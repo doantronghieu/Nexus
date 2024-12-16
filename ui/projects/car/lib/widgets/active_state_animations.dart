@@ -249,28 +249,47 @@ class _ActiveStateButtonState extends State<ActiveStateButton>
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
+        mainAxisSize: MainAxisSize.min, // Added this
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          IconButton(
-            icon: const Icon(Icons.add),
-            onPressed: () {
-              widget.onTemperatureChanged
-                  ?.call((widget.temperature + 0.5).clamp(16.0, 30.0));
-            },
-          ),
-          Text(
-            '${widget.temperature.toStringAsFixed(1)}°C',
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
+          SizedBox(
+            // Wrapped in SizedBox with constrained height
+            height: widget.size * 0.3,
+            child: IconButton(
+              padding: EdgeInsets.zero, // Remove padding
+              iconSize: widget.size * 0.2, // Scale icon size
+              icon: const Icon(Icons.add),
+              onPressed: () {
+                widget.onTemperatureChanged
+                    ?.call((widget.temperature + 0.5).clamp(16.0, 30.0));
+              },
             ),
           ),
-          IconButton(
-            icon: const Icon(Icons.remove),
-            onPressed: () {
-              widget.onTemperatureChanged
-                  ?.call((widget.temperature - 0.5).clamp(16.0, 30.0));
-            },
+          SizedBox(
+            // Wrapped temperature display in SizedBox
+            height: widget.size * 0.3,
+            child: Center(
+              child: Text(
+                '${widget.temperature.toStringAsFixed(1)}°C',
+                style: TextStyle(
+                  fontSize: widget.size * 0.2, // Scale font size
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ),
+          SizedBox(
+            // Wrapped in SizedBox with constrained height
+            height: widget.size * 0.3,
+            child: IconButton(
+              padding: EdgeInsets.zero, // Remove padding
+              iconSize: widget.size * 0.2, // Scale icon size
+              icon: const Icon(Icons.remove),
+              onPressed: () {
+                widget.onTemperatureChanged
+                    ?.call((widget.temperature - 0.5).clamp(16.0, 30.0));
+              },
+            ),
           ),
         ],
       ),
