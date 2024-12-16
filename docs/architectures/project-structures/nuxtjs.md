@@ -1,176 +1,193 @@
 my-nuxt-app/
-├── .nuxt/                      # Auto-generated build directory - Never modify manually
-│                              # Contains compiled app, types, and component registry
-├── .output/                    # Production build output directory
-│                              # Contains optimized server/client bundles and assets 
-├── .nitro/                     # Nitro server build output and cache
-│                              # Contains server middleware, routes, and handlers
+├── .nuxt/                      # Auto-generated build directory
+│                              # Dev-time compilation, types, and registry
+├── .output/                    # Production build output
+│                              # Optimized assets and server/client bundles
+├── .nitro/                     # Nitro server build
+│                              # Server routes, middleware, and cache
 │
-├── assets/                     # Assets processed by build tools (Vite/Webpack)
-│   ├── css/                   # Global styles and preprocessor files
-│   │   ├── main.scss         # Main stylesheet (processed by preprocessor)
-│   │   ├── variables.scss    # Shared variables and mixins
-│   │   └── themes/           # Theme-specific styles
-│   ├── images/               # Images for optimization/transformation
-│   │   ├── icons/           # SVG and icon assets
+├── assets/                     # Processed by build tools
+│   ├── css/                   
+│   │   ├── main.scss          # Main stylesheet
+│   │   ├── variables.scss     # SCSS variables/mixins
+│   │   └── themes/            # Theme variations
+│   │       ├── light.scss
+│   │       └── dark.scss
+│   ├── images/               
+│   │   ├── icons/            # SVG/icon assets
+│   │   │   └── sprite/       # SVG sprite icons
 │   │   └── backgrounds/      # Background images
-│   └── fonts/               # Web fonts to be included in bundle
-│       └── custom/          # Custom font files
+│   └── fonts/                # Web fonts
+│       └── custom/           # Custom font files
 │
-├── components/               # Vue components (auto-imported by name)
-│   ├── base/                # Atomic/base components
-│   │   ├── BaseButton.vue  # Basic button -> <BaseButton />
-│   │   ├── BaseInput.vue   # Basic input -> <BaseInput />
-│   │   └── BaseCard.vue    # Basic card -> <BaseCard />
-│   ├── forms/              # Form-specific components
-│   │   ├── LoginForm.vue   # Login form -> <LoginForm />
-│   │   └── SearchForm.vue  # Search form -> <SearchForm />
-│   ├── layout/             # Layout/structural components
-│   │   ├── TheHeader.vue  # Main header -> <TheHeader />
-│   │   ├── TheFooter.vue  # Main footer -> <TheFooter />
-│   │   └── TheSidebar.vue # Sidebar -> <TheSidebar />
-│   ├── modals/            # Modal/dialog components
-│   │   ├── ConfirmModal.vue # Confirmation -> <ConfirmModal />
-│   │   └── AlertModal.vue   # Alerts -> <AlertModal />
-│   └── ui/                 # Complex UI and features
-│       ├── UserCard.vue    # Regular component -> <UserCard />
-│       └── UserProfile.island.vue # Island component -> <UserProfile />
+├── components/                # Vue components (auto-imported)
+│   ├── base/                 # Atomic/base components
+│   │   ├── BaseButton.vue   # <BaseButton />
+│   │   ├── BaseInput.vue    # <BaseInput />
+│   │   └── BaseCard.vue     # <BaseCard />
+│   ├── forms/               # Form components
+│   │   ├── LoginForm.vue    # <LoginForm />
+│   │   └── SearchForm.vue   # <SearchForm />
+│   ├── layout/              # Layout components
+│   │   ├── TheHeader.vue   # <TheHeader />
+│   │   ├── TheFooter.vue   # <TheFooter />
+│   │   └── TheSidebar.vue  # <TheSidebar />
+│   ├── modals/             # Modal dialogs
+│   │   ├── ConfirmModal.vue # <ConfirmModal />
+│   │   └── AlertModal.vue  # <AlertModal />
+│   └── ui/                 # Feature components
+│       ├── UserCard.vue    # Regular component
+│       └── UserProfile.island.vue # Island component
 │
-├── composables/             # Reusable Vue composables (auto-imported)
-│   ├── states/             # State management composables
-│   │   ├── useAuth.ts     # Authentication state -> useAuth()
-│   │   └── useUser.ts     # User state -> useUser()
-│   ├── features/          # Feature-specific composables
-│   │   ├── useSearch.ts   # Search functionality -> useSearch()
-│   │   └── useCart.ts     # Shopping cart -> useCart()
-│   └── utils/             # Utility composables
-│       ├── useFetch.ts    # Enhanced fetch -> useFetch()
-│       └── useForm.ts     # Form handling -> useForm()
+├── composables/             # Composition utilities
+│   ├── states/             # State management
+│   │   ├── useAuth.ts      # Authentication state
+│   │   └── useUser.ts      # User state
+│   ├── features/           # Feature logic
+│   │   ├── useSearch.ts    # Search functionality
+│   │   ├── useCart.ts      # Shopping cart
+│   │   └── usePagination.ts # Pagination logic
+│   └── utils/              # Utility composables
+│       ├── useFetch.ts     # Enhanced fetching
+│       └── useForm.ts      # Form handling
 │
-├── content/                 # File-based CMS (requires @nuxt/content)
-│   ├── blog/              # Blog posts in Markdown/MDX
-│   │   └── posts/        # Blog post files
-│   └── docs/              # Documentation files
-│       └── api/          # API documentation
+├── content/                # Content management
+│   ├── blog/              # Blog posts
+│   │   └── posts/        # Post files
+│   └── docs/             # Documentation
+│       └── api/          # API docs
 │
-├── layouts/                # Page layouts (require single root element)
-│   ├── default.vue        # Default layout (auto-applied)
-│   ├── admin.vue          # Admin layout
-│   └── auth.vue           # Authentication layout
+├── layouts/               # Page layouts
+│   ├── default.vue       # Default layout
+│   ├── admin.vue         # Admin layout
+│   └── auth.vue          # Auth layout
 │
-├── middleware/             # Navigation middleware (route guards)
-│   ├── auth.ts            # Authentication checks
-│   ├── admin.ts           # Admin area protection
-│   └── analytics.global.ts # Global tracking (runs on all routes)
+├── middleware/            # Route middleware
+│   ├── auth.ts           # Auth checks
+│   ├── admin.ts          # Admin guards
+│   └── analytics.global.ts # Global tracking
 │
-├── pages/                  # File-based routing (auto-generated)
-│   ├── index.vue          # Home page (/)
-│   ├── about.vue          # About page (/about)
-│   ├── admin/            # Admin section (/admin/*)
-│   │   ├── index.vue     # Admin dashboard
-│   │   └── users.vue     # User management
-│   └── users/            # User routes
-│       ├── index.vue     # Users list (/users)
-│       ├── [id].vue      # User profile (/users/123)
-│       ├── [[status]].vue # Optional status (/users/active?)
-│       └── [...slug].vue # Catch-all user routes
+├── pages/                 # File-based routing
+│   ├── index.vue         # Home (/)
+│   ├── about.vue         # About (/about)
+│   ├── admin/           # Admin pages
+│   │   ├── index.vue    # Dashboard
+│   │   └── users.vue    # User management
+│   └── users/           # User pages
+│       ├── index.vue    # List (/users)
+│       ├── [id].vue     # Profile (/users/123)
+│       ├── [[status]].vue # Optional (/users/active?)
+│       └── [...slug].vue # Catch-all
 │
-├── plugins/               # App plugins (initialization)
-│   ├── api.ts            # API client setup
-│   ├── auth.ts           # Authentication
-│   ├── analytics.client.ts # Client-only analytics
-│   └── websocket.server.ts # Server-only websockets
+├── plugins/              # App plugins
+│   ├── api.ts           # API setup
+│   ├── auth.ts          # Auth setup
+│   ├── analytics.client.ts # Client analytics
+│   └── websocket.server.ts # Server websockets
 │
-├── public/                # Static files (served at root)
-│   ├── favicon.ico       # Browser favicon
-│   ├── robots.txt        # SEO instructions
-│   ├── images/           # Static images
-│   └── files/            # Downloadable files
+├── public/               # Static assets
+│   ├── favicon.ico      # Favicon
+│   ├── robots.txt       # SEO rules
+│   ├── security.txt     # Security policy
+│   ├── images/          # Static images
+│   └── files/           # Downloads
 │
-├── server/               # Server-side code
-│   ├── api/             # API endpoints
-│   │   ├── auth/        # Authentication endpoints
-│   │   │   ├── login.post.ts    # POST /api/auth/login
-│   │   │   ├── logout.post.ts   # POST /api/auth/logout
-│   │   │   └── register.post.ts # POST /api/auth/register
-│   │   └── users/       # User endpoints
-│   │       ├── index.get.ts     # GET /api/users
-│   │       ├── [id].get.ts      # GET /api/users/:id
-│   │       └── [id].patch.ts    # PATCH /api/users/:id
-│   ├── middleware/      # Server middleware
-│   │   ├── auth.ts     # Authentication verification
-│   │   ├── cors.ts     # CORS handling
+├── server/              # Server-side code
+│   ├── api/            # API endpoints
+│   │   ├── auth/       # Auth endpoints
+│   │   │   ├── login.post.ts
+│   │   │   ├── logout.post.ts
+│   │   │   ├── refresh.post.ts
+│   │   │   └── register.post.ts
+│   │   └── users/      # User endpoints
+│   │       ├── index.get.ts
+│   │       ├── [id].get.ts
+│   │       └── [id].patch.ts
+│   ├── middleware/     # Server middleware
+│   │   ├── auth.ts    # Auth verification
+│   │   ├── cors.ts    # CORS policies
 │   │   ├── rate-limit.ts # Rate limiting
 │   │   └── security.ts # Security headers
-│   ├── plugins/        # Nitro server plugins
-│   │   ├── database.ts # Database connection
-│   │   ├── cache.ts    # Cache initialization
-│   │   └── socket.ts   # WebSocket setup
-│   └── utils/         # Server utilities
-│       ├── database/  # Database helpers
+│   ├── plugins/       # Server plugins
+│   │   ├── database.ts # DB connection
+│   │   ├── cache.ts   # Cache setup
+│   │   └── socket.ts  # WebSocket
+│   └── utils/        # Server utilities
+│       ├── database/ # DB helpers
 │       │   ├── queries.ts
 │       │   └── models.ts
-│       ├── auth/      # Auth utilities
+│       ├── auth/     # Auth utils
 │       │   ├── jwt.ts
 │       │   └── crypto.ts
-│       ├── cache/     # Caching utilities
+│       ├── cache/    # Cache utils
 │       │   ├── redis.ts
 │       │   └── memory.ts
-│       ├── monitoring/ # Server monitoring
+│       ├── monitoring/
 │       │   └── metrics.ts
-│       ├── security/  # Security utilities
+│       ├── security/
 │       │   └── encryption.ts
-│       └── validation/ # Data validation
+│       ├── types/    # Type defs
+│       │   └── models.ts
+│       └── validation/
 │           └── schemas.ts
 │
-├── shared/              # Universal code (client+server)
-│   └── utils/          # Shared utilities
-│       ├── datetime.ts # Date formatting
-│       └── validation.ts # Shared validation
+├── shared/             # Universal code
+│   └── utils/         # Shared utilities
+│       ├── datetime.ts
+│       └── validation.ts
 │
-├── utils/              # Client-side utilities
-│   ├── formatting.ts   # Data formatting
-│   ├── validation.ts   # Client validation
-│   └── helpers.ts      # General helpers
+├── types/             # TypeScript types
+│   ├── api.ts        # API types
+│   └── models.ts     # Data models
 │
-├── test/               # Testing files
-│   ├── unit/          # Unit tests
+├── utils/             # Client utilities
+│   ├── formatting.ts  # Formatters
+│   ├── validation.ts  # Validators
+│   └── helpers.ts     # General utils
+│
+├── test/              # Test files
+│   ├── unit/         # Unit tests
 │   │   ├── components/
 │   │   └── composables/
-│   └── e2e/           # End-to-end tests
+│   └── e2e/          # E2E tests
 │       └── specs/
 │
-├── .env               # Development env vars (git-ignored)
-├── .env.example       # Example env vars template
-├── .gitignore         # Git ignore patterns
-├── app.vue            # Root Vue component
-├── app.config.ts      # Runtime config
-├── error.vue          # Error page
-├── nuxt.config.ts     # Nuxt configuration
-├── package.json       # Project dependencies
-├── tsconfig.json      # TypeScript config
-└── README.md          # Project documentation
+├── .env              # Dev env vars
+├── .env.example      # Env template
+├── .gitignore        # Git ignore
+├── app.vue           # Root component
+├── app.config.ts     # Runtime config
+├── error.vue         # Error page
+├── nuxt.config.ts    # Nuxt config
+├── package.json      # Dependencies
+├── tsconfig.json     # TS config
+└── README.md         # Documentation
 
-Special Notes:
+Key Notes:
+
 1. File Patterns:
-   - *.client.* : Client-only code
-   - *.server.* : Server-only code
-   - *.global.* : Runs on every route
-   - *.island.* : Independently rendered
-   - [param]    : Required parameter
-   - [[param]]  : Optional parameter
-   - [...slug]  : Catch-all pattern
+   - *.client.* - Client-only
+   - *.server.* - Server-only
+   - *.global.* - Global middleware
+   - *.island.* - Island components
+   - [param] - Required param
+   - [[param]] - Optional param
+   - [...slug] - Catch-all
 
-2. Auto-imports:
-   - Components: Auto-imported by PascalCase
-   - Composables: Must start with 'use'
-   - Utils: Auto-imported from utils/
-   - Server Utils: Server context only
+2. Security:
+   - Use HTTPS in production
+   - Implement rate limiting
+   - Set security headers
+   - Sanitize inputs
+   - Validate data
+   - Handle CORS properly
+   - Use secure sessions
+   - Implement proper auth flow
 
 3. Best Practices:
-   - Components need single root element
-   - API routes support method chaining
-   - Middleware can be async
-   - Server plugins support Nitro storage
-   - Components support Suspense
-   - Environment variables need runtime config
+   - Single root element
+   - Async middleware
+   - Proper type definitions
+   - Error handling
+   - Environment config
+   - API documentation
