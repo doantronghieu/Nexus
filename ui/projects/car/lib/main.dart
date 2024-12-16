@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 void main() {
   runApp(const MyApp());
@@ -100,13 +101,21 @@ class ControlPanel extends StatelessWidget {
               onPressed: () {
                 showSnackBar('Engine started');
               },
-              child: const Text('Start Engine'),
+              child: SvgPicture.asset(
+                'lib/assets/start_engine.svg',
+                width: 24,
+                height: 24,
+              ),
             ),
             ElevatedButton(
               onPressed: () {
                 showSnackBar('Doors locked');
               },
-              child: const Text('Lock Doors'),
+              child: SvgPicture.asset(
+                'lib/assets/lock_doors.svg',
+                width: 24,
+                height: 24,
+              ),
             ),
           ],
         ),
@@ -118,13 +127,21 @@ class ControlPanel extends StatelessWidget {
               onPressed: () {
                 showSnackBar('Horn honked');
               },
-              child: const Text('Honk Horn'),
+              child: SvgPicture.asset(
+                'lib/assets/honk_horn.svg',
+                width: 24,
+                height: 24,
+              ),
             ),
             ElevatedButton(
               onPressed: () {
                 showSnackBar('Climate control adjusted');
               },
-              child: const Text('Adjust Climate'),
+              child: SvgPicture.asset(
+                'lib/assets/adjust_climate.svg',
+                width: 24,
+                height: 24,
+              ),
             ),
           ],
         ),
@@ -136,13 +153,21 @@ class ControlPanel extends StatelessWidget {
               onPressed: () {
                 showSnackBar('Sunroof opened/closed');
               },
-              child: const Text('Sunroof'),
+              child: SvgPicture.asset(
+                'lib/assets/sunroof.svg',
+                width: 24,
+                height: 24,
+              ),
             ),
             ElevatedButton(
               onPressed: () {
                 showSnackBar('Headlights on/off');
               },
-              child: const Text('Headlights'),
+              child: SvgPicture.asset(
+                'lib/assets/headlights.svg',
+                width: 24,
+                height: 24,
+              ),
             ),
           ],
         ),
