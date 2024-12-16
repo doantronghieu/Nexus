@@ -1,193 +1,215 @@
 my-nuxt-app/
 ├── .nuxt/                      # Auto-generated build directory
-│                              # Dev-time compilation, types, and registry
+│                              # Contains compiled app, components, types
 ├── .output/                    # Production build output
-│                              # Optimized assets and server/client bundles
+│                              # Contains optimized server/client bundles
 ├── .nitro/                     # Nitro server build
-│                              # Server routes, middleware, and cache
+│                              # Contains server middleware and handlers
 │
-├── assets/                     # Processed by build tools
-│   ├── css/                   
-│   │   ├── main.scss          # Main stylesheet
-│   │   ├── variables.scss     # SCSS variables/mixins
-│   │   └── themes/            # Theme variations
-│   │       ├── light.scss
-│   │       └── dark.scss
-│   ├── images/               
-│   │   ├── icons/            # SVG/icon assets
-│   │   │   └── sprite/       # SVG sprite icons
-│   │   └── backgrounds/      # Background images
-│   └── fonts/                # Web fonts
-│       └── custom/           # Custom font files
+├── assets/                     # Build-processed assets
+│   ├── css/                   # Global styles
+│   │   ├── main.scss         # Main styles
+│   │   ├── variables.scss    # SCSS variables
+│   │   └── themes/           # Theme files
+│   │       ├── light.scss    # Light theme
+│   │       └── dark.scss     # Dark theme
+│   ├── images/               # Images for processing
+│   │   ├── icons/           # Icon files
+│   │   │   └── sprite/      # SVG sprites
+│   │   └── backgrounds/     # Background images
+│   └── fonts/               # Font files
+│       └── custom/          # Custom fonts
 │
-├── components/                # Vue components (auto-imported)
-│   ├── base/                 # Atomic/base components
-│   │   ├── BaseButton.vue   # <BaseButton />
-│   │   ├── BaseInput.vue    # <BaseInput />
-│   │   └── BaseCard.vue     # <BaseCard />
-│   ├── forms/               # Form components
-│   │   ├── LoginForm.vue    # <LoginForm />
-│   │   └── SearchForm.vue   # <SearchForm />
-│   ├── layout/              # Layout components
-│   │   ├── TheHeader.vue   # <TheHeader />
-│   │   ├── TheFooter.vue   # <TheFooter />
-│   │   └── TheSidebar.vue  # <TheSidebar />
-│   ├── modals/             # Modal dialogs
+├── components/               # Vue components (auto-imported)
+│   ├── base/                # Base/atomic components
+│   │   ├── BaseButton.vue  # <BaseButton />
+│   │   ├── BaseInput.vue   # <BaseInput />
+│   │   └── BaseCard.vue    # <BaseCard />
+│   ├── forms/              # Form components
+│   │   ├── LoginForm.vue   # <LoginForm />
+│   │   └── SearchForm.vue  # <SearchForm />
+│   ├── layout/             # Layout components
+│   │   ├── TheHeader.vue  # <TheHeader />
+│   │   ├── TheFooter.vue  # <TheFooter />
+│   │   └── TheSidebar.vue # <TheSidebar />
+│   ├── modals/            # Modal/dialog components
 │   │   ├── ConfirmModal.vue # <ConfirmModal />
-│   │   └── AlertModal.vue  # <AlertModal />
-│   └── ui/                 # Feature components
-│       ├── UserCard.vue    # Regular component
+│   │   └── AlertModal.vue   # <AlertModal />
+│   └── ui/                # Feature components
+│       ├── UserCard.vue   # Regular component
 │       └── UserProfile.island.vue # Island component
 │
-├── composables/             # Composition utilities
-│   ├── states/             # State management
-│   │   ├── useAuth.ts      # Authentication state
-│   │   └── useUser.ts      # User state
-│   ├── features/           # Feature logic
-│   │   ├── useSearch.ts    # Search functionality
-│   │   ├── useCart.ts      # Shopping cart
-│   │   └── usePagination.ts # Pagination logic
-│   └── utils/              # Utility composables
-│       ├── useFetch.ts     # Enhanced fetching
-│       └── useForm.ts      # Form handling
+├── composables/            # Vue composables (auto-imported)
+│   ├── states/            # State management
+│   │   ├── useAuth.ts     # Authentication
+│   │   └── useUser.ts     # User state
+│   ├── features/          # Feature logic
+│   │   ├── useSearch.ts   # Search
+│   │   ├── useCart.ts     # Shopping cart
+│   │   └── usePagination.ts # Pagination
+│   └── utils/             # Utility composables
+│       ├── useFetch.ts    # API fetching
+│       └── useForm.ts     # Form handling
 │
-├── content/                # Content management
-│   ├── blog/              # Blog posts
-│   │   └── posts/        # Post files
-│   └── docs/             # Documentation
-│       └── api/          # API docs
+├── content/               # Content management
+│   ├── blog/             # Blog content
+│   │   └── posts/       # Blog posts
+│   └── docs/            # Documentation
+│       ├── api/         # API docs
+│       ├── setup/       # Setup guides
+│       └── security/    # Security docs
 │
-├── layouts/               # Page layouts
-│   ├── default.vue       # Default layout
-│   ├── admin.vue         # Admin layout
-│   └── auth.vue          # Auth layout
+├── layouts/              # Page layouts
+│   ├── default.vue      # Default layout
+│   ├── admin.vue        # Admin layout
+│   └── auth.vue         # Auth layout
 │
-├── middleware/            # Route middleware
-│   ├── auth.ts           # Auth checks
-│   ├── admin.ts          # Admin guards
+├── middleware/           # Route middleware
+│   ├── auth.ts          # Auth checks
+│   ├── admin.ts         # Admin access
 │   └── analytics.global.ts # Global tracking
 │
-├── pages/                 # File-based routing
-│   ├── index.vue         # Home (/)
-│   ├── about.vue         # About (/about)
-│   ├── admin/           # Admin pages
-│   │   ├── index.vue    # Dashboard
-│   │   └── users.vue    # User management
-│   └── users/           # User pages
-│       ├── index.vue    # List (/users)
-│       ├── [id].vue     # Profile (/users/123)
-│       ├── [[status]].vue # Optional (/users/active?)
+├── pages/               # File-based routing
+│   ├── index.vue       # Home (/)
+│   ├── about.vue       # About (/about)
+│   ├── admin/         # Admin pages
+│   │   ├── index.vue  # Dashboard
+│   │   └── users.vue  # User management
+│   └── users/         # User routes
+│       ├── index.vue  # List
+│       ├── [id].vue   # Profile
+│       ├── [[status]].vue # Optional param
 │       └── [...slug].vue # Catch-all
 │
-├── plugins/              # App plugins
-│   ├── api.ts           # API setup
-│   ├── auth.ts          # Auth setup
-│   ├── analytics.client.ts # Client analytics
-│   └── websocket.server.ts # Server websockets
+├── plugins/            # App plugins
+│   ├── api.ts         # API client
+│   ├── auth.ts        # Authentication
+│   ├── error-handler.ts # Error handling
+│   ├── analytics.client.ts # Analytics
+│   ├── performance.client.ts # Performance
+│   └── websocket.server.ts # WebSockets
 │
-├── public/               # Static assets
-│   ├── favicon.ico      # Favicon
-│   ├── robots.txt       # SEO rules
-│   ├── security.txt     # Security policy
-│   ├── images/          # Static images
-│   └── files/           # Downloads
+├── public/             # Static files
+│   ├── favicon.ico    # Favicon
+│   ├── robots.txt     # SEO rules
+│   ├── security.txt   # Security policy
+│   ├── images/        # Static images
+│   └── files/         # Downloads
 │
-├── server/              # Server-side code
-│   ├── api/            # API endpoints
-│   │   ├── auth/       # Auth endpoints
+├── server/            # Server-side code
+│   ├── api/          # API endpoints
+│   │   ├── auth/     # Auth endpoints
 │   │   │   ├── login.post.ts
 │   │   │   ├── logout.post.ts
 │   │   │   ├── refresh.post.ts
 │   │   │   └── register.post.ts
-│   │   └── users/      # User endpoints
-│   │       ├── index.get.ts
-│   │       ├── [id].get.ts
-│   │       └── [id].patch.ts
-│   ├── middleware/     # Server middleware
-│   │   ├── auth.ts    # Auth verification
-│   │   ├── cors.ts    # CORS policies
+│   │   ├── users/    # User endpoints
+│   │   │   ├── index.get.ts
+│   │   │   ├── [id].get.ts
+│   │   │   └── [id].patch.ts
+│   │   └── webhooks/ # Webhook handlers
+│   │       └── stripe.post.ts
+│   ├── middleware/   # Server middleware
+│   │   ├── auth.ts  # Authentication
+│   │   ├── cors.ts  # CORS handling
 │   │   ├── rate-limit.ts # Rate limiting
-│   │   └── security.ts # Security headers
-│   ├── plugins/       # Server plugins
-│   │   ├── database.ts # DB connection
-│   │   ├── cache.ts   # Cache setup
-│   │   └── socket.ts  # WebSocket
-│   └── utils/        # Server utilities
-│       ├── database/ # DB helpers
+│   │   ├── security.ts # Security headers
+│   │   └── compression.ts # Compression
+│   ├── plugins/     # Server plugins
+│   │   ├── database.ts # Database
+│   │   ├── cache.ts # Cache
+│   │   └── socket.ts # WebSockets
+│   └── utils/      # Server utilities
+│       ├── database/ # DB utilities
 │       │   ├── queries.ts
 │       │   └── models.ts
-│       ├── auth/     # Auth utils
+│       ├── auth/   # Auth utilities
 │       │   ├── jwt.ts
 │       │   └── crypto.ts
-│       ├── cache/    # Cache utils
+│       ├── cache/  # Caching
 │       │   ├── redis.ts
 │       │   └── memory.ts
-│       ├── monitoring/
+│       ├── email/  # Email handling
+│       │   └── templates.ts
+│       ├── queue/  # Job queues
+│       │   └── processor.ts
+│       ├── logger/ # Logging
+│       │   └── winston.ts
+│       ├── monitoring/ # Monitoring
 │       │   └── metrics.ts
-│       ├── security/
-│       │   └── encryption.ts
-│       ├── types/    # Type defs
-│       │   └── models.ts
-│       └── validation/
+│       ├── performance/ # Performance
+│       │   └── metrics.ts
+│       ├── security/ # Security
+│       │   ├── encryption.ts
+│       │   └── sanitization.ts
+│       └── validation/ # Validation
 │           └── schemas.ts
 │
-├── shared/             # Universal code
-│   └── utils/         # Shared utilities
+├── shared/           # Universal code
+│   └── utils/       # Shared utilities
 │       ├── datetime.ts
 │       └── validation.ts
 │
-├── types/             # TypeScript types
-│   ├── api.ts        # API types
-│   └── models.ts     # Data models
+├── types/           # TypeScript types
+│   ├── api.d.ts    # API types
+│   ├── env.d.ts    # Environment types
+│   ├── config.d.ts # Config types
+│   ├── components.d.ts # Component types
+│   ├── plugins.d.ts # Plugin types
+│   ├── global.d.ts # Global types
+│   └── models.d.ts # Data models
 │
-├── utils/             # Client utilities
-│   ├── formatting.ts  # Formatters
-│   ├── validation.ts  # Validators
-│   └── helpers.ts     # General utils
-│
-├── test/              # Test files
-│   ├── unit/         # Unit tests
+├── test/            # Testing
+│   ├── unit/       # Unit tests
 │   │   ├── components/
-│   │   └── composables/
-│   └── e2e/          # E2E tests
-│       └── specs/
+│   │   ├── composables/
+│   │   └── utils/
+│   ├── integration/ # Integration tests
+│   │   └── api/
+│   └── e2e/       # E2E tests
+│       └── features/
 │
-├── .env              # Dev env vars
-├── .env.example      # Env template
-├── .gitignore        # Git ignore
-├── app.vue           # Root component
-├── app.config.ts     # Runtime config
-├── error.vue         # Error page
-├── nuxt.config.ts    # Nuxt config
-├── package.json      # Dependencies
-├── tsconfig.json     # TS config
-└── README.md         # Documentation
+├── .env            # Dev environment variables
+├── .env.example    # Environment template
+├── .gitignore      # Git ignore patterns
+├── app.vue         # Root Vue component
+├── app.config.ts   # Runtime config
+├── error.vue       # Error page
+├── nuxt.config.ts  # Nuxt configuration
+├── package.json    # Project dependencies
+├── tsconfig.json   # TypeScript config
+└── README.md       # Project documentation
 
-Key Notes:
+Special Patterns:
+- *.client.*  - Client-only
+- *.server.*  - Server-only
+- *.global.*  - Global middleware
+- *.island.*  - Island components
+- [param]     - Required parameter
+- [[param]]   - Optional parameter
+- [...slug]   - Catch-all routes
 
-1. File Patterns:
-   - *.client.* - Client-only
-   - *.server.* - Server-only
-   - *.global.* - Global middleware
-   - *.island.* - Island components
-   - [param] - Required param
-   - [[param]] - Optional param
-   - [...slug] - Catch-all
+Key Features:
+1. Security
+   - CSP headers
+   - Rate limiting
+   - CORS policies
+   - Input validation
+   - Authentication
+   - Authorization
+   - Data sanitization
 
-2. Security:
-   - Use HTTPS in production
-   - Implement rate limiting
-   - Set security headers
-   - Sanitize inputs
-   - Validate data
-   - Handle CORS properly
-   - Use secure sessions
-   - Implement proper auth flow
+2. Performance
+   - Caching
+   - Compression
+   - Asset optimization
+   - Code splitting
+   - Island components
 
-3. Best Practices:
-   - Single root element
-   - Async middleware
-   - Proper type definitions
+3. Development
+   - Type safety
    - Error handling
-   - Environment config
-   - API documentation
+   - Testing coverage
+   - Documentation
+   - Code organization
+  
