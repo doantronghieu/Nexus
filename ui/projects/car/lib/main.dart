@@ -85,10 +85,22 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 }
 
-class ControlPanel extends StatelessWidget {
+class ControlPanel extends StatefulWidget {
   final void Function(String) showSnackBar;
 
   const ControlPanel({required this.showSnackBar, super.key});
+
+  @override
+  State<ControlPanel> createState() => _ControlPanelState();
+}
+
+class _ControlPanelState extends State<ControlPanel> {
+  bool _engineStarted = false;
+  bool _doorsLocked = false;
+  bool _hornHonked = false;
+  bool _climateAdjusted = false;
+  bool _sunroofOpen = false;
+  bool _headlightsOn = false;
 
   @override
   Widget build(BuildContext context) {
@@ -101,10 +113,13 @@ class ControlPanel extends StatelessWidget {
               children: [
                 ElevatedButton(
                   onPressed: () {
-                    showSnackBar('Engine started');
+                    setState(() {
+                      _engineStarted = !_engineStarted;
+                    });
+                    widget.showSnackBar(_engineStarted ? 'Engine started' : 'Engine stopped');
                   },
                   child: SvgPicture.asset(
-                    'lib/assets/start_engine.svg',
+                    _engineStarted ? 'lib/assets/power.svg' : 'lib/assets/start_engine.svg',
                     width: 24,
                     height: 24,
                   ),
@@ -117,10 +132,13 @@ class ControlPanel extends StatelessWidget {
               children: [
                 ElevatedButton(
                   onPressed: () {
-                    showSnackBar('Doors locked');
+                    setState(() {
+                      _doorsLocked = !_doorsLocked;
+                    });
+                    widget.showSnackBar(_doorsLocked ? 'Doors locked' : 'Doors unlocked');
                   },
                   child: SvgPicture.asset(
-                    'lib/assets/lock_doors.svg',
+                    _doorsLocked ? 'lib/assets/lock.svg' : 'lib/assets/unlock.svg',
                     width: 24,
                     height: 24,
                   ),
@@ -139,10 +157,13 @@ class ControlPanel extends StatelessWidget {
               children: [
                 ElevatedButton(
                   onPressed: () {
-                    showSnackBar('Horn honked');
+                    setState(() {
+                      _hornHonked = !_hornHonked;
+                    });
+                    widget.showSnackBar(_hornHonked ? 'Horn honked' : 'Horn stopped');
                   },
                   child: SvgPicture.asset(
-                    'lib/assets/honk_horn.svg',
+                    _hornHonked ? 'lib/assets/honk.svg' : 'lib/assets/mute.svg',
                     width: 24,
                     height: 24,
                   ),
@@ -155,10 +176,13 @@ class ControlPanel extends StatelessWidget {
               children: [
                 ElevatedButton(
                   onPressed: () {
-                    showSnackBar('Climate control adjusted');
+                    setState(() {
+                      _climateAdjusted = !_climateAdjusted;
+                    });
+                    widget.showSnackBar(_climateAdjusted ? 'Climate control adjusted' : 'Climate control stopped');
                   },
                   child: SvgPicture.asset(
-                    'lib/assets/adjust_climate.svg',
+                    _climateAdjusted ? 'lib/assets/climate_on.svg' : 'lib/assets/adjust_climate.svg',
                     width: 24,
                     height: 24,
                   ),
@@ -177,10 +201,13 @@ class ControlPanel extends StatelessWidget {
               children: [
                 ElevatedButton(
                   onPressed: () {
-                    showSnackBar('Sunroof opened/closed');
+                    setState(() {
+                      _sunroofOpen = !_sunroofOpen;
+                    });
+                    widget.showSnackBar(_sunroofOpen ? 'Sunroof opened' : 'Sunroof closed');
                   },
                   child: SvgPicture.asset(
-                    'lib/assets/sunroof.svg',
+                    _sunroofOpen ? 'lib/assets/sunroof_open.svg' : 'lib/assets/sunroof.svg',
                     width: 24,
                     height: 24,
                   ),
@@ -193,10 +220,13 @@ class ControlPanel extends StatelessWidget {
               children: [
                 ElevatedButton(
                   onPressed: () {
-                    showSnackBar('Headlights on/off');
+                    setState(() {
+                      _headlightsOn = !_headlightsOn;
+                    });
+                    widget.showSnackBar(_headlightsOn ? 'Headlights on' : 'Headlights off');
                   },
                   child: SvgPicture.asset(
-                    'lib/assets/headlights.svg',
+                    _headlightsOn ? 'lib/assets/headlights.svg' : 'lib/assets/headlights_off.svg',
                     width: 24,
                     height: 24,
                   ),
