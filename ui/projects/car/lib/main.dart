@@ -97,51 +97,37 @@ class ControlPanel extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            ElevatedButton(
-              onPressed: () {
-                showSnackBar('Engine started');
-              },
-              child: SvgPicture.asset(
-                'lib/assets/start_engine.svg',
-                width: 24,
-                height: 24,
-              ),
+            Column(
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    showSnackBar('Engine started');
+                  },
+                  child: SvgPicture.asset(
+                    'lib/assets/start_engine.svg',
+                    width: 24,
+                    height: 24,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                const Text('Start Engine', style: TextStyle(fontSize: 12)),
+              ],
             ),
-            ElevatedButton(
-              onPressed: () {
-                showSnackBar('Doors locked');
-              },
-              child: SvgPicture.asset(
-                'lib/assets/lock_doors.svg',
-                width: 24,
-                height: 24,
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 16),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            ElevatedButton(
-              onPressed: () {
-                showSnackBar('Horn honked');
-              },
-              child: SvgPicture.asset(
-                'lib/assets/honk_horn.svg',
-                width: 24,
-                height: 24,
-              ),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                showSnackBar('Climate control adjusted');
-              },
-              child: SvgPicture.asset(
-                'lib/assets/adjust_climate.svg',
-                width: 24,
-                height: 24,
-              ),
+            Column(
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    showSnackBar('Doors locked');
+                  },
+                  child: SvgPicture.asset(
+                    'lib/assets/lock_doors.svg',
+                    width: 24,
+                    height: 24,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                const Text('Lock Doors', style: TextStyle(fontSize: 12)),
+              ],
             ),
           ],
         ),
@@ -149,25 +135,75 @@ class ControlPanel extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            ElevatedButton(
-              onPressed: () {
-                showSnackBar('Sunroof opened/closed');
-              },
-              child: SvgPicture.asset(
-                'lib/assets/sunroof.svg',
-                width: 24,
-                height: 24,
-              ),
+            Column(
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    showSnackBar('Horn honked');
+                  },
+                  child: SvgPicture.asset(
+                    'lib/assets/honk_horn.svg',
+                    width: 24,
+                    height: 24,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                const Text('Honk Horn', style: TextStyle(fontSize: 12)),
+              ],
             ),
-            ElevatedButton(
-              onPressed: () {
-                showSnackBar('Headlights on/off');
-              },
-              child: SvgPicture.asset(
-                'lib/assets/headlights.svg',
-                width: 24,
-                height: 24,
-              ),
+            Column(
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    showSnackBar('Climate control adjusted');
+                  },
+                  child: SvgPicture.asset(
+                    'lib/assets/adjust_climate.svg',
+                    width: 24,
+                    height: 24,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                const Text('Adjust Climate', style: TextStyle(fontSize: 12)),
+              ],
+            ),
+          ],
+        ),
+        const SizedBox(height: 16),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            Column(
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    showSnackBar('Sunroof opened/closed');
+                  },
+                  child: SvgPicture.asset(
+                    'lib/assets/sunroof.svg',
+                    width: 24,
+                    height: 24,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                const Text('Sunroof', style: TextStyle(fontSize: 12)),
+              ],
+            ),
+            Column(
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    showSnackBar('Headlights on/off');
+                  },
+                  child: SvgPicture.asset(
+                    'lib/assets/headlights.svg',
+                    width: 24,
+                    height: 24,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                const Text('Headlights', style: TextStyle(fontSize: 12)),
+              ],
             ),
           ],
         ),
