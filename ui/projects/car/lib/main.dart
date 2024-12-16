@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:car/control_button.dart';
+import 'package:car/dashboard_row.dart';
 
 void main() {
   runApp(const MyApp());
@@ -48,39 +50,22 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            _buildDashboardRow(Icons.speed, '120 km/h', Icons.settings, '3000'),
-            _buildDashboardRow(Icons.local_gas_station, '75%', Icons.battery_full, '80%'),
+            DashboardRow(
+              icon1: Icons.speed,
+              value1: '120 km/h',
+              icon2: Icons.settings,
+              value2: '3000',
+            ),
+            DashboardRow(
+              icon1: Icons.local_gas_station,
+              value1: '75%',
+              icon2: Icons.battery_full,
+              value2: '80%',
+            ),
             ControlPanel(showSnackBar: _showSnackBar),
           ],
         ),
       ),
-    );
-  }
-
-  Widget _buildDashboardRow(IconData icon1, String value1, IconData icon2, String value2) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      children: [
-        _buildDashboardItem(icon1, value1),
-        _buildDashboardItem(icon2, value2),
-      ],
-    );
-  }
-
-  Widget _buildDashboardItem(IconData icon, String value) {
-    return Column(
-      children: [
-        Icon(
-          icon,
-          size: 40,
-          color: Colors.blueGrey,
-        ),
-        const SizedBox(height: 8),
-        Text(
-          value,
-          style: const TextStyle(fontSize: 24, color: Colors.blueGrey),
-        ),
-      ],
     );
   }
 }
@@ -109,43 +94,29 @@ class _ControlPanelState extends State<ControlPanel> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            Column(
-              children: [
-                ElevatedButton(
-                  onPressed: () {
-                    setState(() {
-                      _engineStarted = !_engineStarted;
-                    });
-                    widget.showSnackBar(_engineStarted ? 'Engine started' : 'Engine stopped');
-                  },
-                  child: SvgPicture.asset(
-                    _engineStarted ? 'lib/assets/power.svg' : 'lib/assets/start_engine.svg',
-                    width: 24,
-                    height: 24,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                const Text('Start Engine', style: TextStyle(fontSize: 12)),
-              ],
+            ControlButton(
+              assetOn: 'lib/assets/power.svg',
+              assetOff: 'lib/assets/start_engine.svg',
+              label: 'Start Engine',
+              initialState: _engineStarted,
+              onToggle: (isOn) {
+                setState(() {
+                  _engineStarted = isOn;
+                });
+                widget.showSnackBar(isOn ? 'Engine started' : 'Engine stopped');
+              },
             ),
-            Column(
-              children: [
-                ElevatedButton(
-                  onPressed: () {
-                    setState(() {
-                      _doorsLocked = !_doorsLocked;
-                    });
-                    widget.showSnackBar(_doorsLocked ? 'Doors locked' : 'Doors unlocked');
-                  },
-                  child: SvgPicture.asset(
-                    _doorsLocked ? 'lib/assets/lock.svg' : 'lib/assets/unlock.svg',
-                    width: 24,
-                    height: 24,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                const Text('Lock Doors', style: TextStyle(fontSize: 12)),
-              ],
+            ControlButton(
+              assetOn: 'lib/assets/lock.svg',
+              assetOff: 'lib/assets/unlock.svg',
+              label: 'Lock Doors',
+              initialState: _doorsLocked,
+              onToggle: (isOn) {
+                setState(() {
+                  _doorsLocked = isOn;
+                });
+                widget.showSnackBar(isOn ? 'Doors locked' : 'Doors unlocked');
+              },
             ),
           ],
         ),
@@ -153,43 +124,29 @@ class _ControlPanelState extends State<ControlPanel> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            Column(
-              children: [
-                ElevatedButton(
-                  onPressed: () {
-                    setState(() {
-                      _hornHonked = !_hornHonked;
-                    });
-                    widget.showSnackBar(_hornHonked ? 'Horn honked' : 'Horn stopped');
-                  },
-                  child: SvgPicture.asset(
-                    _hornHonked ? 'lib/assets/honk.svg' : 'lib/assets/mute.svg',
-                    width: 24,
-                    height: 24,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                const Text('Honk Horn', style: TextStyle(fontSize: 12)),
-              ],
+            ControlButton(
+              assetOn: 'lib/assets/honk.svg',
+              assetOff: 'lib/assets/mute.svg',
+              label: 'Honk Horn',
+              initialState: _hornHonked,
+              onToggle: (isOn) {
+                setState(() {
+                  _hornHonked = isOn;
+                });
+                widget.showSnackBar(isOn ? 'Horn honked' : 'Horn stopped');
+              },
             ),
-            Column(
-              children: [
-                ElevatedButton(
-                  onPressed: () {
-                    setState(() {
-                      _climateAdjusted = !_climateAdjusted;
-                    });
-                    widget.showSnackBar(_climateAdjusted ? 'Climate control adjusted' : 'Climate control stopped');
-                  },
-                  child: SvgPicture.asset(
-                    _climateAdjusted ? 'lib/assets/climate_on.svg' : 'lib/assets/adjust_climate.svg',
-                    width: 24,
-                    height: 24,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                const Text('Adjust Climate', style: TextStyle(fontSize: 12)),
-              ],
+            ControlButton(
+              assetOn: 'lib/assets/climate_on.svg',
+              assetOff: 'lib/assets/adjust_climate.svg',
+              label: 'Adjust Climate',
+              initialState: _climateAdjusted,
+              onToggle: (isOn) {
+                setState(() {
+                  _climateAdjusted = isOn;
+                });
+                widget.showSnackBar(isOn ? 'Climate control adjusted' : 'Climate control stopped');
+              },
             ),
           ],
         ),
@@ -197,43 +154,29 @@ class _ControlPanelState extends State<ControlPanel> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            Column(
-              children: [
-                ElevatedButton(
-                  onPressed: () {
-                    setState(() {
-                      _sunroofOpen = !_sunroofOpen;
-                    });
-                    widget.showSnackBar(_sunroofOpen ? 'Sunroof opened' : 'Sunroof closed');
-                  },
-                  child: SvgPicture.asset(
-                    _sunroofOpen ? 'lib/assets/sunroof_open.svg' : 'lib/assets/sunroof.svg',
-                    width: 24,
-                    height: 24,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                const Text('Sunroof', style: TextStyle(fontSize: 12)),
-              ],
+            ControlButton(
+              assetOn: 'lib/assets/sunroof_open.svg',
+              assetOff: 'lib/assets/sunroof.svg',
+              label: 'Sunroof',
+              initialState: _sunroofOpen,
+              onToggle: (isOn) {
+                setState(() {
+                  _sunroofOpen = isOn;
+                });
+                widget.showSnackBar(isOn ? 'Sunroof opened' : 'Sunroof closed');
+              },
             ),
-            Column(
-              children: [
-                ElevatedButton(
-                  onPressed: () {
-                    setState(() {
-                      _headlightsOn = !_headlightsOn;
-                    });
-                    widget.showSnackBar(_headlightsOn ? 'Headlights on' : 'Headlights off');
-                  },
-                  child: SvgPicture.asset(
-                    _headlightsOn ? 'lib/assets/headlights.svg' : 'lib/assets/headlights_off.svg',
-                    width: 24,
-                    height: 24,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                const Text('Headlights', style: TextStyle(fontSize: 12)),
-              ],
+            ControlButton(
+              assetOn: 'lib/assets/headlights.svg',
+              assetOff: 'lib/assets/headlights_off.svg',
+              label: 'Headlights',
+              initialState: _headlightsOn,
+              onToggle: (isOn) {
+                setState(() {
+                  _headlightsOn = isOn;
+                });
+                widget.showSnackBar(isOn ? 'Headlights on' : 'Headlights off');
+              },
             ),
           ],
         ),
