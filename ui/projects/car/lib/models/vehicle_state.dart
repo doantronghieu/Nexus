@@ -6,7 +6,7 @@ class VehicleState {
   final double fuelLevel;
   final bool climateControlOn;
   final double climateTemp;
-  final double batteryLevel; // Added battery level
+  final double batteryLevel;
 
   VehicleState({
     this.engineOn = false,
@@ -16,7 +16,7 @@ class VehicleState {
     this.fuelLevel = 100.0,
     this.climateControlOn = false,
     this.climateTemp = 22.0,
-    this.batteryLevel = 100.0, // Added with default value
+    this.batteryLevel = 100.0,
   });
 
   factory VehicleState.fromJson(Map<String, dynamic> json) {
@@ -28,7 +28,7 @@ class VehicleState {
       fuelLevel: json['fuelLevel']?.toDouble() ?? 100.0,
       climateControlOn: json['climateControlOn'] ?? false,
       climateTemp: json['climateTemp']?.toDouble() ?? 22.0,
-      batteryLevel: json['batteryLevel']?.toDouble() ?? 100.0, // Added
+      batteryLevel: json['batteryLevel']?.toDouble() ?? 100.0,
     );
   }
 
@@ -41,7 +41,7 @@ class VehicleState {
       'fuelLevel': fuelLevel,
       'climateControlOn': climateControlOn,
       'climateTemp': climateTemp,
-      'batteryLevel': batteryLevel, // Added
+      'batteryLevel': batteryLevel,
     };
   }
 
@@ -53,7 +53,7 @@ class VehicleState {
     double? fuelLevel,
     bool? climateControlOn,
     double? climateTemp,
-    double? batteryLevel, // Added
+    double? batteryLevel,
   }) {
     return VehicleState(
       engineOn: engineOn ?? this.engineOn,
@@ -63,7 +63,7 @@ class VehicleState {
       fuelLevel: fuelLevel ?? this.fuelLevel,
       climateControlOn: climateControlOn ?? this.climateControlOn,
       climateTemp: climateTemp ?? this.climateTemp,
-      batteryLevel: batteryLevel ?? this.batteryLevel, // Added
+      batteryLevel: batteryLevel ?? this.batteryLevel,
     );
   }
 }

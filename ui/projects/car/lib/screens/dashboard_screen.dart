@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import '../models/vehicle_state.dart';
 import '../widgets/control_icons.dart';
-import '../widgets/svg_icon_button.dart';
+import '../widgets/active_state_animations.dart';
 
 class DashboardScreen extends StatefulWidget {
+  const DashboardScreen({super.key});
+
   @override
-  _DashboardScreenState createState() => _DashboardScreenState();
+  State<DashboardScreen> createState() => _DashboardScreenState();
 }
 
 class _DashboardScreenState extends State<DashboardScreen> {
@@ -16,23 +17,22 @@ class _DashboardScreenState extends State<DashboardScreen> {
     setState(() {
       _vehicleState = newState;
     });
-    // Here you would typically send the update to your backend
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Vehicle Control Dashboard'),
+        title: const Text('Vehicle Control Dashboard'),
         backgroundColor: Colors.blue,
       ),
       body: SingleChildScrollView(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _buildControlSection(),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             _buildMonitoringSection(),
           ],
         ),
@@ -44,18 +44,18 @@ class _DashboardScreenState extends State<DashboardScreen> {
     return Card(
       elevation: 4,
       child: Padding(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
+            const Text(
               'Controls',
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
               ),
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
@@ -64,8 +64,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   ControlIcons.engineControl,
                   _vehicleState.engineOn,
                   (value) {
-                    _updateVehicleState(
-                        _vehicleState.copyWith(engineOn: value));
+                    _updateVehicleState(_vehicleState.copyWith(engineOn: value));
                   },
                 ),
                 _buildControlButton(
@@ -73,8 +72,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   ControlIcons.doorLock,
                   _vehicleState.doorsLocked,
                   (value) {
-                    _updateVehicleState(
-                        _vehicleState.copyWith(doorsLocked: value));
+                    _updateVehicleState(_vehicleState.copyWith(doorsLocked: value));
                   },
                 ),
                 _buildControlButton(
@@ -88,7 +86,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 ),
               ],
             ),
-            if (_vehicleState.climateControlOn) _buildClimateSlider(),
           ],
         ),
       ),
@@ -101,50 +98,34 @@ class _DashboardScreenState extends State<DashboardScreen> {
     bool isActive,
     Function(bool) onChanged,
   ) {
+    String type = label.toLowerCase();
     return Column(
       children: [
-        SvgIconButton(
+        ActiveStateButton(
           svgString: svgString,
           isActive: isActive,
           onPressed: () => onChanged(!isActive),
+          type: type,
+          temperature: _vehicleState.climateTemp,
+          onTemperatureChanged: type == 'climate'
+              ? (value) {
+                  _updateVehicleState(
+                    _vehicleState.copyWith(climateTemp: value),
+                  );
+                }
+              : null,
         ),
-        SizedBox(height: 8),
-        Text(
-          label,
+        const SizedBox(height: 8),
+        AnimatedDefaultTextStyle(
+          duration: const Duration(milliseconds: 200),
           style: TextStyle(
             fontSize: 16,
-            fontWeight: FontWeight.w500,
+            fontWeight: FontWeight.bold,
             color: isActive ? Colors.blue : Colors.grey,
           ),
+          child: Text(label),
         ),
       ],
-    );
-  }
-
-  Widget _buildClimateSlider() {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Temperature: ${_vehicleState.climateTemp.round()}°C',
-            style: TextStyle(fontSize: 16),
-          ),
-          Slider(
-            value: _vehicleState.climateTemp,
-            min: 16,
-            max: 30,
-            divisions: 28,
-            label: '${_vehicleState.climateTemp.round()}°C',
-            onChanged: (value) {
-              _updateVehicleState(
-                _vehicleState.copyWith(climateTemp: value),
-              );
-            },
-          ),
-        ],
-      ),
     );
   }
 
@@ -152,18 +133,18 @@ class _DashboardScreenState extends State<DashboardScreen> {
     return Card(
       elevation: 4,
       child: Padding(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
+            const Text(
               'Vehicle Status',
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
               ),
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             _buildStatusTile(
               'Speed',
               '${_vehicleState.speed.round()} km/h',
@@ -196,7 +177,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       title: Text(title),
       trailing: Text(
         value,
-        style: TextStyle(
+        style: const TextStyle(
           fontSize: 18,
           fontWeight: FontWeight.bold,
         ),

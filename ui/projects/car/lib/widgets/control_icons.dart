@@ -17,9 +17,38 @@ class ControlIcons {
 
   static const String climateControl = '''
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-  <rect x="6" y="6" width="12" height="12" rx="2" fill="#4A5568"/>
-  <path d="M11 8v6.5a1.5 1.5 0 1 0 2 0V8" fill="none" stroke="#E2E8F0" stroke-width="1.5" stroke-linecap="round"/>
-  <path d="M4 12h3M17 12h3M12 4v3M12 17v3" stroke="#48BB78" stroke-width="1.5" stroke-linecap="round"/>
-  <text x="12" y="22" font-family="Arial, sans-serif" font-size="2.5" text-anchor="middle" fill="#2D3748">CLIMATE</text>
+  <!-- Outer circle -->
+  <circle cx="12" cy="12" r="10" fill="#4A5568" opacity="0.1"/>
+  
+  <!-- Temperature display background -->
+  <rect x="8" y="6" width="8" height="12" rx="4" fill="#4A5568"/>
+  
+  <!-- Temperature "mercury" tube -->
+  <rect x="10" y="8" width="4" height="8" rx="2" fill="#E2E8F0"/>
+  
+  <!-- Air flow indicators -->
+  <path d="M4 12h2M18 12h2M12 4v2M12 18v2" 
+        stroke="#48BB78" 
+        stroke-width="1.5" 
+        stroke-linecap="round"/>
+  
+  <!-- Temperature markers -->
+  <path d="M16 8h1M16 10h1M16 12h1M16 14h1" 
+        stroke="#E2E8F0" 
+        stroke-width="0.5"/>
+        
+  <!-- Plus/Minus controls -->
+  <circle cx="12" cy="18.5" r="1" fill="#48BB78"/>
+  <path d="M12 18h2M11 18.5h2" stroke="#E2E8F0" stroke-width="0.5"/>
+  <circle cx="12" cy="5.5" r="1" fill="#48BB78"/>
+  <path d="M11 5.5h2" stroke="#E2E8F0" stroke-width="0.5"/>
+  
+  <text x="12" y="22" 
+        font-family="Arial, sans-serif" 
+        font-size="2.5" 
+        text-anchor="middle" 
+        fill="#2D3748">
+    CLIMATE
+  </text>
 </svg>''';
 }
