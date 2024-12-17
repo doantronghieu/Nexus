@@ -106,21 +106,21 @@ The structure uses:
 ```mermaid
 flowchart TB
     %% Company 2 at top
-    subgraph C2[COMPANY 2]
+    subgraph C2[**_COMPANY 2_**]
         direction LR
         GL["**Group Leader**<br>John Smith"] --> PS["**Project Sponsor**<br>David Wilson"] --> PD["**Program Director**<br>Michael Brown"] --> PM["**Project Manager**<br>Sarah Johnson"]
     end
 
     %% Company 1 main container
-    subgraph C1[COMPANY 1]
+    subgraph C1[**_COMPANY 1_**]
         direction TB
         %% Leadership Layer
-        subgraph LEAD[LEADERSHIP LAYER]
+        subgraph LEAD[**_LEADERSHIP LAYER_**]
             direction TB
             L1["**Leader Company Level**<br>James Anderson"]
             
             %% Force Chief Officers to be horizontal
-            subgraph CEO_GROUP[CHIEF OFFICERS]
+            subgraph CEO_GROUP[**_CHIEF OFFICERS_**]
                 direction LR
                 CO1["**Chief AI Officer**<br>Robert Lee"] --- CO2["**Chief Executive Officer**<br>Emma Davis"]
             end
@@ -129,10 +129,10 @@ flowchart TB
         end
 
         %% Operations Group - adjusted layout
-        subgraph OPS[OPERATIONS ORG.]
+        subgraph OPS[**_OPERATIONS ORG._**]
             direction LR
             %% Delivery Organization
-            subgraph DEL[DELIVERY ORG.]
+            subgraph DEL[**_DELIVERY ORG._**]
                 direction LR
                 DM["**Delivery Manager**<br>Thomas Chen"]
                 RM["**Resource Manager**<br>Lisa Wang"]
@@ -142,7 +142,7 @@ flowchart TB
             end
 
             %% Sales Organization
-            subgraph SALES[SALES ORG.]
+            subgraph SALES[**_SALES ORG._**]
                 direction TB
                 SM["**Sales Manager**<br>Mark Taylor"]
                 AM["**Account Manager**<br>Rachel Kim"]
@@ -150,9 +150,9 @@ flowchart TB
         end
 
         %% Project Delivery Team
-        subgraph PDT[PROJECT DELIVERY TEAM]
+        subgraph PDT[**_PROJECT DELIVERY TEAM_**]
             direction TB
-            subgraph TM[TEAM MEMBERS]
+            subgraph TM[**_TEAM MEMBERS_**]
                 direction TB
                 DA["**Data Architect**<br>1 HC"]
                 DE["**Data Engineers**<br>3 HC"]
