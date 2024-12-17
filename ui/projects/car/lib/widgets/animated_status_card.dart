@@ -1,22 +1,48 @@
 import 'package:flutter/material.dart';
 
+enum StatusType { speed, fuel, battery, temperature }
+
 class AnimatedStatusCard extends StatelessWidget {
-  final String title;
+  final String label;
   final double value;
   final double maxValue;
-  final IconData icon;
-  final Color color;
+  final StatusType type;
   final String unit;
 
   const AnimatedStatusCard({
     Key? key,
-    required this.title,
+    required this.label,
     required this.value,
     this.maxValue = 100,
-    required this.icon,
-    required this.color,
+    required this.type,
     required this.unit,
   }) : super(key: key);
+
+  Color get color {
+    switch (type) {
+      case StatusType.speed:
+        return Colors.blue;
+      case StatusType.fuel:
+        return Colors.green;
+      case StatusType.battery:
+        return Colors.orange;
+      case StatusType.temperature:
+        return Colors.red;
+    }
+  }
+
+  IconData get icon {
+    switch (type) {
+      case StatusType.speed:
+        return Icons.speed;
+      case StatusType.fuel:
+        return Icons.local_gas_station;
+      case StatusType.battery:
+        return Icons.battery_full;
+      case StatusType.temperature:
+        return Icons.thermostat;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +53,7 @@ class AnimatedStatusCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
+            color: Colors.black.withOpacity(0.05),
             spreadRadius: 0,
             blurRadius: 8,
             offset: const Offset(0, 2),
@@ -35,7 +61,6 @@ class AnimatedStatusCard extends StatelessWidget {
         ],
       ),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Container(
             padding: const EdgeInsets.all(8),
@@ -49,6 +74,7 @@ class AnimatedStatusCard extends StatelessWidget {
               size: 24,
             ),
           ),
+          const Spacer(),
           TweenAnimationBuilder<double>(
             duration: const Duration(milliseconds: 500),
             tween: Tween(begin: 0, end: value),

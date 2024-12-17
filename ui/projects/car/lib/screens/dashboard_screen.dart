@@ -3,6 +3,7 @@ import '../models/vehicle_state.dart';
 import '../widgets/control_icons.dart';
 import '../widgets/active_state_animations.dart';
 import '../widgets/animated_status_card.dart';
+import '../widgets/control_button.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -23,111 +24,96 @@ class _DashboardScreenState extends State<DashboardScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[100],
+      backgroundColor: const Color(0xFFF5F5F5),
       appBar: AppBar(
-        title: const Text('Vehicle Control Dashboard'),
+        title: const Text(
+          'Vehicle Control Dashboard',
+          style: TextStyle(
+            fontSize: 22,
+            fontWeight: FontWeight.w500,
+            color: Colors.white,
+          ),
+        ),
         backgroundColor: Colors.blue,
+        elevation: 0,
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildControlSection(),
-            const SizedBox(height: 20),
-            _buildMonitoringSection(),
-          ],
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 24.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildControlSection(),
+              const SizedBox(height: 24),
+              _buildMonitoringSection(),
+            ],
+          ),
         ),
       ),
     );
   }
 
   Widget _buildControlSection() {
-    return Card(
-      elevation: 4,
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              'Controls',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 16),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                _buildControlButton(
-                  'Engine',
-                  ControlIcons.engineControl,
-                  _vehicleState.engineOn,
-                  (value) {
-                    _updateVehicleState(_vehicleState.copyWith(engineOn: value));
-                  },
-                ),
-                _buildControlButton(
-                  'Doors',
-                  ControlIcons.doorLock,
-                  _vehicleState.doorsLocked,
-                  (value) {
-                    _updateVehicleState(_vehicleState.copyWith(doorsLocked: value));
-                  },
-                ),
-                _buildControlButton(
-                  'Climate',
-                  ControlIcons.climateControl,
-                  _vehicleState.climateControlOn,
-                  (value) {
-                    _updateVehicleState(
-                        _vehicleState.copyWith(climateControlOn: value));
-                  },
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildControlButton(
-    String label,
-    String svgString,
-    bool isActive,
-    Function(bool) onChanged,
-  ) {
-    String type = label.toLowerCase();
-    return Column(
-      children: [
-        ActiveStateButton(
-          svgString: svgString,
-          isActive: isActive,
-          onPressed: () => onChanged(!isActive),
-          type: type,
-          temperature: _vehicleState.climateTemp,
-          onTemperatureChanged: type == 'climate'
-              ? (value) {
-                  _updateVehicleState(
-                    _vehicleState.copyWith(climateTemp: value),
-                  );
-                }
-              : null,
-        ),
-        const SizedBox(height: 8),
-        AnimatedDefaultTextStyle(
-          duration: const Duration(milliseconds: 200),
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-            color: isActive ? Colors.blue : Colors.grey,
+    return Container(
+      padding: const EdgeInsets.all(24.0),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 16,
+            offset: const Offset(0, 4),
           ),
-          child: Text(label),
-        ),
-      ],
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Controls',
+            style: TextStyle(
+              fontSize: 28,
+              fontWeight: FontWeight.w600,
+              color: Colors.black,
+            ),
+          ),
+          const SizedBox(height: 24),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              ControlButton(
+                label: 'Engine',
+                svgString: ControlIcons.engineControl,
+                isActive: _vehicleState.engineOn,
+                onChanged: (value) {
+                  _updateVehicleState(_vehicleState.copyWith(engineOn: value));
+                },
+              ),
+              ControlButton(
+                label: 'Doors',
+                svgString: ControlIcons.doorLock,
+                isActive: _vehicleState.doorsLocked,
+                onChanged: (value) {
+                  _updateVehicleState(_vehicleState.copyWith(doorsLocked: value));
+                },
+              ),
+              ControlButton(
+                label: 'Climate',
+                svgString: ControlIcons.climateControl,
+                isActive: _vehicleState.climateControlOn,
+                onChanged: (value) {
+                  _updateVehicleState(_vehicleState.copyWith(climateControlOn: value));
+                },
+                temperature: _vehicleState.climateTemp,
+                onTemperatureChanged: (value) {
+                  _updateVehicleState(_vehicleState.copyWith(climateTemp: value));
+                },
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 
@@ -139,8 +125,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
-            spreadRadius: 0,
+            color: Colors.black.withOpacity(0.05),
             blurRadius: 16,
             offset: const Offset(0, 4),
           ),
@@ -156,11 +141,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 'Vehicle Status',
                 style: TextStyle(
                   fontSize: 28,
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.black,
                 ),
               ),
               IconButton(
-                icon: const Icon(Icons.refresh),
+                icon: const Icon(Icons.refresh, size: 28),
                 onPressed: () {},
                 color: Colors.grey[600],
               ),
@@ -171,21 +157,19 @@ class _DashboardScreenState extends State<DashboardScreen> {
             children: [
               Expanded(
                 child: AnimatedStatusCard(
-                  title: 'Speed',
+                  label: 'Speed',
                   value: _vehicleState.speed,
                   maxValue: 200,
-                  icon: Icons.speed,
-                  color: Colors.blue,
+                  type: StatusType.speed,
                   unit: ' km/h',
                 ),
               ),
               const SizedBox(width: 16),
               Expanded(
                 child: AnimatedStatusCard(
-                  title: 'Fuel Level',
+                  label: 'Fuel Level',
                   value: _vehicleState.fuelLevel,
-                  icon: Icons.local_gas_station,
-                  color: Colors.green,
+                  type: StatusType.fuel,
                   unit: '%',
                 ),
               ),
@@ -196,21 +180,19 @@ class _DashboardScreenState extends State<DashboardScreen> {
             children: [
               Expanded(
                 child: AnimatedStatusCard(
-                  title: 'Battery Level',
+                  label: 'Battery Level',
                   value: _vehicleState.batteryLevel,
-                  icon: Icons.battery_full,
-                  color: Colors.orange,
+                  type: StatusType.battery,
                   unit: '%',
                 ),
               ),
               const SizedBox(width: 16),
               Expanded(
                 child: AnimatedStatusCard(
-                  title: 'Temperature',
+                  label: 'Temperature',
                   value: _vehicleState.temperature,
                   maxValue: 50,
-                  icon: Icons.thermostat,
-                  color: Colors.red,
+                  type: StatusType.temperature,
                   unit: '°C',
                 ),
               ),
