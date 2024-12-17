@@ -22,76 +22,87 @@ class AnimatedStatusCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       elevation: 2,
-      child: TweenAnimationBuilder<double>(
-        duration: const Duration(milliseconds: 800),
-        tween: Tween(begin: 0, end: value),
-        curve: Curves.easeOutCubic,
-        builder: (context, value, _) {
-          return Container(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Icon(icon, color: color),
-                    const SizedBox(width: 8),
-                    Text(
-                      title,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                      ),
+      child: Tooltip(
+        message: title,
+        child: TweenAnimationBuilder<double>(
+          duration: const Duration(milliseconds: 800),
+          tween: Tween(begin: 0, end: value),
+          curve: Curves.easeOutCubic,
+          builder: (context, animatedValue, _) {
+            return Container(
+              padding: const EdgeInsets.all(12),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  // Icon with background
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: color.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(8),
                     ),
-                  ],
-                ),
-                const SizedBox(height: 12),
-                Stack(
-                  children: [
-                    Container(
-                      height: 4,
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        color: Colors.grey.shade200,
-                        borderRadius: BorderRadius.circular(2),
-                      ),
+                    child: Icon(
+                      icon, 
+                      color: color,
+                      size: 24,
                     ),
-                    AnimatedContainer(
-                      duration: const Duration(milliseconds: 500),
-                      height: 4,
-                      width: (value / maxValue) * (MediaQuery.of(context).size.width - 64),
-                      decoration: BoxDecoration(
-                        color: color,
-                        borderRadius: BorderRadius.circular(2),
-                      ),
+                  ),
+                  
+                  const SizedBox(width: 16),
+                  
+                  // Progress bar
+                  Expanded(
+                    child: Stack(
+                      children: [
+                        Container(
+                          height: 4,
+                          decoration: BoxDecoration(
+                            color: Colors.grey.shade200,
+                            borderRadius: BorderRadius.circular(2),
+                          ),
+                        ),
+                        AnimatedContainer(
+                          duration: const Duration(milliseconds: 500),
+                          height: 4,
+                          width: (animatedValue / maxValue) * 100,
+                          decoration: BoxDecoration(
+                            color: color,
+                            borderRadius: BorderRadius.circular(2),
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    TweenAnimationBuilder<double>(
-                      duration: const Duration(milliseconds: 800),
-                      tween: Tween(begin: 0, end: value),
-                      curve: Curves.easeOutCubic,
-                      builder: (context, value, _) {
-                        return Text(
+                  ),
+                  
+                  const SizedBox(width: 16),
+                  
+                  // Value with animation
+                  TweenAnimationBuilder<double>(
+                    duration: const Duration(milliseconds: 800),
+                    tween: Tween(begin: 0, end: value),
+                    curve: Curves.easeOutCubic,
+                    builder: (context, value, _) {
+                      return SizedBox(
+                        width: unit.contains('km/h') ? 90 : 70, // Wider for km/h
+                        child: Text(
                           '${value.toStringAsFixed(1)}$unit',
                           style: TextStyle(
-                            fontSize: 20,
+                            fontSize: 16,
                             fontWeight: FontWeight.bold,
                             color: color,
                           ),
-                        );
-                      },
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          );
-        },
+                          textAlign: TextAlign.end,
+                          softWrap: false,
+                          overflow: TextOverflow.visible,
+                        ),
+                      );
+                    },
+                  ),
+                ],
+              ),
+            );
+          },
+        ),
       ),
     );
   }
