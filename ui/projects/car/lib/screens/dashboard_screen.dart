@@ -3,7 +3,6 @@ import '../models/vehicle_state.dart';
 import '../widgets/control_icons.dart';
 import '../widgets/active_state_animations.dart';
 import '../widgets/animated_status_card.dart';
-import '../widgets/status_change_indicator.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -14,17 +13,9 @@ class DashboardScreen extends StatefulWidget {
 
 class _DashboardScreenState extends State<DashboardScreen> {
   VehicleState _vehicleState = VehicleState();
-  late VehicleState _previousState;
-
-  @override
-  void initState() {
-    super.initState();
-    _previousState = _vehicleState;
-  }
 
   void _updateVehicleState(VehicleState newState) {
     setState(() {
-      _previousState = _vehicleState;
       _vehicleState = newState;
     });
   }
@@ -32,6 +23,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey[100],
       appBar: AppBar(
         title: const Text('Vehicle Control Dashboard'),
         backgroundColor: Colors.blue,
@@ -140,83 +132,91 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   Widget _buildMonitoringSection() {
-    return Card(
-      elevation: 4,
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                  'Vehicle Status',
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                  ),
+    return Container(
+      padding: const EdgeInsets.all(24.0),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.1),
+            spreadRadius: 0,
+            blurRadius: 16,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                'Vehicle Status',
+                style: TextStyle(
+                  fontSize: 28,
+                  fontWeight: FontWeight.bold,
                 ),
-                IconButton(
-                  icon: const Icon(Icons.refresh),
-                  onPressed: () {
-                    // Add refresh functionality if needed
-                  },
+              ),
+              IconButton(
+                icon: const Icon(Icons.refresh),
+                onPressed: () {},
+                color: Colors.grey[600],
+              ),
+            ],
+          ),
+          const SizedBox(height: 24),
+          Row(
+            children: [
+              Expanded(
+                child: AnimatedStatusCard(
+                  title: 'Speed',
+                  value: _vehicleState.speed,
+                  maxValue: 200,
+                  icon: Icons.speed,
+                  color: Colors.blue,
+                  unit: ' km/h',
                 ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            StatusChangeIndicator(
-              oldValue: _previousState.speed,
-              newValue: _vehicleState.speed,
-              child: AnimatedStatusCard(
-                title: 'Speed',
-                value: _vehicleState.speed,
-                maxValue: 200,
-                icon: Icons.speed,
-                color: Colors.blue,
-                unit: ' km/h',
               ),
-            ),
-            const SizedBox(height: 12),
-            StatusChangeIndicator(
-              oldValue: _previousState.fuelLevel,
-              newValue: _vehicleState.fuelLevel,
-              child: AnimatedStatusCard(
-                title: 'Fuel Level',
-                value: _vehicleState.fuelLevel,
-                icon: Icons.local_gas_station,
-                color: Colors.green,
-                unit: '%',
+              const SizedBox(width: 16),
+              Expanded(
+                child: AnimatedStatusCard(
+                  title: 'Fuel Level',
+                  value: _vehicleState.fuelLevel,
+                  icon: Icons.local_gas_station,
+                  color: Colors.green,
+                  unit: '%',
+                ),
               ),
-            ),
-            const SizedBox(height: 12),
-            StatusChangeIndicator(
-              oldValue: _previousState.batteryLevel,
-              newValue: _vehicleState.batteryLevel,
-              child: AnimatedStatusCard(
-                title: 'Battery Level',
-                value: _vehicleState.batteryLevel,
-                icon: Icons.battery_full,
-                color: Colors.orange,
-                unit: '%',
+            ],
+          ),
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              Expanded(
+                child: AnimatedStatusCard(
+                  title: 'Battery Level',
+                  value: _vehicleState.batteryLevel,
+                  icon: Icons.battery_full,
+                  color: Colors.orange,
+                  unit: '%',
+                ),
               ),
-            ),
-            const SizedBox(height: 12),
-            StatusChangeIndicator(
-              oldValue: _previousState.temperature,
-              newValue: _vehicleState.temperature,
-              child: AnimatedStatusCard(
-                title: 'Temperature',
-                value: _vehicleState.temperature,
-                maxValue: 50,
-                icon: Icons.thermostat,
-                color: Colors.red,
-                unit: '°C',
+              const SizedBox(width: 16),
+              Expanded(
+                child: AnimatedStatusCard(
+                  title: 'Temperature',
+                  value: _vehicleState.temperature,
+                  maxValue: 50,
+                  icon: Icons.thermostat,
+                  color: Colors.red,
+                  unit: '°C',
+                ),
               ),
-            ),
-          ],
-        ),
+            ],
+          ),
+        ],
       ),
     );
   }
