@@ -1,0 +1,14 @@
+langchain
+langgraph 
+langchainhub
+langchain-core
+langchain_openai
+langchain-community 
+langchain-anthropic 
+
+tavily-python 
+
+openai
+tiktoken
+
+pandas
