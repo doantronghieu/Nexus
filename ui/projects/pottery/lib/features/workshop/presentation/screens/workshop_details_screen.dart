@@ -47,21 +47,69 @@ class WorkshopDetailsScreen extends StatelessWidget {
           SliverAppBar(
             expandedHeight: 300,
             pinned: true,
+            stretch: true,
             flexibleSpace: FlexibleSpaceBar(
-              title: Text(workshop.title),
-              background: Image.asset(
-                workshop.imageUrl,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) {
-                  return Container(
-                    color: Colors.grey[200],
-                    child: const Icon(
-                      Icons.image_not_supported,
-                      size: 50,
-                      color: Colors.grey,
+              title: Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.bottomCenter,
+                    end: Alignment.topCenter,
+                    colors: [
+                      Color(0xCC000000),
+                      Color(0x00000000),
+                    ],
+                  ),
+                ),
+                child: Text(
+                  workshop.title,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    shadows: [
+                      Shadow(
+                        offset: Offset(0, 1),
+                        blurRadius: 2,
+                        color: Color(0x88000000),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              background: Stack(
+                fit: StackFit.expand,
+                children: [
+                  // Background Image
+                  Image.asset(
+                    workshop.imageUrl,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Container(
+                        color: Colors.grey[200],
+                        child: const Icon(
+                          Icons.image_not_supported,
+                          size: 50,
+                          color: Colors.grey,
+                        ),
+                      );
+                    },
+                  ),
+                  // Gradient Overlay
+                  const DecoratedBox(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          Color(0x00000000),
+                          Color(0x88000000),
+                        ],
+                      ),
                     ),
-                  );
-                },
+                  ),
+                ],
               ),
             ),
           ),
@@ -72,35 +120,51 @@ class WorkshopDetailsScreen extends StatelessWidget {
             sliver: SliverList(
               delegate: SliverChildListDelegate([
                 // Price and Registration Status
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      '\$${workshop.price.toStringAsFixed(2)}',
-                      style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                            color: Theme.of(context).primaryColor,
-                            fontWeight: FontWeight.bold,
-                          ),
-                    ),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 6,
-                      ),
-                      decoration: BoxDecoration(
-                        color: workshop.isAvailable ? Colors.green : Colors.red,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Text(
-                        workshop.isAvailable
-                            ? '${workshop.spotsLeft} spots left'
-                            : 'Workshop full',
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              color: Colors.white,
+                Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              '\$${workshop.price.toStringAsFixed(2)}',
+                              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                                    color: Theme.of(context).primaryColor,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                             ),
-                      ),
+                            Text(
+                              'per person',
+                              style: Theme.of(context).textTheme.bodySmall,
+                            ),
+                          ],
+                        ),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 6,
+                          ),
+                          decoration: BoxDecoration(
+                            color: workshop.isAvailable
+                                ? Colors.green
+                                : Colors.red,
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Text(
+                            workshop.isAvailable
+                                ? '${workshop.spotsLeft} spots left'
+                                : 'Workshop full',
+                            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                  color: Colors.white,
+                                ),
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
+                  ),
                 ),
                 
                 const SizedBox(height: 24),
@@ -155,8 +219,9 @@ class WorkshopDetailsScreen extends StatelessWidget {
                 const SizedBox(height: 8),
                 Card(
                   child: ListTile(
-                    leading: const CircleAvatar(
-                      child: Icon(Icons.person),
+                    leading: CircleAvatar(
+                      backgroundColor: Theme.of(context).primaryColor,
+                      child: const Icon(Icons.person, color: Colors.white),
                     ),
                     title: Text(workshop.instructorName),
                     subtitle: const Text('Expert Potter'),
@@ -183,7 +248,7 @@ class WorkshopDetailsScreen extends StatelessWidget {
                             children: [
                               const Icon(Icons.check_circle, color: Colors.green),
                               const SizedBox(width: 8),
-                              Text(material),
+                              Expanded(child: Text(material)),
                             ],
                           ),
                         );
@@ -236,6 +301,7 @@ class WorkshopDetailsScreen extends StatelessWidget {
                 : null,
             style: ElevatedButton.styleFrom(
               padding: const EdgeInsets.all(16),
+              minimumSize: const Size(double.infinity, 48),
             ),
             child: Text(
               workshop.isAvailable ? 'Register Now' : 'Workshop Full',
