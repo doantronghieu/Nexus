@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../core/providers/app_state.dart';
 import '../../domain/models/product.dart';
+import 'cart_screen.dart';
 
 class ProductDetailsScreen extends StatelessWidget {
   final Product product;
@@ -24,8 +25,13 @@ class ProductDetailsScreen extends StatelessWidget {
             const Spacer(),
             TextButton(
               onPressed: () {
-                // Navigate to cart when implemented
                 ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const CartScreen(),
+                  ),
+                );
               },
               child: const Text(
                 'VIEW CART',
@@ -40,11 +46,6 @@ class ProductDetailsScreen extends StatelessWidget {
     );
   }
 
-  bool _isInCart(BuildContext context) {
-    final appState = AppState.of(context);
-    return appState?.cartItems.any((item) => item.id == product.id) ?? false;
-  }
-
   void _removeFromCart(BuildContext context) {
     final appState = AppState.of(context);
     appState?.removeFromCart(product);
@@ -55,6 +56,11 @@ class ProductDetailsScreen extends StatelessWidget {
         backgroundColor: Colors.red,
       ),
     );
+  }
+
+  bool _isInCart(BuildContext context) {
+    final appState = AppState.of(context);
+    return appState?.cartItems.any((item) => item.id == product.id) ?? false;
   }
 
   @override
@@ -259,9 +265,7 @@ class ProductDetailsScreen extends StatelessWidget {
           padding: const EdgeInsets.all(16.0),
           child: ElevatedButton(
             onPressed: product.inStock
-                ? () => isInCart
-                    ? _removeFromCart(context)
-                    : _addToCart(context)
+                ? () => isInCart ? _removeFromCart(context) : _addToCart(context)
                 : null,
             style: ElevatedButton.styleFrom(
               padding: const EdgeInsets.all(16),

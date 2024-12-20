@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import '../../../../core/providers/app_state.dart';
 import '../../data/repositories/mock_product_repository.dart';
 import '../../domain/models/product.dart';
 import '../widgets/product_card.dart';
+import 'cart_screen.dart';
 
 class ProductListScreen extends StatefulWidget {
   const ProductListScreen({super.key});
@@ -69,10 +71,53 @@ class _ProductListScreenState extends State<ProductListScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final cartItemCount = AppState.of(context)?.cartItems.length ?? 0;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Pottery Store'),
         centerTitle: true,
+        actions: [
+          Stack(
+            children: [
+              IconButton(
+                icon: const Icon(Icons.shopping_cart),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const CartScreen(),
+                    ),
+                  );
+                },
+              ),
+              if (cartItemCount > 0)
+                Positioned(
+                  right: 8,
+                  top: 8,
+                  child: Container(
+                    padding: const EdgeInsets.all(2),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.error,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    constraints: const BoxConstraints(
+                      minWidth: 16,
+                      minHeight: 16,
+                    ),
+                    child: Text(
+                      '$cartItemCount',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 10,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        ],
       ),
       body: Column(
         children: [
@@ -111,7 +156,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
                     padding: const EdgeInsets.all(16.0),
                     gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2,
-                      childAspectRatio: 0.65, // Adjusted for more vertical space
+                      childAspectRatio: 0.65,
                       crossAxisSpacing: 16.0,
                       mainAxisSpacing: 16.0,
                     ),
