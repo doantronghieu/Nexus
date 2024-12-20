@@ -13,7 +13,7 @@ class ProductDetailsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(product.name),
+        title: const Text('Product Details'),
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -21,9 +21,10 @@ class ProductDetailsScreen extends StatelessWidget {
           children: [
             // Product Image
             AspectRatio(
-              aspectRatio: 4/3,
+              aspectRatio: 1,
               child: Image.asset(
                 product.imageUrl,
+                width: double.infinity,
                 fit: BoxFit.cover,
                 errorBuilder: (context, error, stackTrace) {
                   return Container(
@@ -37,15 +38,14 @@ class ProductDetailsScreen extends StatelessWidget {
                 },
               ),
             ),
-            
+
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Product Name and Price
+                  // Name and Price
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Expanded(
                         child: Text(
@@ -53,26 +53,19 @@ class ProductDetailsScreen extends StatelessWidget {
                           style: Theme.of(context).textTheme.headlineSmall,
                         ),
                       ),
+                      const SizedBox(width: 16),
                       Text(
-                        '\$\${product.price.toStringAsFixed(2)}',
+                        '\$${product.price.toStringAsFixed(2)}',
                         style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                          color: Theme.of(context).primaryColor,
-                          fontWeight: FontWeight.bold,
-                        ),
+                              color: Theme.of(context).primaryColor,
+                              fontWeight: FontWeight.bold,
+                            ),
                       ),
                     ],
                   ),
-                  
+
                   const SizedBox(height: 16),
-                  
-                  // Category
-                  Chip(
-                    label: Text(product.category),
-                    backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-                  ),
-                  
-                  const SizedBox(height: 16),
-                  
+
                   // Stock Status
                   Row(
                     children: [
@@ -84,14 +77,14 @@ class ProductDetailsScreen extends StatelessWidget {
                       Text(
                         product.inStock ? 'In Stock' : 'Out of Stock',
                         style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          color: product.inStock ? Colors.green : Colors.red,
-                        ),
+                              color: product.inStock ? Colors.green : Colors.red,
+                            ),
                       ),
                     ],
                   ),
-                  
+
                   const SizedBox(height: 24),
-                  
+
                   // Description
                   Text(
                     'Description',
@@ -102,9 +95,9 @@ class ProductDetailsScreen extends StatelessWidget {
                     product.description,
                     style: Theme.of(context).textTheme.bodyLarge,
                   ),
-                  
+
                   const SizedBox(height: 24),
-                  
+
                   // Dimensions
                   Text(
                     'Dimensions',
@@ -113,14 +106,14 @@ class ProductDetailsScreen extends StatelessWidget {
                   const SizedBox(height: 8),
                   ...product.dimensions.entries.map(
                     (entry) => Padding(
-                      padding: const EdgeInsets.only(bottom: 4.0),
+                      padding: const EdgeInsets.only(bottom: 8.0),
                       child: Row(
                         children: [
                           Text(
-                            '\${entry.key}: ',
+                            '${entry.key}: ',
                             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                              fontWeight: FontWeight.bold,
-                            ),
+                                  fontWeight: FontWeight.bold,
+                                ),
                           ),
                           Text(
                             entry.value,
@@ -148,8 +141,12 @@ class ProductDetailsScreen extends StatelessWidget {
             } : null,
             style: ElevatedButton.styleFrom(
               padding: const EdgeInsets.all(16),
+              minimumSize: const Size(double.infinity, 48),
             ),
-            child: const Text('Add to Cart'),
+            child: Text(
+              product.inStock ? 'Add to Cart' : 'Out of Stock',
+              style: const TextStyle(fontSize: 16),
+            ),
           ),
         ),
       ),
