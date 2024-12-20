@@ -1,49 +1,118 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import '../../data/repositories/mock_workshop_repository.dart';
+import '../../../../core/providers/app_state.dart';
 import '../../domain/models/workshop.dart';
 
-class WorkshopDetailsScreen extends StatelessWidget {
+class WorkshopDetailsScreen extends StatefulWidget {
   final Workshop workshop;
-  final _repository = MockWorkshopRepository();
 
-  WorkshopDetailsScreen({
+  const WorkshopDetailsScreen({
     super.key,
     required this.workshop,
   });
 
-  Future<void> _registerForWorkshop(BuildContext context) async {
-    try {
-      // TODO: Get actual user ID from authentication
-      const userId = 'user123';
-      final success = await _repository.registerForWorkshop(workshop.id, userId);
-      
-      if (!context.mounted) return;
-      
-      if (success) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Successfully registered for workshop!')),
-        );
-        Navigator.pop(context);
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Workshop is full')),
-        );
-      }
-    } catch (e) {
-      if (!context.mounted) return;
+  @override
+  State<WorkshopDetailsScreen> createState() => _WorkshopDetailsScreenState();
+}
+
+class _WorkshopDetailsScreenState extends State<WorkshopDetailsScreen> {
+  bool _isLoading = false;
+
+  bool _isRegistered(BuildContext context) {
+    final appState = AppState.of(context);
+    final currentUser = appState?.currentUser;
+    if (currentUser == null) return false;
+
+    final registrations = appState?.workshopRegistrations[widget.workshop.id] ?? [];
+    return registrations.contains(currentUser.id);
+  }
+
+  Future<void> _registerForWorkshop() async {
+    final appState = AppState.of(context);
+    final currentUser = appState?.currentUser;
+    
+    if (currentUser == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error registering for workshop: ${e.toString()}')),
+        const SnackBar(
+          content: Text('Please sign in to register for workshops'),
+          backgroundColor: Colors.red,
+        ),
       );
+      return;
+    }
+
+    setState(() => _isLoading = true);
+
+    try {
+      appState?.registerForWorkshop(widget.workshop.id, currentUser.id);
+
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Successfully registered for ${widget.workshop.title}'),
+          backgroundColor: Colors.green,
+        ),
+      );
+    } finally {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
+    }
+  }
+
+  Future<void> _cancelRegistration() async {
+    final appState = AppState.of(context);
+    final currentUser = appState?.currentUser;
+    if (currentUser == null) return;
+
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Cancel Registration'),
+        content: const Text('Are you sure you want to cancel your registration?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('No'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('Yes'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirm != true || !mounted) return;
+
+    setState(() => _isLoading = true);
+
+    try {
+      appState?.cancelWorkshopRegistration(widget.workshop.id, currentUser.id);
+
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Registration cancelled successfully'),
+          backgroundColor: Colors.green,
+        ),
+      );
+    } finally {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final isRegistered = _isRegistered(context);
+
     return Scaffold(
       body: CustomScrollView(
         slivers: [
-          // App Bar
           SliverAppBar(
             expandedHeight: 300,
             pinned: true,
@@ -63,7 +132,7 @@ class WorkshopDetailsScreen extends StatelessWidget {
                   ),
                 ),
                 child: Text(
-                  workshop.title,
+                  widget.workshop.title,
                   style: const TextStyle(
                     color: Colors.white,
                     fontSize: 20,
@@ -81,22 +150,18 @@ class WorkshopDetailsScreen extends StatelessWidget {
               background: Stack(
                 fit: StackFit.expand,
                 children: [
-                  // Background Image
                   Image.asset(
-                    workshop.imageUrl,
+                    widget.workshop.imageUrl,
                     fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) {
-                      return Container(
-                        color: Colors.grey[200],
-                        child: const Icon(
-                          Icons.image_not_supported,
-                          size: 50,
-                          color: Colors.grey,
-                        ),
-                      );
-                    },
+                    errorBuilder: (context, error, stackTrace) => Container(
+                      color: Colors.grey[200],
+                      child: const Icon(
+                        Icons.image_not_supported,
+                        size: 50,
+                        color: Colors.grey,
+                      ),
+                    ),
                   ),
-                  // Gradient Overlay
                   const DecoratedBox(
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
@@ -113,179 +178,170 @@ class WorkshopDetailsScreen extends StatelessWidget {
               ),
             ),
           ),
-          
-          // Content
           SliverPadding(
             padding: const EdgeInsets.all(16.0),
             sliver: SliverList(
               delegate: SliverChildListDelegate([
-                // Price and Registration Status
                 Card(
                   child: Padding(
                     padding: const EdgeInsets.all(16.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text(
-                              '\$${workshop.price.toStringAsFixed(2)}',
-                              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                                    color: Theme.of(context).primaryColor,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  '\$${widget.workshop.price.toStringAsFixed(2)}',
+                                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                                        color: Theme.of(context).primaryColor,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                ),
+                                Text(
+                                  'per person',
+                                  style: Theme.of(context).textTheme.bodySmall,
+                                ),
+                              ],
                             ),
-                            Text(
-                              'per person',
-                              style: Theme.of(context).textTheme.bodySmall,
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 6,
+                              ),
+                              decoration: BoxDecoration(
+                                color: widget.workshop.isAvailable
+                                    ? Colors.green
+                                    : Colors.red,
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Text(
+                                widget.workshop.isAvailable
+                                    ? '${widget.workshop.maxParticipants - widget.workshop.currentParticipants} spots left'
+                                    : 'Workshop full',
+                                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                      color: Colors.white,
+                                    ),
+                              ),
                             ),
                           ],
-                        ),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 6,
-                          ),
-                          decoration: BoxDecoration(
-                            color: workshop.isAvailable
-                                ? Colors.green
-                                : Colors.red,
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Text(
-                            workshop.isAvailable
-                                ? '${workshop.spotsLeft} spots left'
-                                : 'Workshop full',
-                            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                  color: Colors.white,
-                                ),
-                          ),
                         ),
                       ],
                     ),
                   ),
                 ),
-                
-                const SizedBox(height: 24),
-                
-                // Date and Time
+                const SizedBox(height: 16),
                 Card(
                   child: Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        Text(
+                          'Date & Time',
+                          style: Theme.of(context).textTheme.titleLarge,
+                        ),
+                        const SizedBox(height: 16),
                         ListTile(
                           leading: const Icon(Icons.calendar_today),
                           title: Text(
-                            DateFormat('EEEE, MMMM d, y').format(workshop.date),
+                            DateFormat('EEEE, MMMM d, y').format(widget.workshop.date),
                           ),
                           subtitle: const Text('Workshop Date'),
+                          contentPadding: EdgeInsets.zero,
                         ),
                         ListTile(
                           leading: const Icon(Icons.access_time),
                           title: Text(
-                            DateFormat('h:mm a').format(workshop.date),
+                            DateFormat('h:mm a').format(widget.workshop.date),
                           ),
                           subtitle: Text(
-                            'Duration: ${workshop.duration ~/ 60} hours',
+                            'Duration: ${widget.workshop.duration ~/ 60} hours',
                           ),
+                          contentPadding: EdgeInsets.zero,
                         ),
                       ],
                     ),
                   ),
                 ),
-                
-                const SizedBox(height: 24),
-                
-                // Workshop Details
-                Text(
-                  'About this Workshop',
-                  style: Theme.of(context).textTheme.titleLarge,
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  workshop.description,
-                  style: Theme.of(context).textTheme.bodyLarge,
-                ),
-                
-                const SizedBox(height: 24),
-                
-                // Instructor
-                Text(
-                  'Instructor',
-                  style: Theme.of(context).textTheme.titleLarge,
-                ),
-                const SizedBox(height: 8),
-                Card(
-                  child: ListTile(
-                    leading: CircleAvatar(
-                      backgroundColor: Theme.of(context).primaryColor,
-                      child: const Icon(Icons.person, color: Colors.white),
-                    ),
-                    title: Text(workshop.instructorName),
-                    subtitle: const Text('Expert Potter'),
-                  ),
-                ),
-                
-                const SizedBox(height: 24),
-                
-                // Materials Included
-                Text(
-                  'Materials Included',
-                  style: Theme.of(context).textTheme.titleLarge,
-                ),
-                const SizedBox(height: 8),
+                const SizedBox(height: 16),
                 Card(
                   child: Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: workshop.materialsIncluded.map((material) {
-                        return Padding(
-                          padding: const EdgeInsets.only(bottom: 8.0),
-                          child: Row(
-                            children: [
-                              const Icon(Icons.check_circle, color: Colors.green),
-                              const SizedBox(width: 8),
-                              Expanded(child: Text(material)),
-                            ],
+                      children: [
+                        Text(
+                          'About',
+                          style: Theme.of(context).textTheme.titleLarge,
+                        ),
+                        const SizedBox(height: 8),
+                        Text(widget.workshop.description),
+                        const SizedBox(height: 16),
+                        const Divider(),
+                        ListTile(
+                          leading: CircleAvatar(
+                            backgroundColor: Theme.of(context).primaryColor,
+                            child: const Icon(Icons.person, color: Colors.white),
                           ),
-                        );
-                      }).toList(),
+                          title: Text(widget.workshop.instructorName),
+                          subtitle: const Text('Instructor'),
+                          contentPadding: EdgeInsets.zero,
+                        ),
+                      ],
                     ),
                   ),
                 ),
-                
-                const SizedBox(height: 24),
-                
-                // Requirements
-                Text(
-                  'Requirements',
-                  style: Theme.of(context).textTheme.titleLarge,
-                ),
-                const SizedBox(height: 8),
+                const SizedBox(height: 16),
                 Card(
                   child: Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: workshop.requirements.map((requirement) {
-                        return Padding(
-                          padding: const EdgeInsets.only(bottom: 8.0),
-                          child: Row(
-                            children: [
-                              const Icon(Icons.info_outline),
-                              const SizedBox(width: 8),
-                              Expanded(child: Text(requirement)),
-                            ],
-                          ),
-                        );
-                      }).toList(),
+                      children: [
+                        Text(
+                          'Materials & Requirements',
+                          style: Theme.of(context).textTheme.titleLarge,
+                        ),
+                        const SizedBox(height: 16),
+                        Text(
+                          'Included Materials:',
+                          style: Theme.of(context).textTheme.titleMedium,
+                        ),
+                        const SizedBox(height: 8),
+                        ...widget.workshop.materialsIncluded.map((material) => Padding(
+                              padding: const EdgeInsets.only(bottom: 8),
+                              child: Row(
+                                children: [
+                                  const Icon(Icons.check_circle, color: Colors.green),
+                                  const SizedBox(width: 8),
+                                  Expanded(child: Text(material)),
+                                ],
+                              ),
+                            )),
+                        const SizedBox(height: 16),
+                        Text(
+                          'Requirements:',
+                          style: Theme.of(context).textTheme.titleMedium,
+                        ),
+                        const SizedBox(height: 8),
+                        ...widget.workshop.requirements.map((requirement) => Padding(
+                              padding: const EdgeInsets.only(bottom: 8),
+                              child: Row(
+                                children: [
+                                  const Icon(Icons.info_outline),
+                                  const SizedBox(width: 8),
+                                  Expanded(child: Text(requirement)),
+                                ],
+                              ),
+                            )),
+                      ],
                     ),
                   ),
                 ),
-                
                 const SizedBox(height: 32),
               ]),
             ),
@@ -296,17 +352,32 @@ class WorkshopDetailsScreen extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: ElevatedButton(
-            onPressed: workshop.isAvailable
-                ? () => _registerForWorkshop(context)
-                : null,
+            onPressed: _isLoading
+                ? null
+                : isRegistered
+                    ? _cancelRegistration
+                    : widget.workshop.isAvailable
+                        ? _registerForWorkshop
+                        : null,
             style: ElevatedButton.styleFrom(
               padding: const EdgeInsets.all(16),
+              backgroundColor: isRegistered ? Colors.red : null,
               minimumSize: const Size(double.infinity, 48),
             ),
-            child: Text(
-              workshop.isAvailable ? 'Register Now' : 'Workshop Full',
-              style: const TextStyle(fontSize: 16),
-            ),
+            child: _isLoading
+                ? const SizedBox(
+                    height: 20,
+                    width: 20,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
+                : Text(
+                    isRegistered
+                        ? 'Cancel Registration'
+                        : widget.workshop.isAvailable
+                            ? 'Register Now'
+                            : 'Workshop Full',
+                    style: const TextStyle(fontSize: 16),
+                  ),
           ),
         ),
       ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../core/providers/app_state.dart';
 import '../../domain/models/product.dart';
 
 class ProductDetailsScreen extends StatelessWidget {
@@ -9,8 +10,57 @@ class ProductDetailsScreen extends StatelessWidget {
     required this.product,
   });
 
+  void _addToCart(BuildContext context) {
+    final appState = AppState.of(context);
+    appState?.addToCart(product);
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Row(
+          children: [
+            const Icon(Icons.shopping_cart, color: Colors.white),
+            const SizedBox(width: 8),
+            const Text('Added to cart'),
+            const Spacer(),
+            TextButton(
+              onPressed: () {
+                // Navigate to cart when implemented
+                ScaffoldMessenger.of(context).hideCurrentSnackBar();
+              },
+              child: const Text(
+                'VIEW CART',
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+          ],
+        ),
+        duration: const Duration(seconds: 2),
+        backgroundColor: Colors.green,
+      ),
+    );
+  }
+
+  bool _isInCart(BuildContext context) {
+    final appState = AppState.of(context);
+    return appState?.cartItems.any((item) => item.id == product.id) ?? false;
+  }
+
+  void _removeFromCart(BuildContext context) {
+    final appState = AppState.of(context);
+    appState?.removeFromCart(product);
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Removed from cart'),
+        backgroundColor: Colors.red,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final isInCart = _isInCart(context);
+
     return Scaffold(
       body: CustomScrollView(
         slivers: [
@@ -52,7 +102,6 @@ class ProductDetailsScreen extends StatelessWidget {
               background: Stack(
                 fit: StackFit.expand,
                 children: [
-                  // Background Image
                   Image.asset(
                     product.imageUrl,
                     fit: BoxFit.cover,
@@ -67,7 +116,6 @@ class ProductDetailsScreen extends StatelessWidget {
                       );
                     },
                   ),
-                  // Gradient Overlay
                   const DecoratedBox(
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
@@ -210,18 +258,22 @@ class ProductDetailsScreen extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: ElevatedButton(
-            onPressed: product.inStock ? () {
-              // TODO: Implement add to cart functionality
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Added to cart')),
-              );
-            } : null,
+            onPressed: product.inStock
+                ? () => isInCart
+                    ? _removeFromCart(context)
+                    : _addToCart(context)
+                : null,
             style: ElevatedButton.styleFrom(
               padding: const EdgeInsets.all(16),
+              backgroundColor: isInCart ? Colors.red : null,
               minimumSize: const Size(double.infinity, 48),
             ),
             child: Text(
-              product.inStock ? 'Add to Cart' : 'Out of Stock',
+              product.inStock
+                  ? isInCart
+                      ? 'Remove from Cart'
+                      : 'Add to Cart'
+                  : 'Out of Stock',
               style: const TextStyle(fontSize: 16),
             ),
           ),
