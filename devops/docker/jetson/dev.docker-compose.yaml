@@ -1,0 +1,47 @@
+services:
+  l4t-ml:
+    build:
+      context: .
+      dockerfile: dev.Dockerfile
+    image: custom-l4t-ml:latest
+    container_name: l4t-ml
+    restart: unless-stopped
+    network_mode: host
+    runtime: nvidia
+    environment:
+    - DISPLAY=${DISPLAY}
+    - NVIDIA_VISIBLE_DEVICES=all
+    volumes:
+    - /home:/home
+    - /etc/passwd:/etc/passwd:ro
+    - /etc/group:/etc/group:ro
+    - /etc/shadow:/etc/shadow:ro
+    - /tmp/.X11-unix:/tmp/.X11-unix
+    working_dir: /home/${USER}
+    command: |
+      bash -c '
+      if [ ! -d "/home/$USER" ]; then
+        echo "User $USER does not exist. Please make sure the USER environment variable is set correctly."
+        exit 1
+      fi
+      exec su - $USER
+      '
+    user: root
+    tty: true
+    stdin_open: true
+    deploy:
+      resources:
+        reservations:
+          devices:
+          - driver: nvidia
+            count: all
+            capabilities: [ gpu ]
+
+# To build the new image
+# docker compose -f devops/docker/jetson/dev.docker-compose.yaml build
+
+# To start the container
+# docker compose -f devops/docker/jetson/dev.docker-compose.yaml up -d
+
+# To exec into the container
+# docker compose -f devops/docker/jetson/dev.docker-compose.yaml exec l4t-ml bash

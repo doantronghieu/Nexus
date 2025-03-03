@@ -1,0 +1,206 @@
+[
+	{
+		"input": "What is the current weather temperature?",
+		"output": "general"
+	},
+	{
+		"input": "How many letters are in 'strawberry'?",
+		"output": "general"
+	},
+	{
+		"input": "How many 'r's are in 'strawberry'?",
+		"output": "general"
+	},
+	{
+		"input": "Are you Llama?",
+		"output": "general"
+	},
+	{
+		"input": "Tell me a joke",
+		"output": "general"
+	},
+	{
+		"input": "What time is it?",
+		"output": "general"
+	},
+	{
+		"input": "Do you like pizza?",
+		"output": "general"
+	},
+	{
+		"input": "What's your favorite color?",
+		"output": "general"
+	},
+	{
+		"input": "How old are you?",
+		"output": "general"
+	},
+	{
+		"input": "Can you sing a song?",
+		"output": "general"
+	},
+	{
+		"input": "What day is it today?",
+		"output": "general"
+	},
+	{
+		"input": "Do you sleep?",
+		"output": "general"
+	},
+	{
+		"input": "What's the capital of France?",
+		"output": "general"
+	},
+	{
+		"input": "How tall are you?",
+		"output": "general"
+	},
+	{
+		"input": "What did you eat today?",
+		"output": "general"
+	},
+	{
+		"input": "Can you dance?",
+		"output": "general"
+	},
+	{
+		"input": "Do you have any siblings?",
+		"output": "general"
+	},
+	{
+		"input": "What's your name again?",
+		"output": "general"
+	},
+	{
+		"input": "Are you happy today?",
+		"output": "general"
+	},
+	{
+		"input": "Do you like animals?",
+		"output": "general"
+	},
+	{
+		"input": "What's the meaning of life?",
+		"output": "general"
+	},
+	{
+		"input": "Can you count to 10?",
+		"output": "general"
+	},
+	{
+		"input": "What's your favorite book?",
+		"output": "general"
+	},
+	{
+		"input": "Do you have friends?",
+		"output": "general"
+	},
+	{
+		"input": "What's the weather like where you are?",
+		"output": "general"
+	},
+	{
+		"input": "What's your favorite season?",
+		"output": "general"
+	},
+	{
+		"input": "Do you celebrate holidays?",
+		"output": "general"
+	},
+	{
+		"input": "What's your favorite food?",
+		"output": "general"
+	},
+	{
+		"input": "Can you draw pictures?",
+		"output": "general"
+	},
+	{
+		"input": "Do you get tired?",
+		"output": "general"
+	},
+	{
+		"input": "What languages do you speak?",
+		"output": "general"
+	},
+	{
+		"input": "Do you have a family?",
+		"output": "general"
+	},
+	{
+		"input": "What's your favorite movie?",
+		"output": "general"
+	},
+	{
+		"input": "Can you ride a bicycle?",
+		"output": "general"
+	},
+	{
+		"input": "Do you like sports?",
+		"output": "general"
+	},
+	{
+		"input": "What's your favorite hobby?",
+		"output": "general"
+	},
+	{
+		"input": "Do you have any pets?",
+		"output": "general"
+	},
+	{
+		"input": "What's your favorite game?",
+		"output": "general"
+	},
+	{
+		"input": "Can you swim?",
+		"output": "general"
+	},
+	{
+		"input": "What's your favorite subject?",
+		"output": "general"
+	},
+	{
+		"input": "Do you like music?",
+		"output": "general"
+	},
+	{
+		"input": "What's your favorite place?",
+		"output": "general"
+	},
+	{
+		"input": "Can you cook?",
+		"output": "general"
+	},
+	{
+		"input": "Do you go to school?",
+		"output": "general"
+	},
+	{
+		"input": "What's your favorite drink?",
+		"output": "general"
+	},
+	{
+		"input": "Can you play any instruments?",
+		"output": "general"
+	},
+	{
+		"input": "Do you like to travel?",
+		"output": "general"
+	},
+	{
+		"input": "What's your dream job?",
+		"output": "general"
+	},
+	{
+		"input": "Can you drive a car?",
+		"output": "general"
+	},
+	{
+		"input": "Do you like to read?",
+		"output": "general"
+	},
+	{
+		"input": "What's your zodiac sign?",
+		"output": "general"
+	}
+]

@@ -1,0 +1,12 @@
+pip3 install fastapi uvicorn python-multipart docstring_parser rich httpx[http2]
+
+python3 fn_calling_test.py -v
+python3 fn_calling_test.py -v -m
+python3 fn_calling_test.py -v -p
+
+Search for parks in New York
+What's the weather in London?
+
+LLM-Legion
+
+Let's double-check all the details to ensure we don't miss anything regarding cloning OpenAI main APIs .

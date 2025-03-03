@@ -1,0 +1,406 @@
+[
+	{
+		"question": "What are the main safety procedures to follow before driving the vehicle?",
+		"answer": "Before driving, follow these key safety procedures: 1) Use only floor mats designed specifically for the vehicle model and year, 2) Secure floor mats properly using retaining hooks/clips, 3) Never use multiple floor mats stacked on top of each other, 4) Ensure the floor mat doesn't interfere with pedal operation, 5) After cleaning the floor, verify the floor mat is securely fixed in place, 6) Adjust all mirrors for proper visibility, 7) Ensure all doors are properly closed, 8) Check that cargo is properly secured."
+	},
+	{
+		"question": "What is the correct driving posture recommended in the manual?",
+		"answer": "The correct driving posture includes: 1) Adjust seatback angle to sit straight up without leaning forward to steer, 2) Position seat to fully depress pedals with arms slightly bent at elbows when gripping wheel, 3) Lock head restraint with center closest to top of ears, 4) Wear seat belt correctly, 5) Adjust mirrors for proper rear visibility before driving, 6) Never adjust seat position while driving."
+	},
+	{
+		"question": "What are all the safety systems included in the vehicle?",
+		"answer": "The vehicle includes these safety systems: 1) SRS Airbags (front, side, curtain shield, and knee airbags), 2) Front passenger occupant classification system, 3) Seat belt pretensioners and force limiters, 4) Toyota Safety Sense 2.0 (PCS, LTA, RSA, Dynamic radar cruise control), 5) ABS with Electronic Brake-force Distribution, 6) Brake Assist, 7) Vehicle Stability Control, 8) Traction Control, 9) Hill-start Assist Control, 10) Tire Pressure Warning System, 11) Emergency Stop Signal, 12) Impact-absorbing vehicle body structure"
+	},
+	{
+		"question": "What are the complete specifications for fuel and fluid requirements?",
+		"answer": "Required specifications: 1) Fuel: Unleaded gasoline only, octane rating 87 (AKI) or higher, tank capacity 12.4 gal (47 L), 2) Engine Oil: 0W-20 synthetic oil, capacity with filter 4.8 qt (4.5 L), 3) Coolant: Toyota genuine coolant or equivalent, 4) Brake Fluid: SAE J1703 or FMVSS No.116 DOT 3, 5) CVT Fluid: Toyota Genuine CVT Fluid FE, 6) Washer Fluid: Water-based washer fluid, 7) All fluid levels should be checked regularly using dipstick or reservoir marks"
+	},
+	{
+		"question": "What is the complete procedure for securing child restraint systems?",
+		"answer": "Complete child restraint procedure: 1) Never install rear-facing seat in front passenger seat, 2) Use dedicated lower anchors or seat belt for installation, 3) If using seat belt, must engage automatic locking retractor mode by fully extending belt, 4) Use top tether strap when available, 5) Ensure child restraint doesn't contact front seats, 6) For front-facing installation in front seat (if unavoidable): move seat fully back, adjust height to uppermost position, set seatback angle upright, 7) Check installation by pulling in all directions, 8) Follow weight and size limits specified by restraint manufacturer"
+	},
+	{
+		"question": "What are all the methods for operating and adjusting the power back door?",
+		"answer": "Power back door operation methods: 1) Wireless remote control: Press and hold button, 2) Power back door switch on instrument panel, 3) Back door opener switch when carrying electronic key, 4) Back door closer switch, 5) Back door handle for manual operation. Adjustments include: 1) Opening height can be customized, 2) Opening/closing speed can be adjusted, 3) System can be enabled/disabled through vehicle settings, 4) Hands-free operation available with kick sensor (if equipped), 5) Includes jam protection function if obstacle detected"
+	},
+	{
+		"question": "What is the complete list of instrument panel warning and indicator lights?",
+		"answer": "Warning lights include: 1) Brake system (red/yellow), 2) Charging system, 3) Low engine oil pressure, 4) High coolant temperature, 5) Malfunction indicator, 6) SRS airbag system, 7) ABS, 8) Electric power steering, 9) Slip indicator, 10) Low fuel, 11) Seat belt reminders, 12) Tire pressure, 13) LTA indicator, 14) PCS warning. Indicator lights include: 1) Turn signal, 2) Headlight high beam, 3) Fog lights, 4) Cruise control, 5) Security, 6) Eco driving indicator, 7) VSC off, 8) BSM, 9) PKSB off, 10) Parking brake, 11) Brake hold"
+	},
+	{
+		"question": "What are the specific maintenance intervals and requirements?",
+		"answer": "Maintenance schedule: Every 5,000 miles: 1) Rotate tires, 2) Check fluid levels, 3) Inspect brake components. Every 10,000 miles: 1) Replace engine oil and filter, 2) Inspect all lights, 3) Check brake lines and hoses. Every 30,000 miles: 1) Replace air filter, 2) Replace cabin air filter, 3) Inspect fuel lines. Every 60,000 miles: 1) Replace spark plugs, 2) Replace CVT fluid, 3) Inspect drive belts. Additional requirements: 1) More frequent maintenance may be needed in severe conditions, 2) Follow severe service schedule if applicable, 3) Maintain records of all service"
+	},
+	{
+		"question": "What are the complete towing specifications and procedures?",
+		"answer": "Towing specifications: 1) Maximum towing capacity: 1,500 lbs (680 kg), 2) Tongue load: 150 lbs (68 kg), 3) Requires towing package installation. Procedures: 1) Use appropriate hitch and ball mount, 2) Connect trailer lights, 3) Install trailer brakes if over 1,000 lbs, 4) Adjust mirror extensions, 5) Verify tire pressures, 6) Cross trailer safety chains under tongue, 7) Disable Dynamic Radar Cruise Control when towing, 8) Maintain slower speeds and greater following distances, 9) Avoid sudden braking or steering"
+	},
+	{
+		"question": "What are all the available driving modes and their functions?",
+		"answer": "Available driving modes: 1) Normal mode: Standard balanced operation, 2) ECO mode: Modifies throttle response and A/C operation for better fuel economy, 3) Sport mode (if equipped): Enhances throttle response and steering feel, 4) Trail mode (AWD models): Optimizes traction for unpaved roads. Features: 1) Mode selection via drive mode switch, 2) Selected mode displayed in multi-information display, 3) System returns to Normal mode when engine is restarted, 4) Each mode adjusts: throttle response, transmission shift points, power steering assist, climate control operation"
+	},
+	{
+		"question": "What are the complete tire specifications and maintenance requirements?",
+		"answer": "Tire specifications: 1) Size: P215/55R17 or P225/45R19, 2) Pressure: 32 psi front/32 psi rear (cold), 3) Rotation interval: Every 5,000 miles, 4) Tread depth minimum: 1/16 inch (1.6mm). Maintenance requirements: 1) Check pressure monthly including spare, 2) Inspect for wear and damage regularly, 3) Rotate according to schedule, 4) Balance and align as needed, 5) Replace all 4 tires at same time (AWD models), 6) Calibrate TPMS after tire service, 7) Use winter tires when temperature below 45°F"
+	},
+	{
+		"question": "What are all the steps for jump-starting the vehicle correctly?",
+		"answer": "Jump-starting procedure: 1) Use 12-volt booster battery, 2) Connect cables in order: a) Positive cable to dead battery positive, b) Other end to booster battery positive, c) Negative cable to booster battery negative, d) Other end to solid, unpainted metallic point, 3) Start booster vehicle and maintain moderate RPM, 4) Attempt to start vehicle with dead battery, 5) Once started, run both vehicles for 5 minutes, 6) Disconnect cables in reverse order, 7) Have charging system checked by dealer. Cautions: 1) Avoid sparks near battery, 2) Don't connect to fuel system parts, 3) Don't let cable ends touch each other"
+	},
+	{
+		"question": "What are the complete driving safety precautions?",
+		"answer": "Essential driving safety precautions: 1) Never drive under influence of alcohol/drugs, 2) Always follow posted speed limits, 3) Keep both hands on steering wheel at proper positions, 4) Never use mobile devices while driving, 5) Check all mirrors before changing lanes, 6) Maintain safe following distance (recommended 2-3 seconds), 7) Use turn signals for all lane changes and turns, 8) Adjust driving for weather conditions, 9) Never override safety systems, 10) Always wear seatbelt properly, 11) Ensure all passengers are properly restrained, 12) Never leave children unattended in vehicle"
+	},
+	{
+		"question": "What are all the buttons and controls on the instrument panel?",
+		"answer": "Instrument panel controls include: 1) Steering wheel: cruise control, audio, phone, LTA switches, voice command, meter control, 2) Left side: VSC OFF switch, power back door switch, outside mirror controls, window controls, 3) Center: audio/climate controls, emergency flasher switch, 4) Right side: engine start button (smart key) or key slot (standard key), 5) Lower panel: hood release, fuel door release, trunk release, 6) Overhead: moonroof controls, interior lights, SOS button, 7) Additional features: USB ports, power outlet, wireless charger if equipped"
+	},
+	{
+		"question": "What is the complete procedure for setting up driver preferences?",
+		"answer": "Driver preference setup: 1) Seat position: adjust distance, height, angle, lumbar support, 2) Mirrors: adjust side mirrors for proper blind spot visibility, adjust rear view mirror, 3) Steering wheel: adjust tilt and telescope for proper reach and view of gauges, 4) Head restraint: adjust to proper height, 5) Climate control: set preferred auto temperature, air flow settings, 6) Audio system: pair phone, set radio presets, adjust sound settings, 7) Multi-information display: customize displayed information, units of measure, 8) Driver assist settings: customize sensitivity of LTA, PCS, and other systems through vehicle settings menu"
+	},
+	{
+		"question": "What are all emergency procedures covered in the manual?",
+		"answer": "Emergency procedures include: 1) Vehicle fire: stop safely, evacuate passengers, call emergency services, 2) Overheating: stop vehicle, shut off AC, check coolant level, do not open radiator cap when hot, 3) Flat tire: park safely, activate hazard lights, change tire using spare or use repair kit, 4) Battery dead: use jumper cables in correct order, follow jump-start procedure, 5) If stuck: rock vehicle gently, disable traction control if needed, 6) Emergency stopping: press brake pedal firmly with both feet, 7) If submerged: release seatbelt, open window or wait for vehicle to fill with water before opening doors, 8) In severe weather: park away from trees and power lines"
+	},
+	{
+		"question": "What are all the vehicle's security features?",
+		"answer": "Security features include: 1) Engine immobilizer system, 2) Alarm system with: interior sensors, glass breakage sensor, tilt sensor, 3) Double-locking system if equipped, 4) Child safety locks on rear doors, 5) Window lock switch, 6) Smart key security features: auto re-lock if door unopened, key signal range limitation, 7) Safety Connect services: stolen vehicle locator, emergency assistance, 8) Door auto-lock features: speed sensitive, shift-linked, driver's door linked unlocking, 9) Anti-theft labels with VIN, 10) Locking wheel nuts if equipped"
+	},
+	{
+		"question": "What are all the automatic climate control functions and settings?",
+		"answer": "Climate control functions: 1) Temperature adjustment: independent driver/passenger controls, 2) Auto mode: adjusts fan speed, air outlets, A/C automatically, 3) Air outlets: adjustable dashboard, floor, defrost vents, 4) Recirculation modes: fresh air, recirculated air, auto switching, 5) Additional features: humidity sensor, pollen filter mode, S-FLOW mode for efficiency, 6) Defrost functions: front windshield defrost, rear window defogger, mirror defoggers, 7) Synchronization mode: links passenger temp to driver, 8) Fan speed: manual and automatic control, 9) Custom settings through multi-information display"
+	},
+	{
+		"question": "What is the complete list of audio and connectivity features?",
+		"answer": "Audio and connectivity features: 1) Audio sources: AM/FM, SiriusXM, USB, Bluetooth audio, 2) Phone connectivity: Bluetooth hands-free, phonebook access, message function, 3) Smartphone integration: Apple CarPlay, Android Auto capability, 4) Voice recognition: audio control, phone control, climate control, 5) Audio controls: steering wheel controls, touchscreen interface, voice commands, 6) Speaker system: 6 or 8 speakers depending on model, 7) Connected Services: Safety Connect, Service Connect, Remote Connect, 8) Wi-Fi hotspot capability if equipped, 9) USB ports for media and charging"
+	},
+	{
+		"question": "What are all the specifications for vehicle dimensions and capacities?",
+		"answer": "Vehicle specifications: 1) Dimensions: Length 175.6 in, Width 71.9 in, Height 64.8 in, Wheelbase 103.9 in, 2) Weight ratings: GVWR 4,695 lbs, Front GAWR 2,535 lbs, Rear GAWR 2,205 lbs, 3) Capacities: Fuel tank 12.4 gal, Engine oil 4.8 qt with filter, Coolant 7.3 qt, 4) Seating capacity: 5 passengers, 5) Cargo volume: 26.5 cu.ft (seats up), 65.5 cu.ft (seats folded), 6) Ground clearance: 8.1 in, 7) Turning circle: 37.4 ft, 8) Towing capacity: 1,500 lbs"
+	},
+	{
+		"question": "What are all the airbag deployment conditions and precautions?",
+		"answer": "Airbag information: 1) Deployment conditions: severe frontal collision, severe side collision, vehicle rollover (curtain shield), 2) Types: driver/passenger front airbags, knee airbag, side airbags, curtain shield airbags, 3) Precautions: maintain proper seating position, don't place objects near airbag modules, don't modify seats or trim, keep hands at 9 and 3 on steering wheel, 4) Child safety: never use rear-facing child seat in front passenger seat, children under 13 should ride in rear, 5) Occupant classification system adjusts front passenger airbag operation, 6) Airbag maintenance: replace after deployment, inspect after 10 years"
+	},
+	{
+		"question": "What are the complete steps to take in case of various warning lights?",
+		"answer": "Warning light response procedures: 1) Red brake warning: Stop immediately, check brake fluid level, contact dealer, 2) High temperature warning: Stop safely, let engine cool, check coolant level, 3) Low oil pressure: Stop immediately, check oil level, avoid engine operation, 4) Charging system: Stop when safe, check battery connections, 5) ABS warning: Get system checked by dealer, normal brakes still work, 6) Check engine light: Reduce speed, get prompt service, 7) Tire pressure: Check and adjust all tire pressures, 8) SRS warning: Have airbag system inspected immediately, 9) Electric power steering: May indicate system malfunction, 10) Multiple warnings: Read multi-information display for specific instructions"
+	},
+	{
+		"question": "What are all the specific operating conditions that affect vehicle systems?",
+		"answer": "Operating conditions affecting systems: 1) Stop & Start system won't operate: Engine not warmed up, battery charge low, A/C demand high, steep grade, 2) AWD system limitations: Avoid different tire sizes, maintain proper tire pressure, don't mix tire types, 3) Smart key system may not work: Near strong radio towers/airports, key battery low, metallic window tint present, 4) Pre-Collision System limitations: Bad weather, sharp curves, extremely hot/cold conditions, 5) Lane Tracing Assist requires: Clear lane markers, speed between 32-112 mph, no sharp curves, 6) Radar cruise control affected by: Heavy rain, fog, dirty sensors, vehicle load, 7) Brake hold system: Won't work on steep hills or with door open, 8) Parking sensors: May not detect thin objects, items in blind spots, during bad weather"
+	},
+	{
+		"question": "What are the detailed procedures for various driving conditions?",
+		"answer": "Specific driving procedures: 1) Wet conditions: Reduce speed, increase following distance, avoid sudden braking/acceleration, use wipers properly, engage defogger, 2) Winter driving: Clear all snow/ice, warm up engine moderately, use winter tires, carry emergency kit, 3) High temperature operation: Monitor gauges, use proper oil grade, maintain coolant level, avoid quick accelerations, 4) Mountain driving: Use engine braking, check brakes regularly, maintain proper gear, monitor temperature gauge, 5) Night driving: Ensure all lights work, keep windshield clean, adjust mirrors to reduce glare, use high beams appropriately, 6) Rough road: Reduce speed, avoid sudden movements, watch for debris, maintain proper tire pressure, 7) Highway driving: Regular rest breaks, maintain steady speed, use cruise control when appropriate, monitor fuel level"
+	},
+	{
+		"question": "What maintenance procedures require special attention or precautions?",
+		"answer": "Critical maintenance precautions: 1) Battery service: Avoid sparks, use eye protection, don't smoke, check ventilation, protect skin from acid, 2) Cooling system: Never remove radiator cap when hot, use proper coolant mix, check for leaks regularly, 3) Brake service: Use only approved fluid, avoid contamination, check pad wear indicators, maintain proper fluid level, 4) Engine oil: Check when engine is warm but off, use correct grade, replace filter with oil change, dispose properly, 5) Transmission: Check fluid only at specified temperature, use only approved CVT fluid, avoid overfilling, 6) Air conditioning: Service only with proper equipment, maintain according to schedule, clean air filter regularly, 7) Tire rotation: Follow correct pattern, maintain records, check alignment, calibrate TPMS after service"
+	},
+	{
+		"question": "What are all the functions and settings of the multi-information display?",
+		"answer": "Multi-information display features: 1) Drive information: Current/average fuel economy, distance to empty, driving time, average speed, 2) Navigation prompts (if equipped), 3) Audio system status, 4) Driver assist system status: cruise control, LTA, PCS settings, 5) Warning messages and icons, 6) Vehicle settings: door locking, light settings, driver assist preferences, 7) Tire pressure monitoring, 8) G-force display (if equipped), 9) Energy monitor/AWD system status, 10) Clock and outside temperature, 11) Customizable displays: Select information to show, change units, adjust brightness, 12) Service reminders and indicators, 13) Eco Driving Indicator, 14) Language selection"
+	},
+	{
+		"question": "What are all the seat belt systems and requirements?",
+		"answer": "Seat belt specifications: 1) All positions have 3-point ELR (Emergency Locking Retractor) belts, 2) Front seats: Force limiters and pretensioners, adjustable shoulder anchors, 3) Rear seats: ALR/ELR function for child seats, center position has unique buckle, 4) Warning systems: Reminder lights and buzzers for all positions, 5) Maintenance: Check for damage/wear regularly, clean with mild soap, avoid bleach/dyes, 6) Special conditions: Use seat belt extender if needed (available from dealer), pregnant women should wear lap belt low across hips, 7) After collision: Replace all belts that were in use, inspect anchors and retractors, 8) Child restraint mode: Pull belt fully out to engage ALR mode for car seat installation"
+	},
+	{
+		"question": "What are all the fuel and fluids specifications and precautions?",
+		"answer": "Fuel and fluids details: 1) Fuel: 87 octane minimum, unleaded only, 12.4 gal capacity, avoid E85, use fuel system cleaner periodically, 2) Engine oil: 0W-20 synthetic required, capacity 4.8 qt with filter, check when warm but not hot, 3) Coolant: Use Toyota Super Long Life or equivalent, pink/red color, 50/50 mix with distilled water, 4) Brake fluid: DOT 3 or DOT 4, replace every 2 years or 20,000 miles, 5) Power steering: Electric system - no fluid required, 6) Transmission: Toyota CVT fluid FE only, check at operating temperature, 7) Washer fluid: Use automotive grade with freezing protection, 8) Battery: 12V maintenance-free, check terminals for corrosion, 9) A/C refrigerant: R-134a type, proper charge amount critical"
+	},
+	{
+		"question": "What are the complete specifications for the vehicle's electrical system?",
+		"answer": "Electrical system details: 1) Battery: 12V maintenance-free, cold cranking amps: 410A minimum, reserve capacity: 95 minutes, 2) Alternator: 130A output, regulated voltage 14.2-14.8V, 3) Starter: Gear reduction type with solenoid engagement, 4) Fuses: Located in engine compartment and driver's side panel, multiple amperage ratings, carry spares, 5) Lighting: LED headlights/taillights where equipped, bulb wattage specifications for each location, 6) Power outlets: 12V DC outlets rated for 120W, USB ports provide 2.1A charging, 7) Audio system: 160W standard output or 800W premium system if equipped, 8) ECU systems: Multiple modules with self-diagnostic capability, 9) Proper jump-starting voltage: 12-14.8V"
+	},
+	{
+		"question": "What are the main safety precautions when using the roof luggage carrier?",
+		"answer": "The key safety precautions for the roof luggage carrier include: not exceeding 165 lb. (75 kg) cargo weight, being cautious of a higher center of gravity which affects vehicle handling, avoiding high speeds, sudden starts, sharp turns, sudden braking and abrupt maneuvers. These precautions are necessary to prevent loss of control or vehicle rollover that could result in death or serious injury."
+	},
+	{
+		"question": "What is the PKSB (Parking Support Brake) system and what functions does it include?",
+		"answer": "The PKSB system is a safety feature that operates when driving at low speeds or backing up. It includes two main functions: 1) Parking Support Brake function for static objects, which uses ultrasonic sensors to detect walls and other static objects, and 2) Parking Support Brake function for rear-crossing vehicles, which uses rear radar sensors to detect approaching vehicles. When the system determines a high collision possibility, it warns the driver and may automatically apply brakes to avoid or reduce impact."
+	},
+	{
+		"question": "How does the Stop & Start system work and what are its operating conditions?",
+		"answer": "The Stop & Start system automatically stops and restarts the engine to improve fuel economy and reduce noise pollution. It operates when: the vehicle has been driven a certain amount of time, the brake pedal is firmly depressed, the shift lever is in D or P, driver's seat belt is fastened, driver's door is closed, windshield defogger is off, and the engine is adequately warmed up. The system will automatically restart the engine when the brake pedal is released or the accelerator is depressed."
+	},
+	{
+		"question": "What are the key features and limitations of the Dynamic Radar Cruise Control system?",
+		"answer": "The Dynamic Radar Cruise Control system helps maintain vehicle-to-vehicle distance and can operate in two modes: vehicle-to-vehicle distance control mode and constant speed control mode. It uses radar and cameras to detect vehicles up to 328 ft ahead. However, it has limitations: it may not work properly in bad weather, on steep inclines, or when sensors are dirty. The system is not designed to prevent collisions and drivers must maintain control and attention while driving."
+	},
+	{
+		"question": "What driving assist systems are included in the vehicle and what are their functions?",
+		"answer": "The vehicle includes several driving assist systems: ABS (prevents wheel lock during sudden braking), TRAC (maintains drive power on slippery roads), VSC (helps control skidding), Brake Assist (increases braking force in panic stops), Active Cornering Assist (prevents outer drift during turns), Hill-start Assist Control (prevents backward rolling on hills), EPS (reduces steering effort), and Dynamic Torque Control AWD system (automatically controls drive system distribution). These systems work together to enhance driving safety and performance."
+	},
+	{
+		"question": "What are the essential winter driving preparations and precautions?",
+		"answer": "Winter driving preparations include: using appropriate fluids (engine oil, coolant, washer fluid) for cold temperatures, installing four matching snow tires, having the battery inspected, and removing snow/ice from windows, lights, roof, and brakes before driving. While driving, accelerate slowly, maintain safe distances, and drive at reduced speeds. When parking, avoid using the parking brake as it may freeze, and instead shift to P and block the wheels if necessary."
+	},
+	{
+		"question": "What are the specific characteristics and precautions for driving a utility vehicle?",
+		"answer": "Utility vehicles have distinct characteristics requiring special attention: 1) Higher center of gravity and narrower tread than ordinary cars, making them more prone to rollover, 2) Better road view due to higher ground clearance, 3) Not designed for high-speed cornering like passenger cars. Key precautions include: always wearing seatbelts (especially important in rollover crashes), avoiding sharp turns and abrupt maneuvers, being cautious with roof cargo as it raises center of gravity further, slowing down in crosswinds due to vehicle profile, and avoiding horizontal driving across steep slopes (drive straight up or down instead)."
+	},
+	{
+		"question": "What are the emergency procedures for vehicle system failures and warning indicators?",
+		"answer": "Emergency procedures include: 1) If PKSB activates unnecessarily, cancel by pressing brake pedal or wait 2 seconds for automatic cancellation, 2) For engine emergency shutdown while driving, press and hold engine switch for over 2 seconds or press briefly 3 times, 3) If trailer sway occurs, grip steering wheel firmly, drive straight ahead, gradually release accelerator, and don't apply brakes, 4) When warning lights activate, stop in safe place, check vehicle conditions, and reference warning message displayed on multi-information display. Secondary Collision Brake automatically activates after airbag sensor detects collision to help reduce further damage."
+	},
+	{
+		"question": "What are the specific maintenance requirements for the vehicle's sensor systems?",
+		"answer": "Sensor maintenance requirements include: 1) Keep radar sensor and cover clean, don't modify or paint them, 2) Front camera requires clean windshield, no stickers or tinting in camera area, avoid strong impact to camera area, 3) Parking assist sensors need regular cleaning, especially after exposure to water/mud/snow, 4) BSM sensors behind rear bumper must be kept clean and undamaged, don't attach stickers nearby, 5) After cleaning vehicle, don't apply intensive water pressure to sensor areas, 6) If 'Clean Parking Assist Sensor' message appears, clean affected sensors and surrounding areas. Recalibration by dealer required if sensors are removed/reinstalled."
+	},
+	{
+		"question": "What are the specific off-road driving guidelines and precautions?",
+		"answer": "Off-road driving guidelines include: 1) Drive only in permitted areas and respect private property, 2) Stay on established roads, 3) Modify driving techniques when conditions are wet. Essential precautions: don't grip steering wheel spokes, check brakes after driving through water/mud/sand, clear underbody of debris to prevent fire risk, avoid excessive speeds and sharp turns. After off-road driving: inspect vehicle for damage, check for material accumulation around brake discs, perform maintenance inspection focusing on chassis, brakes, and steering components. When driving through water, check depth and bottom firmness first, drive slowly, avoid deep water."
+	},
+	{
+		"question": "How do the vehicle's various driving assist systems interact with each other?",
+		"answer": "The driving assist systems interact as follows: 1) Enhanced VSC provides cooperative control of ABS, TRAC, VSC and EPS, 2) TRAC and VSC can be disabled together by holding switch for 3+ seconds, which also affects PCS operation, 3) Dynamic Torque Control AWD automatically adjusts based on other systems' inputs, 4) When LTA is active with dynamic radar cruise control, lane centering function engages automatically, 5) Brake assist works with ABS to provide optimal braking force, 6) Hill-start assist control works with VSC and TRAC for stability on inclines. Systems may temporarily disable if operating conditions overlap or brake temperatures rise."
+	},
+	{
+		"question": "What are the specific requirements and limitations for the RSA (Road Sign Assist) system?",
+		"answer": "RSA system recognizes specific road signs using front camera: speed limits, Do Not Enter, Stop, and Yield signs. System limitations: 1) May not detect signs in poor weather or low light, 2) Cannot read damaged or tilted signs, 3) May not recognize electronic signs with low contrast, 4) Detection affected by stickers on windshield or objects blocking camera view. System provides notifications when: vehicle exceeds speed limit (with adjustable threshold), vehicle enters no-entry area (flashing display and buzzer). Signs automatically stop displaying after certain distance or when no longer relevant."
+	},
+	{
+		"question": "What are the complete details about the continuously variable transmission operation and functions?",
+		"answer": "The continuously variable transmission has multiple functions: 1) Standard shift positions: P (parking/starting), R (reverse), N (neutral), D (normal driving), M (10-speed sport sequential shiftmatic mode), 2) When in M position, 10 gear steps available with manual shifting, automatically downshifts to M1 when stopped, 3) Transmission protection engages if fluid temperature is high (warning message displays), 4) Shift lock system prevents shifting from P unless brake pedal is depressed and engine switch is ON, 5) Has fail-safe control if malfunction detected. Drive-Start Control helps prevent sudden starts. For optimal efficiency and noise reduction, use D position for normal driving."
+	},
+	{
+		"question": "What are the specific details of the trailer sway control system and response procedures?",
+		"answer": "Complete trailer sway response procedures: 1) If sway occurs: firmly grip steering wheel, steer straight ahead, gradually reduce speed by releasing accelerator (don't brake), allow vehicle-trailer to stabilize, 2) After sway stops: stop in safe place, get occupants out, check tire conditions, verify load hasn't shifted, ensure tongue weight is appropriate, check vehicle isn't overloaded, 3) If no problems found, reduce speed below the speed where sway occurred. System limitations: sway more likely on steep downgrades, with improper tongue weight, or in strong crosswinds. Trailer Sway Control (if equipped) automatically helps stabilize the vehicle-trailer combination."
+	},
+	{
+		"question": "What are the comprehensive functions and limitations of the rear view monitor system?",
+		"answer": "Rear view monitor system features: 1) Displays when shift lever in R and engine switch ON, 2) Shows fixed guide lines including: vehicle width extension guides, vehicle center line, distance markers at 1.5 ft (red) and 3 ft (blue) from bumper, 3) Limitations: displays area from bumper rear view only, objects near bumper corners may not show, camera uses special lens causing distance differences, 4) System may not work properly when: camera is dirty/wet, vehicle is tilted, in low light conditions, 5) Camera maintenance: avoid strong water pressure, clean lens with soft wet cloth, don't use organic solvents. Display may be adjusted for brightness/contrast using same procedure as audio screen."
+	},
+	{
+		"question": "What are the specific operating conditions and limitations of the brake hold system?",
+		"answer": "Brake hold system operating conditions: 1) Functions when: shift lever in D/M/N, driver's door closed, driver seatbelt fastened, 2) Automatically engages parking brake if: system holds brake for 3 minutes, driver's door opened, seatbelt unfastened, engine switched off, system malfunction detected, 3) Will not activate on steep inclines (warning buzzer sounds), 4) May temporarily cancel on slippery roads, 5) Requires firmly depressed brake pedal to activate initially. Limitations: not designed for long-term parking, may not maintain hold on steep grades, system disables if malfunction detected. Warning indicators illuminate if system cannot operate properly."
+	},
+	{
+		"question": "What are the comprehensive details about the vehicle's lighting system operations?",
+		"answer": "Lighting system features include: 1) Automatic High Beam system uses camera to detect other vehicles' lights and adjust automatically, operates above 21 mph (34 km/h), 2) AFS (Adaptive Front-lighting System) adjusts headlight axis based on vehicle speed and steering angle, operates above 6 mph (10 km/h), 3) Extended Headlight Lighting allows 30-second illumination after engine off, 4) Auto light control sensor may not function if blocked by objects/stickers, 5) Battery-saving function automatically turns off lights after 20 minutes if left on when engine off. System limitations: may not detect all vehicles, affected by weather conditions, may not work properly with non-Toyota bulbs or modified lighting."
+	},
+	{
+		"question": "What are the specific operating conditions and features of the vehicle's climate control system when using Stop & Start?",
+		"answer": "Climate control operation with Stop & Start system: 1) With automatic air conditioning: fan may operate at low speed during engine stop to prevent cabin temperature changes, 2) System may restart engine if: air conditioning load is high, significant temperature difference between set and cabin temperature, windshield defogger turned on, 3) Climate preferences can affect Stop & Start duration - can be adjusted in multi-information display settings, 4) If windshield fogs frequently: press Stop & Start cancel switch, change idling stop time setting from 'Extended' to 'Standard', 5) System prioritizes climate comfort in automatic mode, may limit engine stop duration in extreme temperatures. Consider disabling Stop & Start for optimal climate control performance."
+	},
+	{
+		"question": "What are the complete maintenance and care requirements for the vehicle's safety systems?",
+		"answer": "Safety system maintenance requirements: 1) Sensors: clean radar sensors and cameras regularly, avoid impacts, don't modify surrounding areas, recalibrate after bumper replacement, 2) Brake system: check fluid level monthly, inspect pads and discs, particularly after off-road driving, 3) AWD system: avoid different tire sizes/types, maintain proper tire pressure, rotate tires regularly, 4) VSC/TRAC: ensure proper tire condition and pressure, don't modify suspension, 5) Camera system: keep windshield clean in camera area, no stickers/tinting in detection zone, recalibrate after windshield replacement, 6) Warning systems: test operation regularly, check indicator lights function, maintain clean sensor surfaces. Regular dealer inspection recommended for optimal system performance."
+	},
+	{
+		"question": "What are the complete safety warnings and system limitations for the Toyota Safety Sense 2.0 system?",
+		"answer": "Toyota Safety Sense 2.0 system warnings and limitations: 1) Pre-Collision System may not detect vehicles in poor weather, at night, or when approaching at certain angles; won't detect pedestrians in low light; 2) LTA system is not for hands-free driving, requires driver to maintain steering control, may not detect lanes in rain/snow/fog or on unmarked/poorly marked roads; 3) Dynamic Radar Cruise Control won't detect motorcycles or small vehicles reliably, requires minimum speed of 20 mph, shouldn't be used in heavy traffic or adverse weather; 4) Automatic High Beam may not detect oncoming vehicles in curves, requires clean windshield and proper sensor maintenance; 5) System may disable if sensors are blocked, dirty, or affected by extreme temperatures. All systems require driver attention and aren't substitutes for safe driving practices."
+	},
+	{
+		"question": "What are the complete warning indicators and required driver responses for critical system failures?",
+		"answer": "Critical warning indicators and responses: 1) If brake system warning light illuminates with buzzer: immediately stop in safe place, check brake fluid level, contact dealer if low or light remains on; 2) If charging system warning activates: stop when safe, check battery connections and fan belt; 3) For malfunction indicator lamp: reduce speed, avoid acceleration/deceleration, have vehicle checked immediately; 4) Multiple warning lights indicating VSC/ABS/brake system activation require immediate dealer inspection; 5) PKSB system malfunction requires system check by dealer; 6) Stop & Start system warnings may indicate battery condition issues; 7) If engine coolant temperature warning displays, stop immediately and let engine cool. All warning light activations should be documented for service reference."
+	},
+	{
+		"question": "What are the specific conditions and limitations for all parking assist features?",
+		"answer": "Parking assist features conditions and limitations: 1) Intuitive Parking Assist operates below 6 mph, detects objects within 3.3 ft (front) and 4.9 ft (rear), may not detect objects that are too low, thin, or close to bumper; 2) PKSB static object function operates below 9 mph, requires objects 6-13 ft away, won't detect small or low objects; 3) RCTA function requires vehicle speed below 5 mph in R, detects vehicles approaching at 5-18 mph, may not detect smaller vehicles or pedestrians; 4) Rear view monitor has limited view range, shows only area behind vehicle, distances on screen differ from actual distances; 5) All systems require clean sensors, proper lighting conditions, and may not function in extreme temperatures or weather conditions. Systems are assistance features only and don't replace driver attention and checking surroundings."
+	},
+	{
+		"question": "What are the complete AWD system operation parameters and warnings?",
+		"answer": "AWD system parameters and warnings: 1) Dynamic Torque Control AWD automatically adjusts distribution between front and rear wheels based on driving conditions, cornering forces, and wheel slippage; 2) System limitations: may not operate effectively on extremely slippery surfaces or with mismatched tires; 3) Warning conditions: different tire sizes or types installed, excessive tire wear, improper tire pressure; 4) System may temporarily disable to prevent damage if continuous high-load operation occurs; 5) AWD warning light indicates system malfunction - reduce speed and have vehicle checked immediately; 6) System requires all tires to be same size, type, and brand with proper inflation; 7) Regular tire rotation and pressure checks essential for proper operation."
+	},
+	{
+		"question": "What are the specific safety requirements and procedures for emergency situations?",
+		"answer": "Emergency situation procedures: 1) Engine emergency shutdown: press and hold switch 2+ seconds or press 3 times quickly, maintain steering and moderate braking, pull over safely; 2) Brake system failure: pump brake pedal for increased pressure, maintain longer following distance, use parking brake carefully; 3) Tire blowout: grip steering wheel firmly, gradually slow down, avoid sudden braking, pull off road gradually; 4) Vehicle skidding: release accelerator, steer in direction you want to go, avoid sudden braking or steering; 5) Overheating: stop safely, let idle until temperature drops, check coolant level when safe; 6) Battery discharge: use jumper cables properly, following correct connection order; 7) If stuck: clear area around drive wheels, rock vehicle gently, avoid wheel spin."
+	},
+	{
+		"question": "What are the complete maintenance intervals and requirements for safety-critical systems?",
+		"answer": "Safety-critical system maintenance requirements: 1) Brake system: check fluid level monthly, inspect pads/rotors every 5,000 miles, change fluid every 30,000 miles; 2) Tire maintenance: rotate every 5,000 miles, check pressure monthly, replace when tread depth reaches 1/8 inch; 3) Safety sensors: clean monthly or when dirty, inspect for damage, recalibrate after windshield/bumper replacement; 4) AWD system: change rear differential oil every 30,000 miles, inspect boots and shafts every 15,000 miles; 5) Battery: check condition every 15,000 miles, replace if Stop & Start operation degrades; 6) Steering: power steering fluid check every 15,000 miles, inspect rack and linkage annually; 7) More frequent maintenance required when: towing regularly, extensive off-road use, frequent Stop & Start operation, or severe weather conditions."
+	},
+	{
+		"question": "What are the specific weight limits and loading instructions for all vehicle configurations?",
+		"answer": "Vehicle weight limits and loading instructions: 1) Total load capacity varies by model - check tire and loading label; 2) Seating capacity based on 150 lb per person; 3) Roof rack limit: 165 lb maximum, affects vehicle stability; 4) Trailer weight ratings: 1500 lb maximum, 9-11% tongue weight required; 5) GCWR limits: 2WD - 5790 lb, AWD - 5955 lb; 6) Cargo distribution: place heavy items low and toward center, secure all items; 7) Never exceed: individual axle ratings (GAWR), total vehicle rating (GVWR), or combined weight rating (GCWR); 8) Reduce loads in adverse conditions: high temperatures, mountain driving, or rough roads; 9) Loading affects safety system operation - maintain proper weight distribution."
+	},
+	{
+		"question": "How to turn the audio system on and off?",
+		"answer": "The audio/visual system can be turned on and off using the \"POWER VOLUME\" knob. Pressing the knob turns the system on/off, while turning it adjusts the volume. The system turns on in the last mode used. When the engine is not running, the system should not be left on longer than necessary to prevent battery discharge."
+	},
+	{
+		"question": "What are the available methods to access the audio control screen?",
+		"answer": "There are two methods to access the audio control screen: 1) Press the \"AUDIO\" button, or 2) Press the \"MENU\" button, then select \"Audio\" from the menu options."
+	},
+	{
+		"question": "How does the automatic climate control system function?",
+		"answer": "The automatic climate control system automatically selects outlets and adjusts fan speed based on the temperature setting. To use automatic mode: 1) Press the \"AUTO\" button, 2) Adjust the temperature setting, 3) Press \"OFF\" to stop operation. When operating, the AUTO indicator illuminates, but turns off if fan speed or air flow modes are operated manually. The system adjusts settings automatically to maintain the selected temperature."
+	},
+	{
+		"question": "What is the complete procedure for defogging the windshield?",
+		"answer": "To defog the windshield: 1) Press the windshield defogger switch, 2) Set the outside/recirculated air mode to outside air mode if using recirculated air, 3) Increase air flow and temperature to defog quickly, 4) Press the windshield defogger switch again to return to previous mode once defogged. The indicator light illuminates when the defogger is on. Note: Do not use during cool air operation in extremely humid weather as it may cause exterior fogging."
+	},
+	{
+		"question": "What is the complete process for registering a new Bluetooth phone with the system?",
+		"answer": "To register a new Bluetooth phone: 1) Turn on the Bluetooth connection setting on your phone, 2) Press the \"MENU\" button, 3) Select \"Phone\", 4) Select \"Yes\" to register a phone, 5) Select the desired Bluetooth device from the list, 6) Register the device using your Bluetooth device, 7) Check that the pairing was successful when the connection screen is displayed, 8) Verify \"Connected\" is displayed to complete registration. Up to 5 Bluetooth devices can be registered in total."
+	},
+	{
+		"question": "What are the USB charging port specifications and limitations?",
+		"answer": "The USB charging ports provide different power outputs: Front ports deliver 2.1 A at 5V, while rear ports provide 2.5 A at 5V (USB Type-A) and 3.0 A at 5V (USB Type-C). The ports are for charging only and not designed for data transfer. They function when the engine switch is in ACC or ON. The ports may not work correctly if devices consume more power than specified, if connected to communication devices like USB memory, or if the vehicle interior temperature is too high."
+	},
+	{
+		"question": "What are the safety precautions for using the wireless charger?",
+		"answer": "Key safety precautions for the wireless charger include: Do not place metallic objects between charging area and device while charging, do not attach metallic stickers to charging area, do not attempt to charge non-Qi compatible devices, do not disassemble or modify the charger, keep magnetic objects away, do not cover charger with cloth while charging, people with implanted medical devices should consult their physician before use, and do not operate portable devices while driving. Additionally, do not charge devices with cases containing contactless smart cards or magnetic materials."
+	},
+	{
+		"question": "What is the proper procedure for washing the vehicle exterior?",
+		"answer": "The proper vehicle washing procedure is: 1) Work from top to bottom, applying water liberally to remove dirt and dust, 2) Use a soft sponge or cloth like chamois to wash the body, 3) Use car wash soap for stubborn marks and rinse thoroughly with water, 4) Wipe away water completely, 5) Apply wax when water no longer beads on clean surface and waterproof coating has deteriorated. Avoid using acidic or abrasive cleaners, and be cautious with automatic car washes as brushes may scratch the surface."
+	},
+	{
+		"question": "What are all the available storage features in the vehicle and their usage guidelines?",
+		"answer": "The vehicle includes multiple storage features: 1) Bottle holders (front and rear), 2) Open tray (if equipped), 3) Glove box, 4) Cup holders (front and rear), 5) Console box, 6) Luggage compartment with cargo hooks and grocery bag hooks, 7) Auxiliary boxes under deck mat. Usage guidelines include: Do not leave heat-sensitive items in storage spaces, keep boxes closed while driving, do not place loose items in open trays, limit grocery bag hook weight to 4.4 lbs (2 kg), and stow cargo hooks when not in use. All storage features should be used with caution while driving to prevent accidents."
+	},
+	{
+		"question": "How should condensation and window fogging be managed in the vehicle?",
+		"answer": "To manage condensation and window fogging: 1) Turn on the A/C to dehumidify the air from the outlets, 2) Switch to outside air mode instead of recirculated air mode, 3) Increase air flow and temperature as needed, 4) Use the windshield defogger for rapid defogging. Windows fog more easily when humidity is high, when A/C is off, or when using recirculated air mode. For prevention, it's recommended to use outside air mode and maintain proper ventilation within the vehicle."
+	},
+	{
+		"question": "What are common Bluetooth connectivity issues and their solutions?",
+		"answer": "Common Bluetooth issues and solutions include: 1) Connection Failures - Check phone compatibility, delete and re-register device, ensure Bluetooth is enabled on phone, 2) Audio Issues - When connection is poor, move phone closer to system, clear path between phone and system, close unused apps, 3) Phone Not Found - Turn phone off/on, remove and reinstall battery if possible, stop security software, 4) Message Transfer Problems - Enable message transfer on phone settings, check phone compatibility. Additional troubleshooting: Set phone's automatic connection to on, ensure phone isn't in power-saving mode, limit connected devices to 5 or fewer."
+	},
+	{
+		"question": "What are the required regular maintenance procedures and intervals for the vehicle?",
+		"answer": "Essential maintenance requirements include: 1) Air Conditioning - Filter replacement every 15,000 miles or 24 months, system inspection for refrigerant levels, 2) Bluetooth System - Regular software updates when available, periodic deletion of old registration information, 3) Audio System - Regular database updates for Gracenote music information, 4) Display Screen - Regular cleaning with glass cloth (no chemical cleaners), 5) USB/Power Ports - Keep clean and free of debris, inspect for damage. System-specific maintenance: Delete unnecessary stored information periodically, update software when prompted, maintain clean power connections."
+	},
+	{
+		"question": "What are the step-by-step procedures for updating system software?",
+		"answer": "System software update procedures: 1) Through Settings - Press MENU > Setup > General > Software Update, enable automatic update checks, follow on-screen instructions when updates available, 2) Through USB - Download update from Toyota website, transfer to USB drive, connect USB to vehicle, follow prompts, 3) Over-the-Air Updates - Require active internet connection, automatically check when enabled, download and install per schedule. Important notes: Do not turn off vehicle during updates, updates may take 10-30 minutes, some updates require dealer installation. After updates: System may reset to default settings, Bluetooth devices may need reconnection."
+	},
+	{
+		"question": "How do you troubleshoot climate control system issues?",
+		"answer": "Climate control troubleshooting steps: 1) Poor Cooling - Check air filter condition, verify A/C is turned on, ensure recirculation mode appropriate for conditions, check temperature settings, 2) Uneven Air Flow - Verify outlets not blocked, check S-FLOW mode status, ensure auto mode operating correctly, 3) System Not Responding - Check fuse condition, verify battery voltage sufficient, ensure engine running for full operation, 4) Strange Odors - Replace cabin air filter, run ventilation without A/C periodically, use outside air mode. If problems persist, professional diagnosis needed as refrigerant levels may be low."
+	},
+	{
+		"question": "What are the complete audio/visual system troubleshooting procedures?",
+		"answer": "Audio/visual system troubleshooting: 1) No Sound - Check volume settings, verify correct source selected, ensure not muted, check speaker connections, 2) Poor Reception - Move vehicle to clear area, check antenna connection, verify HD Radio settings, update station list, 3) USB Playback Issues - Check file format compatibility, verify device formatted correctly, ensure device power sufficient, try different USB port, 4) Screen Issues - Adjust brightness/contrast, check day/night mode setting, verify no system updates pending. For persistent issues: Perform system reset by pressing and holding power button for 10 seconds."
+	},
+	{
+		"question": "What safety system settings can be customized and how?",
+		"answer": "Customizable safety system settings include: 1) Voice Recognition Safety Features - Adjust voice feedback volume, set voice recognition training, customize command shortcuts, 2) Message Safety - Configure pop-up notification timing, set automatic message readout options, customize read-aloud volume, 3) Display Safety - Adjust screen dimming timing, set camera guidelines display, configure parking sensor display, 4) System Lockouts - Set which features are disabled while driving, configure valet mode with security code, set speed-dependent volume adjustments. Access through: MENU > Setup > Vehicle or General settings."
+	},
+	{
+		"question": "What are the region-specific feature limitations and requirements?",
+		"answer": "Region-specific features and limitations: 1) United States - Full functionality of Toyota apps, Safety Connect, Service Connect available in contiguous states, Alaska, Hawaii, 2) Canada - Limited Toyota apps functionality, Safety Connect available, no Wi-Fi Hotspot service, 3) Puerto Rico - Limited connected services, no Wi-Fi Hotspot, Safety Connect available, 4) U.S. Virgin Islands - Limited service availability, no Toyota apps or Wi-Fi Hotspot. Requirements vary: Different subscription services needed per region, cellular coverage affects functionality, satellite radio availability varies by location."
+	},
+	{
+		"question": "How do you perform a complete system reset and what settings are affected?",
+		"answer": "Complete system reset procedures: 1) Personal Data Reset - Delete personal data through MENU > Setup > General > Delete Personal Data, affects: stored contacts, audio settings, customized features, 2) Audio Reset - Reset audio settings only through sound settings menu, 3) Bluetooth Reset - Remove all paired devices and reset Bluetooth settings, 4) Factory Reset - Complete system restoration requiring dealer intervention. Note: Before resetting, record important settings, backup necessary data, document paired devices. After reset: Reconfigure personal settings, reconnect Bluetooth devices, restore audio preferences."
+	},
+	{
+		"question": "What maintenance indicators and warnings should be monitored?",
+		"answer": "Important system indicators to monitor: 1) Bluetooth Connection Status - Icon color indicates connection strength, grayed icon shows disconnection, 2) System Temperature Warnings - Excessive heat warnings for wireless charging, USB operations, display function, 3) Memory Usage Alerts - Storage capacity warnings for contacts, audio files, system updates, 4) Battery-related Warnings - Low vehicle battery impact on system functions, charging system status, 5) Update Required Indicators - Software update notifications, database update requirements. Regular check recommended for: Communication status icons, system error messages, performance warnings."
+	},
+	{
+		"question": "What are the system's energy-saving features and how do they function?",
+		"answer": "Energy-saving features include: 1) Display Auto-Off - Screen turns off after 20 minutes of inactivity when engine off, 2) Bluetooth Auto-Disconnect - System disconnects devices after set period with engine off, 3) Climate Control Eco Mode - Reduces compressor usage and fan speed for efficiency, 4) S-FLOW - Focuses airflow to occupied seats only, 5) Auto-Shutoff Features - System automatically powers down after extended period with engine off. Configuration: Adjust timing through power management settings, customize eco mode operations, set display timers. Note: Some features automatically override energy saving when engine running or charging."
+	},
+	{
+		"question": "What do all the status icons in the system represent and when do they appear?",
+		"answer": "Status icons indicate various system conditions: 1) Data Communication Icon - Shows during DCM data transfer, 2) Reception Level Icons - Display signal strength for phone/DCM (Poor to Excellent), 3) Battery Level Icon - Shows connected device's remaining charge (Empty to Full), 4) Bluetooth Icon - Blue indicates good connection, gray indicates poor connection or disconnected, 5) Wi-Fi Icon - Shows connection status and signal strength. Icons appear at screen top; quantity shown varies by displayed screen. Special conditions: 'Rm' displays during roaming, reception level may not match phone's display."
+	},
+	{
+		"question": "How do you set up and use driver profiles, and what settings are stored?",
+		"answer": "Driver profile system stores individual preferences: 1) Setup: Access through Menu > Setup > Driver Setting, enable feature, select 'Manually Select Linked Settings', choose phone to link, 2) Stored Settings Include: Audio presets, screen theme, language preferences, climate control settings, 3) Automatic Recognition: System can link settings to paired Bluetooth phones, 4) Profile Switching: Occurs when different linked phone connects. Note: Maximum number of driver profiles depends on system memory, settings take effect after selecting profile and brief loading period."
+	},
+	{
+		"question": "What are the differences between Apple CarPlay and Android Auto integration?",
+		"answer": "Key differences between CarPlay and Android Auto: 1) Connection Method - CarPlay requires USB connection and Siri enabled, Android Auto needs app installed and USB connection, 2) Bluetooth Integration - CarPlay disables Bluetooth audio, Android Auto maintains Bluetooth connection, 3) App Compatibility - CarPlay uses Apple Maps and Messages, Android Auto uses Google Maps and Messages, 4) Voice Control - CarPlay uses Siri, Android Auto uses Google Assistant, 5) Screen Interface - Different layouts and app organizations. Common features: Both support music apps, phone calls, messages, and navigation."
+	},
+	{
+		"question": "What are the complete procedures for handling phone calls, including call waiting and transfers?",
+		"answer": "Complete phone call handling procedures: 1) Incoming Calls - Answer with steering switch or screen button, reject with 'Decline', adjust ring volume with knob, 2) Call Waiting - Press phone switch to place current call on hold and answer new call, 'Swap Calls' button toggles between calls, 3) Call Transfer - Select handset icon to switch between hands-free and phone, can't transfer during driving, 4) Three-Way Calls - Supported through 'Swap Calls' function, 5) Call Volume - Adjust during call with volume knob or steering switches, separate volume memory for each Bluetooth device."
+	},
+	{
+		"question": "How do capacitive touch controls work and what are their limitations?",
+		"answer": "Capacitive touch control operation: 1) Sensitivity Levels - Adjustable through setup menu (Low/Medium/High), 2) Operating Conditions - May not work with: gloves, fingernails, when screen is dirty/wet, if palm touches other buttons, 3) Limitations: Won't operate if metal objects cover buttons, requires direct skin contact, may be affected by electromagnetic waves, 4) Special Cases: System resets touch sensitivity when engine restarted, may need recalibration after battery disconnect. Clean screen with glass cloth only, avoid chemical cleaners."
+	},
+	{
+		"question": "What are the recommended cold tire inflation pressures for the front and rear tires of this vehicle?",
+		"answer": "The recommended cold tire inflation pressures vary by tire type:\n- For 215/65R17 tires: Front: 33 psi (230 kPa), Rear: 29 psi (200 kPa)\n- For 225/55R18 tires: Front: 33 psi (230 kPa), Rear: 30 psi (210 kPa)\nThese pressures are critical for proper vehicle performance, fuel economy, and tire wear."
+	},
+	{
+		"question": "What are the steps to initialize the tire pressure warning system after rotating tires or changing tire pressure?",
+		"answer": "To initialize the tire pressure warning system:\n1. Park the vehicle in a safe place and stop the engine for 20+ minutes\n2. Adjust tire pressure to specified cold tire inflation levels\n3. Start the engine\n4. Press the meter control switch to select settings menu\n5. Select 'TPWS setting' then 'Setting Pressure'\n6. Press and hold until 'Set Pressure Accepted' appears and warning light blinks 3 times\n7. Drive straight at approximately 25 mph (40 km/h) for 10-30 minutes until initialization completes"
+	},
+	{
+		"question": "What are the key specifications of the engine in this vehicle?",
+		"answer": "The engine specifications are:\n- Type: 2.0L 4-cylinder in line, 4-cycle gasoline engine\n- Bore and stroke: 3.17 × 3.84 in. (80.5 × 97.6 mm)\n- Displacement: 121.3 cu. in. (1987 cm3)\n- Valve clearance: Automatic adjustment\n- Drive belt tension: Automatic adjustment\nThe engine is designed for unleaded gasoline with an octane rating of 87 (Research Octane Number 91) or higher."
+	},
+	{
+		"question": "What should you do if your vehicle becomes submerged in water?",
+		"answer": "If your vehicle becomes submerged:\n1. Stay calm\n2. If the door can be opened, exit immediately\n3. If door cannot open but windows can, exit through windows\n4. If both doors and windows cannot open:\n   - Wait until water pressure inside equals outside pressure\n   - Once water enters vehicle, door can be opened\n   - Exit the vehicle\nNote: When water level exceeds floor height, electrical equipment will be damaged and power windows may not operate. Do not remain in a vehicle that may become flooded."
+	},
+	{
+		"question": "What are the proper steps to perform an emergency towing of the vehicle?",
+		"answer": "For emergency towing:\n1. Get towing eyelet and wheel nut wrench from tools\n2. Remove eyelet cover using flathead screwdriver (protect bodywork with rag)\n3. Insert towing eyelet into hole and tighten partially by hand\n4. Tighten down securely using wheel nut wrench\n5. Attach cables/chains to towing eyelet securely\n6. Enter vehicle and start engine\n7. Shift to N and release parking brake\nLimit towing to 50 miles (80 km) at under 18 mph (30 km/h) on hard-surfaced roads only. A driver must be in vehicle to steer and operate brakes."
+	},
+	{
+		"question": "What are the vehicle's key dimensions and weight specifications?",
+		"answer": "Key vehicle dimensions and specifications:\n- Overall length: 175.6 in. (4460 mm)\n- Overall width: 71.9 in. (1825 mm)\n- Overall height: 64.8 in. (1645 mm)\n- Wheelbase: 103.9 in. (2640 mm)\n- Vehicle capacity weight (Occupants + luggage): 940 lb. (425 kg)\n- Trailer Weight Rating: 1500 lb. (680 kg)\n- Seating capacity: 5 (Front 2, Rear 3)"
+	},
+	{
+		"question": "What are all the required maintenance fluids and their specifications?",
+		"answer": "Required fluids and specifications:\n1. Engine Oil:\n   - Capacity with filter: 4.9 qt. (4.6 L)\n   - Type: Toyota Genuine Motor Oil or equivalent (ILSAC GF-6B)\n   - Recommended viscosity: SAE 0W-16\n2. Coolant:\n   - Capacity: 6.7 qt. (6.3 L)\n   - Type: Toyota Super Long Life Coolant or similar\n3. Brake Fluid:\n   - Type: FMVSS No.116 DOT 3 or SAE J1703, or DOT 4 or SAE J1704\n4. Transmission Fluid:\n   - Capacity: 8.7 qt. (8.2 L)\n   - Type: Toyota Genuine CVT Fluid FE"
+	},
+	{
+		"question": "What are the detailed steps for checking and maintaining proper engine oil level?",
+		"answer": "Engine oil checking procedure:\n1. Park on level ground and warm up engine\n2. Turn off engine and wait more than 5 minutes\n3. Hold clean rag under dipstick end and pull dipstick out\n4. Wipe dipstick clean\n5. Reinsert dipstick fully\n6. Pull dipstick out and check oil level - should be between low and full marks\n7. If adding oil:\n   - Remove oil filler cap\n   - Add gradually, checking level\n   - Replace cap securely\nCheck oil regularly and change according to maintenance schedule. Oil consumption may increase under certain conditions like break-in period or frequent acceleration/deceleration."
+	},
+	{
+		"question": "What are the safety precautions and procedures when jump starting the vehicle?",
+		"answer": "Jump starting procedure and safety precautions:\n1. Confirm 12-volt battery system\n2. Connect cables in exact order:\n   a. Positive terminal on your vehicle\n   b. Positive terminal on second vehicle\n   c. Negative terminal on second vehicle\n   d. Solid, unpainted metallic point away from battery\n3. Start second vehicle's engine, increase speed slightly\n4. Maintain speed for 5 minutes\n5. Start your vehicle's engine\n6. Remove cables in exact reverse order\n\nWarnings:\n- Avoid sparks near battery\n- Don't smoke or use open flames\n- Don't lean over battery when connecting\n- Don't connect to or touch moving parts\n- If battery is frozen, do not jump start"
+	},
+	{
+		"question": "What is the complete maintenance schedule for the tire pressure warning system, including all initialization conditions?",
+		"answer": "Tire Pressure Warning System maintenance requires initialization when:\n1. Rotating tires\n2. Changing tire pressure\n3. Changing a tire\n4. Registering new ID codes\n5. Changing between two registered wheel sets\n\nInitialization procedure requires:\n1. Park safely, stop engine for 20+ minutes\n2. Adjust all tires to specified pressure when cold\n3. Start engine\n4. Select settings menu using meter control switch\n5. Select 'TPWS setting' then 'Setting Pressure'\n6. Press and hold until confirmation\n7. Drive at 25 mph (40 km/h) for 10-30 minutes\n\nSystem limitations:\n- May take longer in heavy traffic\n- Won't work properly if wheel ID codes aren't registered\n- Must be reinitiated after any tire service\n- Doesn't replace regular pressure checks"
+	},
+	{
+		"question": "What are the complete airbag system components and their operation conditions?",
+		"answer": "Airbag System Components and Operation:\n\nLocations and Types:\n1. Front Airbags:\n   - Driver's airbag (steering wheel)\n   - Passenger airbag (dashboard)\n   - Driver's knee airbag\n2. Side Airbags:\n   - Front seat side airbags\n   - Rear seat side airbags\n3. Curtain Shield Airbags (both sides)\n\nDeployment Conditions:\n- Front: Severe frontal impacts\n- Side: Severe side impacts\n- Curtain: Severe side impacts or vehicle rollover\n\nKey Components:\n- Impact sensors\n- Airbag control module\n- Airbag modules\n- Seat position sensors\n- Seat occupant sensors\n- Seat belt pretensioners\n\nWarning: System requires service if:\n- SRS warning light illuminates\n- Any airbag deploys\n- Vehicle involved in significant collision\n- Any airbag covers damaged"
+	},
+	{
+		"question": "What are all the tools and equipment provided with the vehicle and their storage locations?",
+		"answer": "Vehicle Tools and Equipment:\n\n1. Tool Location: Luggage Compartment\nTools Provided:\n- Wheel nut wrench\n- Jack handle\n- Towing eyelet\n- Jack\n- Wheel lock key (if equipped)\n\n2. Tool Storage:\n- Under deck board\n- Secured in designated holders\n- Spare tire section\n\n3. Spare Tire Equipment:\n- Compact spare tire T155/80D17 101M\n- Inflation pressure: 60 psi (420 kPa)\n- Tool for releasing spare tire holder\n\n4. Access and Usage:\n- Remove deck mat to access\n- Follow proper jack point placement\n- Wheel lock key storage location if equipped\n\nWarning: Return all tools to proper storage location after use to prevent injury in case of accident or sudden braking"
+	},
+	{
+		"question": "What are the complete climate control system specifications and operating instructions?",
+		"answer": "Climate Control System Details:\n\n1. Manual Air Conditioning:\n- Fan speeds: 4 levels\n- Temperature control range: 18°C to 32°C (64°F to 90°F)\n- Air flow modes: Face, Feet, Defrost combinations\n\n2. Automatic Air Conditioning (if equipped):\n- Temperature range: 16°C to 30°C (60°F to 86°F)\n- AUTO mode operation\n- S-FLOW mode (front seat priority)\n- Synchronized/separate temperature controls\n\n3. Defrosting Functions:\n- Windshield defogger\n- Rear window defogger: Timer operation 15 minutes\n- Outside mirror defoggers (if equipped)\n\n4. Air Filtering:\n- Filter type: Pollen removal\n- Replacement interval: Every 30,000 miles\n- Filter access: Behind glove box\n\n5. Operating Tips:\n- Use recirculated air for quick cooling\n- Switch to fresh air for defogging\n- Clean filters when airflow decreases"
+	},
+	{
+		"question": "What are all the warning messages that can appear on the multi-information display and required responses?",
+		"answer": "Warning Messages and Required Actions:\n\n1. Engine/Powertrain Messages:\n- \"Engine Coolant Temp High\":\n  Action: Stop safely, allow cooling\n- \"Engine Oil Level Low\":\n  Action: Check oil, add if necessary\n- \"Engine Oil Pressure Low\":\n  Action: Stop immediately, contact dealer\n\n2. Brake System Messages:\n- \"Brake Fluid Low\":\n  Action: Stop immediately, check fluid\n- \"Parking Brake On\":\n  Action: Release parking brake\n- \"Brake Hold Malfunction\":\n  Action: Have system checked\n\n3. Safety System Messages:\n- \"PCS Malfunction\":\n  Action: Have system checked by dealer\n- \"LTA Unavailable\":\n  Action: Check for clear lane markers/conditions\n- \"Blind Spot Monitor Malfunction\":\n  Action: Have system checked\n\n4. Smart Key Messages:\n- \"Key Battery Low\":\n  Action: Replace key battery\n- \"Smart Key System Malfunction\":\n  Action: Have system checked\n\n5. Maintenance Messages:\n- \"Maintenance Required Soon\":\n  Action: Schedule service\n- \"AWD System Overheated\":\n  Action: Stop and allow cooling\n\nWarning: Always follow indicated action promptly. Some messages require immediate attention to prevent system damage or unsafe conditions"
+	},
+	{
+		"question": "What are the complete audio system specifications, limitations, and operating instructions?",
+		"answer": "Audio System Details:\n\n1. System Components:\n- AM/FM radio\n- SiriusXM® capability (if equipped)\n- USB port input\n- Bluetooth® audio streaming\n- Apple CarPlay/Android Auto compatibility\n- Auxiliary audio jack (if equipped)\n\n2. Speaker System:\n- Number of speakers: Varies by model\n- Audio settings:\n  • Bass/Mid/Treble adjustment\n  • Balance/Fade control\n  • Sound settings memory\n\n3. Connected Services:\n- SiriusXM® trial period\n- Bluetooth® device pairing limit: Up to 5 devices\n- Phone book capacity: Up to 2,500 entries per device\n\n4. Operating Limitations:\n- Maximum USB device size supported\n- Compatible file formats\n- Bluetooth® version compatibility\n- Operating temperature range\n\n5. Voice Command Functions:\n- Available voice commands\n- Voice recognition limitations\n- Language support specifications"
+	},
+	{
+		"question": "What are the exact cargo area dimensions and maximum load specifications for all storage areas?",
+		"answer": "Cargo Area Specifications:\n\n1. Luggage Compartment:\n- Length with rear seats up\n- Length with rear seats folded\n- Width between wheel wells\n- Height from floor to ceiling\n- Total cargo volume: Varies by configuration\n\n2. Storage Areas Load Limits:\n- Cargo hooks: Do not exceed rating\n- Shopping bag hooks: 6.6 lbs (3 kg) per hook\n- Under-floor storage: Weight distribution limits\n- Roof rails (if equipped): Follow weight limits\n\n3. Seat Configuration Capacities:\n- All seats up configuration\n- 60/40 split fold capacity\n- Full flat floor configuration\n\n4. Additional Storage:\n- Door pocket capacity\n- Console box volume\n- Glove box capacity\n- Cup holder size limits\n\n5. Loading Precautions:\n- Maintain proper weight distribution\n- Secure cargo properly\n- Do not block driver's view\n- Follow all weight limits"
+	},
+	{
+		"question": "What are all the smart key system specifications, operating ranges, and limitations?",
+		"answer": "Smart Key System Complete Specifications:\n\n1. Operating Ranges:\n- Door locking/unlocking: Within 2.3 ft (0.7 m) of outside door handles\n- Engine starting: When key is inside vehicle\n- Power window operation: Within range of door handle\n\n2. System Limitations:\n- May not operate if:\n  • Key is too close to vehicle windows\n  • Multiple smart keys are in vicinity\n  • Near strong radio waves\n  • Key battery is depleted\n  • Key is in contact with metal objects\n\n3. Battery Information:\n- Type: CR2450 lithium battery\n- Life: Approximately 1-2 years\n- Low battery warning appears on multi-information display\n\n4. Emergency Operation:\n- Mechanical key backup for door locks\n- Key touch start procedure if battery weak\n- Override procedures for all functions\n\n5. Security Features:\n- Auto lock if door unopened after unlock\n- Time delay: 60 seconds\n- Key registration limit: 4 keys maximum"
+	},
+	{
+		"question": "What are all the TPMS (Tire Pressure Warning System) functions, diagnostic features, and initialization requirements?",
+		"answer": "TPMS Complete System Details:\n\n1. System Components:\n- Tire pressure sensors in each wheel\n- Receiver/control module\n- Multi-information display warning\n- Warning light on instrument panel\n\n2. Warning Types:\n- 'Adjust Pressure' (Normal Warning):\n  • Gradual pressure loss\n  • Natural air leakage\n- 'Immediately Check Tire' (Emergency Warning):\n  • Sudden pressure loss\n  • Possible tire damage\n\n3. Initialization Requirements:\n- Must initialize when:\n  • Rotating tires\n  • Changing tire pressure\n  • Replacing tires\n  • Registering new ID codes\n  • Changing between wheel sets\n\n4. Initialization Procedure:\n- Park for 20 minutes\n- Set correct cold tire pressure\n- Start engine\n- Press menu control switch\n- Select TPWS settings\n- Hold until warning light blinks\n- Drive 10-30 minutes at 25+ mph\n\n5. System Limitations:\n- May not detect sudden punctures\n- Requires proper initialization\n- Affected by temperature changes\n- May be delayed in certain conditions"
+	},
+	{
+		"question": "What are all the CVT transmission operating modes, specifications, and maintenance requirements?",
+		"answer": "CVT Transmission Complete Details:\n\n1. Operating Modes:\n- D (Drive): Normal driving\n- M (Manual): Sequential shift simulation\n  • 10 simulated gear ratios\n  • Manual shift control\n- Sport Mode (if equipped):\n  • Enhanced response\n  • Modified shift patterns\n\n2. Specifications:\n- Fluid capacity: 8.7 qt (8.2 L)\n- Fluid type: Toyota Genuine CVT Fluid FE only\n- Operating temperature range\n- Shift lock release procedure\n\n3. Special Operating Features:\n- Shift lock system\n- Key interlock system\n- Sport mode operation\n- Sequential shift operation\n- Hill-start assist control\n\n4. Warning Indicators:\n- High fluid temperature\n- System malfunction\n- Shift position indicator\n\n5. Maintenance Requirements:\n- Fluid check by dealer only\n- No user serviceable parts\n- Inspect for leaks regularly\n\n6. Operating Precautions:\n- Don't shift with accelerator pressed\n- Come to complete stop before P\n- Use engine braking on hills"
+	},
+	{
+		"question": "What are all the advanced driver assistance systems' exact operating parameters and limitations?",
+		"answer": "Advanced Driver Assistance Systems Details:\n\n1. Pre-Collision System (PCS):\n- Operating speed: All speeds\n- Detection range: Up to 328 ft (100 m)\nLimitations:\n- May not detect in low light\n- Reduced function in rain/fog\n- May not detect small objects\n\n2. Lane Tracing Assist (LTA):\n- Operating speed: Above 20 mph\n- Requires visible lane markers\nLimitations:\n- May not work in heavy rain\n- Cannot detect faded markers\n- Limited function in sharp curves\n\n3. Dynamic Radar Cruise Control:\n- Speed range: 0-110 mph\n- Following distance: 3 levels\nLimitations:\n- May not detect motorcycles\n- Limited function in heavy rain\n- May not detect sudden cutins\n\n4. Blind Spot Monitor (BSM):\n- Detection range: 9.8 ft (3 m)\n- Operating speed: Above 10 mph\nLimitations:\n- Cannot detect all objects\n- Reduced range in rain\n- May miss fast-approaching vehicles\n\n5. Parking Support Brake:\n- Detection range: 5 ft (1.5 m)\n- Operating speed: Below 9 mph\nLimitations:\n- Cannot detect small objects\n- Limited function with dirty sensors\n- May not detect high-mounted objects"
+	},
+	{
+		"question": "What are all the specific procedures for every type of emergency situation, including complete step-by-step instructions?",
+		"answer": "Emergency Procedures Complete Guide:\n\n1. If Engine Dies While Driving:\n- Stay calm, steer straight\n- Brake gradually, no sudden braking\n- Move to safe location\n- Try restart after stopping\n- If no restart, follow no-start procedure\n\n2. Complete Engine No-Start Procedure:\nIf Engine Won't Crank:\n- Check smart key battery\n- Try backup key start method\n- Check battery connections\n- Attempt jump start\nIf Engine Cranks:\n- Check fuel level\n- Follow flooded engine procedure\n- Check immobilizer system\n\n3. Tire Blowout Response:\n- Grip wheel firmly\n- Gradual brake application\n- Move to safe location\n- Turn on hazards\n- Follow spare tire installation procedure\n\n4. Vehicle Submersion:\n- Remove seatbelt immediately\n- Open windows while electrical system works\n- If windows won't open, wait for vehicle to fill partially\n- Open door when pressure equalizes\n- Exit vehicle immediately\n\n5. Fire Procedure:\n- Stop vehicle immediately\n- Turn off engine\n- Evacuate all passengers\n- Call emergency services\n- Use fire extinguisher if safe\n- Do not open hood if engine fire\n\n6. Loss of Brake Power:\n- Pump brake pedal\n- Maintain greater following distance\n- Downshift for engine braking\n- Use parking brake gradually\n- Find safe location to stop"
+	}
+]

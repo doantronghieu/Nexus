@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ service_name }} - WebSocket Testing Interface</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    
+    <style>
+        /* Video preview container styles */
+        .preview-container {
+            max-width: 280px;
+            height: 210px;
+            position: relative;
+            background-color: #f3f4f6;
+            border-radius: 0.5rem;
+        }
+        
+        .preview-container video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 0.5rem;
+            background-color: #000;
+            display: block;
+        }
+        
+        #cameraPlaceholder {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #f3f4f6;
+            border-radius: 0.5rem;
+        }
+        
+        video:not([srcObject=""]) + #cameraPlaceholder {
+            display: none;
+        }
+        
+        /* Connection status indicator */
+        .status-dot {
+            height: 8px;
+            width: 8px;
+            border-radius: 50%;
+            margin-right: 6px;
+        }
+        
+        .status-dot.connected {
+            background-color: #10B981;
+            box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
+        }
+        
+        .status-dot.disconnected {
+            background-color: #EF4444;
+            box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2);
+        }
+        
+        /* Animations */
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: .5; }
+        }
+        
+        .animate-pulse-custom {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        
+        /* File preview styles */
+        .file-preview {
+            max-height: 160px;
+            object-fit: contain;
+        }
+        
+        /* Message log styles */
+        .message-log {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+            line-height: 1.5;
+        }
+        
+        .message-log-entry {
+            padding: 0.25rem 0;
+            border-bottom: 1px solid #f3f4f6;
+        }
+        
+        .message-log-entry:last-child {
+            border-bottom: none;
+        }
+        
+        .message-log-entry.error {
+            color: #DC2626;
+        }
+        
+        .message-log-entry.success {
+            color: #059669;
+        }
+        
+        .message-log-entry.info {
+            color: #2563EB;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-100 min-h-screen">
+    <div class="container mx-auto px-4 py-2 max-h-screen flex flex-col">
+        <!-- Header -->
+        <div class="mb-2 flex items-center justify-between bg-white p-2 rounded-lg shadow">
+            <div class="flex items-center gap-4">
+                <a href="/" class="text-blue-500 hover:text-blue-600 flex items-center gap-1">
+                    <span class="material-icons text-sm">arrow_back</span>
+                    <span>Dashboard</span>
+                </a>
+                
+                <h1 class="text-xl font-bold">WebSocket Testing Interface</h1>
+                
+                <!-- Server Info Badge -->
+                <div class="px-2 py-1 bg-gray-100 rounded text-sm">
+                    <span class="font-medium">Server:</span>
+                    <span id="wsUrl" class="cursor-pointer hover:text-blue-500" title="Click to copy">
+                        {{ server_config.full_ws_url }}
+                    </span>
+                </div>
+                
+                <!-- Health Badge -->
+                <div id="healthBadge" class="px-2 py-1 bg-white border rounded-lg shadow-sm">
+                    <div class="flex items-center gap-1 text-sm text-gray-600">
+                        <div id="healthDot" class="w-2 h-2 rounded-full bg-gray-400"></div>
+                        <span class="font-medium">Health Status</span>
+                        <span id="healthUpdateTime" class="text-xs bg-gray-100 px-1 rounded"></span>
+                    </div>
+                    <div id="healthDetails" class="text-xs"></div>
+                </div>
+            </div>
+            
+            <!-- Connection Controls -->
+            <div class="flex items-center gap-2">
+                <div class="flex items-center">
+                    <div id="statusDot" class="status-dot disconnected"></div>
+                    <div id="connectionStatus" class="text-sm">Disconnected</div>
+                </div>
+                <button id="connectBtn" class="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 transition flex items-center gap-1">
+                    <span class="material-icons text-sm">power</span>
+                    <span>Connect</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 flex-grow overflow-hidden">
+            <!-- Left Column -->
+            <div class="space-y-3 overflow-y-auto md:pr-2">
+                <!-- Text Messaging -->
+                <div class="bg-white p-3 rounded-lg shadow">
+                    <h2 class="text-md font-semibold mb-2">Text Message</h2>
+                    <div class="space-y-2">
+                        <input type="text" id="messageInput" 
+                               placeholder="Enter message..." 
+                               class="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        <button id="sendMessageBtn" class="w-full px-3 py-1.5 bg-blue-500 text-white rounded hover:bg-blue-600 transition flex items-center justify-center gap-1">
+                            <span class="material-icons text-sm">send</span>
+                            <span>Send Message</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- File Upload -->
+                <div class="bg-white p-3 rounded-lg shadow">
+                    <h2 class="text-md font-semibold mb-2">File Upload</h2>
+                    <div class="space-y-2">
+                        <div class="relative">
+                            <input type="file" id="fileInput" class="hidden" accept="image/*,audio/*">
+                            <button onclick="document.getElementById('fileInput').click()" 
+                                    class="w-full px-3 py-1.5 bg-blue-500 text-white rounded hover:bg-blue-600 transition flex items-center justify-center gap-1">
+                                <span class="material-icons text-sm">file_upload</span>
+                                <span>Choose File</span>
+                            </button>
+                            <div id="fileInfo" class="mt-1 text-sm text-gray-600"></div>
+                        </div>
+                        <div id="filePreview" class="hidden rounded-lg overflow-hidden bg-gray-50 p-2"></div>
+                        <button id="sendFileBtn" class="w-full px-3 py-1.5 bg-blue-500 text-white rounded hover:bg-blue-600 transition flex items-center justify-center gap-1" disabled>
+                            <span class="material-icons text-sm">send</span>
+                            <span>Send File</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Messages Log -->
+                <div class="bg-white p-3 rounded-lg shadow flex-grow">
+                    <div class="flex items-center justify-between mb-2">
+                        <h2 class="text-md font-semibold">Messages Log</h2>
+                        <div class="flex items-center gap-2">
+                            <button id="exportLogBtn" class="px-2 py-1 text-sm bg-gray-100 text-gray-600 rounded hover:bg-gray-200 transition flex items-center gap-1">
+                                <span class="material-icons text-sm">download</span>
+                                <span>Export</span>
+                            </button>
+                            <button id="clearLogBtn" class="px-2 py-1 text-sm bg-gray-100 text-gray-600 rounded hover:bg-gray-200 transition flex items-center gap-1">
+                                <span class="material-icons text-sm">clear_all</span>
+                                <span>Clear</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div id="messageLog" class="h-48 overflow-y-auto p-2 bg-gray-50 rounded message-log text-sm"></div>
+                </div>
+            </div>
+
+            <!-- Right Column -->
+            <div class="space-y-3 overflow-y-auto md:pl-2">
+                <!-- Audio Streaming -->
+                <div class="bg-white p-3 rounded-lg shadow">
+                    <h2 class="text-md font-semibold mb-2">Audio Streaming</h2>
+                    <div class="space-y-2">
+                        <button id="startAudioBtn" class="w-full px-3 py-1.5 bg-red-500 text-white rounded hover:bg-red-600 transition flex items-center justify-center gap-1">
+                            <span class="material-icons text-sm">mic</span>
+                            <span class="button-text">Start Streaming</span>
+                        </button>
+                        <div id="audioStatus" class="hidden items-center justify-center p-2 rounded-lg border border-green-500 text-green-500">
+                            <span class="animate-pulse-custom">● Streaming Audio</span>
+                        </div>
+                        <div id="audioVisualizer" class="h-16 bg-gray-50 rounded-lg">
+                            <!-- Audio visualization will be rendered here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Video Streaming -->
+                <div class="bg-white p-3 rounded-lg shadow">
+                    <h2 class="text-md font-semibold mb-2">Camera Streaming</h2>
+                    <div class="space-y-2">
+                        <div class="preview-container mx-auto">
+                            <video id="videoPreview" autoplay playsinline muted></video>
+                            <div id="cameraPlaceholder" class="w-full h-full flex items-center justify-center text-gray-400">
+                                <span class="material-icons text-4xl">videocam_off</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button id="startVideoBtn" class="flex-1 px-3 py-1.5 bg-red-500 text-white rounded hover:bg-red-600 transition flex items-center justify-center gap-1">
+                                <span class="material-icons text-sm">videocam</span>
+                                <span class="button-text">Start Camera</span>
+                            </button>
+                            <button id="stopVideoBtn" class="flex-1 px-3 py-1.5 bg-gray-500 text-white rounded hover:bg-gray-600 transition flex items-center justify-center gap-1" disabled>
+                                <span class="material-icons text-sm">videocam_off</span>
+                                <span>Stop Camera</span>
+                            </button>
+                        </div>
+                        <button id="sendVideoBtn" class="w-full px-3 py-1.5 bg-blue-500 text-white rounded hover:bg-blue-600 transition flex items-center justify-center gap-1" disabled>
+                            <span class="material-icons text-sm">stream</span>
+                            <span class="button-text">Start Streaming</span>
+                        </button>
+                        <div class="text-xs text-gray-500">
+                            Stream Settings:
+                            <span id="videoStats"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Connection Info -->
+                <div class="bg-white p-3 rounded-lg shadow">
+                    <h2 class="text-md font-semibold mb-2">Connection Information</h2>
+                    <div id="connectionInfo" class="space-y-2 text-sm text-gray-600">
+                        <div>
+                            <span class="font-medium">Status:</span>
+                            <span id="connStatus">Disconnected</span>
+                        </div>
+                        <div>
+                            <span class="font-medium">Duration:</span>
+                            <span id="connDuration">-</span>
+                        </div>
+                        <div>
+                            <span class="font-medium">Messages Sent:</span>
+                            <span id="messagesSent">0</span>
+                        </div>
+                        <div>
+                            <span class="font-medium">Messages Received:</span>
+                            <span id="messagesReceived">0</span>
+                        </div>
+                        <div>
+                            <span class="font-medium">Last Message:</span>
+                            <span id="lastMessageTime">-</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="notificationToast" class="fixed bottom-4 right-4 transform transition-transform duration-300 translate-y-full">
+        <div class="bg-gray-800 text-white px-4 py-2 rounded-lg shadow-lg">
+            <div class="flex items-center gap-2">
+                <span id="notificationIcon" class="material-icons text-sm"></span>
+                <span id="notificationMessage"></span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Server configuration from template
+        const serverConfig = {
+            host: '{{ server_config.host }}',
+            port: '{{ server_config.port }}',
+            apiPrefix: '{{ server_config.api_prefix }}',
+            wsUrl: '{{ server_config.full_ws_url }}',
+            baseUrl: '{{ server_config.base_url }}'
+        };
+        
+        // Global variables
+        let ws = null;
+        let videoStream = null;
+        let videoRecorder = null;
+        let isStreamingVideo = false;
+        let audioStream = null;
+        let audioContext = null;
+        let mediaStreamSource = null;
+        let processor = null;
+        let isStreamingAudio = false;
+        let connectionStartTime = null;
+        let messageCounter = { sent: 0, received: 0 };
+        let lastMessageTime = null;
+
+        // Connection management
+        function connect() {
+            if (ws && ws.readyState === WebSocket.OPEN) {
+                ws.close();
+                stopHealthCheck();
+                return;
+            }
+
+            ws = new WebSocket(serverConfig.wsUrl);
+
+            ws.onopen = () => {
+                updateConnectionStatus(true);
+                logMessage('Connected to WebSocket server', 'success');
+                startHealthCheck();
+                connectionStartTime = new Date();
+                startConnectionTimer();
+            };
+
+            ws.onclose = () => {
+                updateConnectionStatus(false);
+                logMessage('Disconnected from WebSocket server', 'info');
+                stopHealthCheck();
+                stopConnectionTimer();
+            };
+
+            ws.onmessage = (event) => {
+                messageCounter.received++;
+                lastMessageTime = new Date();
+                updateConnectionInfo();
+                
+                try {
+                    const data = JSON.parse(event.data);
+                    logMessage(`Received: ${JSON.stringify(data, null, 2)}`, 'info');
+                } catch (e) {
+                    logMessage(`Received binary data of size: ${event.data.size} bytes`, 'info');
+                }
+            };
+
+            ws.onerror = (error) => {
+                logMessage(`Error: ${error.message}`, 'error');
+                stopHealthCheck();
+            };
+        }
+
+        function updateConnectionStatus(connected) {
+            const statusDot = document.getElementById('statusDot');
+            const connectionStatus = document.getElementById('connectionStatus');
+            const connectBtn = document.getElementById('connectBtn');
+            const connStatus = document.getElementById('connStatus');
+
+            if (connected) {
+                statusDot.classList.replace('disconnected', 'connected');
+                connectionStatus.textContent = 'Connected';
+                connStatus.textContent = 'Connected';
+                connectBtn.innerHTML = '<span class="material-icons text-sm">power_off</span><span>Disconnect</span>';
+                connectBtn.classList.replace('bg-blue-500', 'bg-red-500');
+                connectBtn.classList.replace('hover:bg-blue-600', 'hover:bg-red-600');
+                showNotification('Connected to server', 'check_circle', 'bg-green-500');
+            } else {
+                statusDot.classList.replace('connected', 'disconnected');
+                connectionStatus.textContent = 'Disconnected';
+                connStatus.textContent = 'Disconnected';
+                connectBtn.innerHTML = '<span class="material-icons text-sm">power</span><span>Connect</span>';
+                connectBtn.classList.replace('bg-red-500', 'bg-blue-500');
+                connectBtn.classList.replace('hover:bg-red-600', 'hover:bg-blue-600');
+                showNotification('Disconnected from server', 'error_outline', 'bg-red-500');
+                
+                // Reset streaming states
+                if (isStreamingVideo) stopVideoStream();
+                if (isStreamingAudio) stopAudioStream();
+            }
+
+            // Update button states
+            document.getElementById('sendMessageBtn').disabled = !connected;
+            document.getElementById('sendFileBtn').disabled = !connected;
+            document.getElementById('startAudioBtn').disabled = !connected;
+            if (!connected) document.getElementById('sendVideoBtn').disabled = true;
+        }
+
+        // Health check polling
+        let healthCheckInterval;
+
+        function startHealthCheck() {
+            checkHealth();
+            healthCheckInterval = setInterval(checkHealth, 5000);
+        }
+
+        function stopHealthCheck() {
+            if (healthCheckInterval) {
+                clearInterval(healthCheckInterval);
+            }
+            document.getElementById('healthDot').className = 'w-2 h-2 rounded-full bg-gray-400';
+            document.getElementById('healthDetails').innerHTML = '';
+            document.getElementById('healthUpdateTime').textContent = '';
+        }
+
+        async function checkHealth() {
+            try {
+                const response = await fetch(`${serverConfig.baseUrl}/health`);
+                const data = await response.json();
+                updateHealthBadge(data);
+            } catch (error) {
+                console.error('Health check error:', error);
+                updateHealthBadge({ status: 'error', error: error.message });
+            }
+        }
+
+        function updateHealthBadge(data) {
+            const healthDot = document.getElementById('healthDot');
+            const healthDetails = document.getElementById('healthDetails');
+            const healthUpdateTime = document.getElementById('healthUpdateTime');
+            
+            healthDot.className = `w-2 h-2 rounded-full ${data.status === 'healthy' ? 'bg-green-500' : 'bg-red-500'}`;
+            healthUpdateTime.textContent = new Date().toLocaleTimeString();
+            
+            healthDetails.innerHTML = '';
+            Object.entries(data).forEach(([key, value]) => {
+                if (key === 'timestamp') return;
+                const div = document.createElement('div');
+                div.className = 'flex justify-between';
+                div.innerHTML = `
+                    <span class="text-gray-500">${key}</span>
+                    <span class="font-medium ${key === 'status' ? (value === 'healthy' ? 'text-green-600' : 'text-red-600') : ''}">${value}</span>
+                `;
+                healthDetails.appendChild(div);
+            });
+        }
+
+        // Connection timer
+        let connectionTimer;
+
+        function startConnectionTimer() {
+            connectionTimer = setInterval(updateConnectionDuration, 1000);
+            updateConnectionDuration();
+        }
+
+        function stopConnectionTimer() {
+            if (connectionTimer) {
+                clearInterval(connectionTimer);
+            }
+            document.getElementById('connDuration').textContent = '-';
+        }
+
+        function updateConnectionDuration() {
+            if (!connectionStartTime) return;
+            
+            const duration = new Date() - connectionStartTime;
+            const seconds = Math.floor(duration / 1000);
+            const minutes = Math.floor(seconds / 60);
+            const hours = Math.floor(minutes / 60);
+            
+            const formatTime = (time) => time.toString().padStart(2, '0');
+            document.getElementById('connDuration').textContent = 
+                `${formatTime(hours)}:${formatTime(minutes % 60)}:${formatTime(seconds % 60)}`;
+        }
+
+        // Message handling
+        const messageInput = document.getElementById('messageInput');
+        const sendMessageBtn = document.getElementById('sendMessageBtn');
+        const messageLog = document.getElementById('messageLog');
+        const clearLogBtn = document.getElementById('clearLogBtn');
+        const exportLogBtn = document.getElementById('exportLogBtn');
+
+        function logMessage(message, type = 'info') {
+            const entry = document.createElement('div');
+            entry.className = `message-log-entry ${type}`;
+            entry.textContent = `${new Date().toLocaleTimeString()} - ${message}`;
+            messageLog.appendChild(entry);
+            messageLog.scrollTop = messageLog.scrollHeight;
+        }
+
+        clearLogBtn.addEventListener('click', () => {
+            messageLog.innerHTML = '';
+            showNotification('Message log cleared', 'delete', 'bg-gray-500');
+        });
+
+        exportLogBtn.addEventListener('click', () => {
+            const logContent = Array.from(messageLog.children)
+                .map(entry => entry.textContent)
+                .join('\n');
+            
+            const blob = new Blob([logContent], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `websocket-log-${new Date().toISOString()}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showNotification('Log exported successfully', 'download_done', 'bg-green-500');
+        });
+
+        messageInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendMessageBtn.click();
+            }
+        });
+
+        sendMessageBtn.addEventListener('click', () => {
+            if (!ws || ws.readyState !== WebSocket.OPEN) {
+                logMessage('Error: Not connected', 'error');
+                return;
+            }
+
+            const message = {
+                type: "text",
+                data: messageInput.value,
+                timestamp: new Date().toISOString()
+            };
+            
+            try {
+                ws.send(JSON.stringify(message));
+                messageCounter.sent++;
+                updateConnectionInfo();
+                logMessage(`Sent: ${messageInput.value}`);
+                messageInput.value = '';
+            } catch (error) {
+                logMessage(`Error sending message: ${error.message}`, 'error');
+            }
+        });
+
+        // File handling
+        const fileInput = document.getElementById('fileInput');
+        const fileInfo = document.getElementById('fileInfo');
+        const filePreview = document.getElementById('filePreview');
+        const sendFileBtn = document.getElementById('sendFileBtn');
+
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) {
+                resetFileInput();
+                return;
+            }
+
+            fileInfo.textContent = `Selected: ${file.name} (${(file.size / 1024).toFixed(1)} KB)`;
+            filePreview.innerHTML = '';
+            filePreview.classList.remove('hidden');
+
+            if (file.type.startsWith('image/')) {
+                const img = document.createElement('img');
+                img.src = URL.createObjectURL(file);
+                img.className = 'file-preview mx-auto';
+                filePreview.appendChild(img);
+            } else if (file.type.startsWith('audio/')) {
+                const audio = document.createElement('audio');
+                audio.src = URL.createObjectURL(file);
+                audio.controls = true;
+                audio.className = 'w-full';
+                filePreview.appendChild(audio);
+            }
+
+            sendFileBtn.disabled = false;
+        });
+
+        function resetFileInput() {
+            fileInput.value = '';
+            fileInfo.textContent = '';
+            filePreview.innerHTML = '';
+            filePreview.classList.add('hidden');
+            sendFileBtn.disabled = true;
+        }
+
+        sendFileBtn.addEventListener('click', async () => {
+            if (!ws || ws.readyState !== WebSocket.OPEN) {
+                logMessage('Error: Not connected', 'error');
+                return;
+            }
+
+            const file = fileInput.files[0];
+            if (!file) {
+                logMessage('Error: No file selected', 'error');
+                return;
+            }
+
+            try {
+                // Send metadata first
+                const metadata = {
+                    type: "file",
+                    fileName: file.name,
+                    fileType: file.type,
+                    fileSize: file.size,
+                    timestamp: new Date().toISOString()
+                };
+                ws.send(JSON.stringify(metadata));
+
+                // Send file data
+                const buffer = await file.arrayBuffer();
+                ws.send(buffer);
+                
+                messageCounter.sent += 2; // Metadata + file
+                updateConnectionInfo();
+                logMessage(`Sent file: ${file.name} (${file.type})`);
+                showNotification('File sent successfully', 'check_circle', 'bg-green-500');
+                
+                resetFileInput();
+            } catch (error) {
+                logMessage(`Error sending file: ${error.message}`, 'error');
+                showNotification('Error sending file', 'error_outline', 'bg-red-500');
+            }
+        });
+
+        // Audio streaming
+        const startAudioBtn = document.getElementById('startAudioBtn');
+        const audioStatus = document.getElementById('audioStatus');
+        const audioVisualizer = document.getElementById('audioVisualizer');
+
+        async function startAudioStream() {
+            try {
+                audioStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                mediaStreamSource = audioContext.createMediaStreamSource(audioStream);
+                processor = audioContext.createScriptProcessor(2048, 1, 1);
+                
+                // Set up audio visualization
+                const analyser = audioContext.createAnalyser();
+                analyser.fftSize = 256;
+                mediaStreamSource.connect(analyser);
+                
+                // Start visualization
+                visualizeAudio(analyser);
+                
+                processor.onaudioprocess = (e) => {
+                    if (ws && ws.readyState === WebSocket.OPEN && isStreamingAudio) {
+                        const inputData = e.inputBuffer.getChannelData(0);
+                        const pcmData = new Int16Array(inputData.length);
+                        for (let i = 0; i < inputData.length; i++) {
+                            pcmData[i] = inputData[i] * 0x7FFF;
+                        }
+                        
+                        // Send audio metadata
+                        ws.send(JSON.stringify({
+                            type: "audio_stream",
+                            timestamp: new Date().toISOString(),
+                            sampleRate: audioContext.sampleRate,
+                            channels: 1,
+                            bytesPerSample: 2
+                        }));
+                        
+                        // Send audio data
+                        ws.send(pcmData.buffer);
+                        messageCounter.sent += 2;
+                        updateConnectionInfo();
+                    }
+                };
+                
+                mediaStreamSource.connect(processor);
+                processor.connect(audioContext.destination);
+                
+                isStreamingAudio = true;
+                updateAudioUI(true);
+                logMessage('Started audio streaming');
+                showNotification('Audio streaming started', 'mic', 'bg-green-500');
+                
+            } catch (error) {
+                logMessage(`Error: ${error.message}`, 'error');
+                showNotification('Error accessing microphone', 'error_outline', 'bg-red-500');
+                updateAudioUI(false);
+            }
+        }
+
+        function stopAudioStream() {
+            if (processor) {
+                processor.disconnect();
+                processor = null;
+            }
+            if (mediaStreamSource) {
+                mediaStreamSource.disconnect();
+                mediaStreamSource = null;
+            }
+            if (audioContext) {
+                audioContext.close();
+                audioContext = null;
+            }
+            if (audioStream) {
+                audioStream.getTracks().forEach(track => track.stop());
+                audioStream = null;
+            }
+            
+            isStreamingAudio = false;
+            updateAudioUI(false);
+            logMessage('Stopped audio streaming');
+            showNotification('Audio streaming stopped', 'mic_off', 'bg-gray-500');
+        }
+
+        function updateAudioUI(streaming) {
+            const buttonText = startAudioBtn.querySelector('.button-text');
+            buttonText.textContent = streaming ? 'Stop Streaming' : 'Start Streaming';
+            startAudioBtn.classList.remove(streaming ? 'bg-red-500' : 'bg-green-500');
+            startAudioBtn.classList.add(streaming ? 'bg-green-500' : 'bg-red-500')
+            startAudioBtn.classList.remove(streaming ? 'hover:bg-red-600' : 'hover:bg-green-600');
+            startAudioBtn.classList.add(streaming ? 'hover:bg-green-600' : 'hover:bg-red-600');
+            audioStatus.classList[streaming ? 'remove' : 'add']('hidden');
+            audioStatus.classList[streaming ? 'add' : 'remove']('flex');
+        }
+
+        function visualizeAudio(analyser) {
+            const bufferLength = analyser.frequencyBinCount;
+            const dataArray = new Uint8Array(bufferLength);
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            
+            audioVisualizer.innerHTML = '';
+            audioVisualizer.appendChild(canvas);
+            
+            function draw() {
+                const width = canvas.width = audioVisualizer.clientWidth;
+                const height = canvas.height = audioVisualizer.clientHeight;
+                
+                if (!isStreamingAudio) return;
+                
+                requestAnimationFrame(draw);
+                analyser.getByteFrequencyData(dataArray);
+                
+                ctx.fillStyle = '#f9fafb';
+                ctx.fillRect(0, 0, width, height);
+                
+                const barWidth = (width / bufferLength) * 2.5;
+                let barHeight;
+                let x = 0;
+                
+                for (let i = 0; i < bufferLength; i++) {
+                    barHeight = (dataArray[i] / 255) * height;
+                    ctx.fillStyle = `rgb(${dataArray[i]}, 111, 255)`;
+                    ctx.fillRect(x, height - barHeight, barWidth, barHeight);
+                    x += barWidth + 1;
+                }
+            }
+            
+            draw();
+        }
+
+        // Video streaming
+        const startVideoBtn = document.getElementById('startVideoBtn');
+        const stopVideoBtn = document.getElementById('stopVideoBtn');
+        const sendVideoBtn = document.getElementById('sendVideoBtn');
+        const videoPreview = document.getElementById('videoPreview');
+        const videoStats = document.getElementById('videoStats');
+
+        async function startVideoStream() {
+            try {
+                videoStream = await navigator.mediaDevices.getUserMedia({ 
+                    video: {
+                        width: { ideal: 280 },
+                        height: { ideal: 210 },
+                        frameRate: { ideal: 15 }
+                    }
+                });
+                
+                videoPreview.srcObject = videoStream;
+                await videoPreview.play();
+                
+                updateVideoUI(true);
+                logMessage('Camera started successfully');
+                showNotification('Camera started', 'videocam', 'bg-green-500');
+                
+                // Update video stats
+                const videoTrack = videoStream.getVideoTracks()[0];
+                const settings = videoTrack.getSettings();
+                videoStats.textContent = `${settings.width}x${settings.height} @${settings.frameRate}fps`;
+                
+            } catch (error) {
+                logMessage(`Error: ${error.message}`, 'error');
+                showNotification('Error accessing camera', 'error_outline', 'bg-red-500');
+                updateVideoUI(false);
+            }
+        }
+
+        function stopVideoStream() {
+            if (isStreamingVideo) {
+                stopVideoStreaming();
+            }
+            
+            if (videoStream) {
+                videoStream.getTracks().forEach(track => track.stop());
+                videoPreview.srcObject = null;
+            }
+            
+            updateVideoUI(false);
+            logMessage('Camera stopped');
+            showNotification('Camera stopped', 'videocam_off', 'bg-gray-500');
+            videoStats.textContent = '';
+        }
+
+        function startVideoStreaming() {
+            if (!videoStream || !ws || ws.readyState !== WebSocket.OPEN) {
+                logMessage('Error: Camera or WebSocket not ready', 'error');
+                return;
+            }
+
+            const videoTrack = videoStream.getVideoTracks()[0];
+            videoRecorder = new MediaRecorder(new MediaStream([videoTrack]), {
+                mimeType: 'video/webm;codecs=vp8',
+                videoBitsPerSecond: 100000
+            });
+
+            videoRecorder.ondataavailable = (event) => {
+                if (event.data.size > 0 && ws && ws.readyState === WebSocket.OPEN) {
+                    ws.send(JSON.stringify({
+                        type: "video_stream",
+                        timestamp: new Date().toISOString(),
+                        chunkSize: event.data.size,
+                        frameWidth: videoTrack.getSettings().width,
+                        frameHeight: videoTrack.getSettings().height,
+                        frameRate: videoTrack.getSettings().frameRate
+                    }));
+                    ws.send(event.data);
+                    messageCounter.sent += 2;
+                    updateConnectionInfo();
+                }
+            };
+
+            videoRecorder.start(100);
+            isStreamingVideo = true;
+            updateStreamingUI(true);
+            logMessage('Started video streaming');
+            showNotification('Video streaming started', 'stream', 'bg-green-500');
+        }
+
+        function stopVideoStreaming() {
+            if (videoRecorder) {
+                videoRecorder.stop();
+                videoRecorder = null;
+            }
+            isStreamingVideo = false;
+            updateStreamingUI(false);
+            logMessage('Stopped video streaming');
+            showNotification('Video streaming stopped', 'stop', 'bg-gray-500');
+        }
+
+        function updateVideoUI(cameraActive) {
+            startVideoBtn.disabled = cameraActive;
+            stopVideoBtn.disabled = !cameraActive;
+            sendVideoBtn.disabled = !cameraActive;
+            
+            startVideoBtn.querySelector('.button-text').textContent = cameraActive ? 'Camera Active' : 'Start Camera';
+            startVideoBtn.classList.remove(cameraActive ? 'bg-red-500' : 'bg-green-500');
+            startVideoBtn.classList.add(cameraActive ? 'bg-green-500' : 'bg-red-500');
+            startVideoBtn.classList.remove(cameraActive ? 'hover:bg-red-600' : 'hover:bg-green-600');
+            startVideoBtn.classList.add(cameraActive ? 'hover:bg-green-600' : 'hover:bg-red-600');
+        }
+
+        function updateStreamingUI(streaming) {
+            sendVideoBtn.querySelector('.button-text').textContent = streaming ? 'Stop Streaming' : 'Start Streaming';
+            sendVideoBtn.classList.remove(streaming ? 'bg-blue-500' : 'bg-red-500');
+            sendVideoBtn.classList.add(streaming ? 'bg-red-500' : 'bg-blue-500');
+            sendVideoBtn.classList.remove(streaming ? 'hover:bg-blue-600' : 'hover:bg-red-600');
+            sendVideoBtn.classList.add(streaming ? 'hover:bg-red-600' : 'hover:bg-blue-600');
+            
+            if (streaming) {
+                sendVideoBtn.classList.add('animate-pulse-custom');
+            } else {
+                sendVideoBtn.classList.remove('animate-pulse-custom');
+            }
+        }
+
+        function updateConnectionInfo() {
+            document.getElementById('messagesSent').textContent = messageCounter.sent;
+            document.getElementById('messagesReceived').textContent = messageCounter.received;
+            document.getElementById('lastMessageTime').textContent = 
+                lastMessageTime ? lastMessageTime.toLocaleTimeString() : '-';
+        }
+
+        // Notification system
+        let notificationTimeout;
+
+        function showNotification(message, icon, bgColor) {
+            const toast = document.getElementById('notificationToast');
+            const notificationIcon = document.getElementById('notificationIcon');
+            const notificationMessage = document.getElementById('notificationMessage');
+            
+            // Clear existing timeout
+            if (notificationTimeout) {
+                clearTimeout(notificationTimeout);
+                toast.classList.add('translate-y-full');
+            }
+
+            // Update content
+            notificationIcon.textContent = icon;
+            notificationMessage.textContent = message;
+            toast.className = `fixed bottom-4 right-4 transform transition-transform duration-300 ${bgColor}`;
+            
+            // Show notification
+            setTimeout(() => {
+                toast.classList.remove('translate-y-full');
+            }, 100);
+
+            // Hide after 3 seconds
+            notificationTimeout = setTimeout(() => {
+                toast.classList.add('translate-y-full');
+            }, 3000);
+        }
+
+        // Copy WebSocket URL functionality
+        document.getElementById('wsUrl').addEventListener('click', async () => {
+            try {
+                await navigator.clipboard.writeText(serverConfig.wsUrl);
+                showNotification('WebSocket URL copied to clipboard', 'content_copy', 'bg-blue-500');
+            } catch (error) {
+                showNotification('Failed to copy URL', 'error_outline', 'bg-red-500');
+            }
+        });
+
+        // Event listeners
+        startAudioBtn.addEventListener('click', () => {
+            if (isStreamingAudio) {
+                stopAudioStream();
+            } else {
+                startAudioStream();
+            }
+        });
+
+        startVideoBtn.addEventListener('click', startVideoStream);
+        stopVideoBtn.addEventListener('click', stopVideoStream);
+        sendVideoBtn.addEventListener('click', () => {
+            if (isStreamingVideo) {
+                stopVideoStreaming();
+            } else {
+                startVideoStreaming();
+            }
+        });
+
+        document.getElementById('connectBtn').addEventListener('click', connect);
+
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            connect();  // Auto-connect
+        });
+
+        // Cleanup on page unload
+        window.addEventListener('beforeunload', () => {
+            if (ws) ws.close();
+            if (audioStream) audioStream.getTracks().forEach(track => track.stop());
+            if (videoStream) videoStream.getTracks().forEach(track => track.stop());
+        });
+    </script>
+</body>
+</html>

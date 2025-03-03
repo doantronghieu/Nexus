@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>{{ service_name }} - Service Dashboard</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Service Dashboard for {{ service_name }}">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    
+    <style>
+        /* Ensure the page fits viewport */
+        body {
+            height: 100vh;
+            overflow: hidden;
+        }
+        
+        /* Mobile scroll container */
+        @media (max-width: 768px) {
+            body {
+                overflow-y: auto;
+            }
+            .mobile-scroll {
+                height: auto !important;
+                overflow: visible !important;
+            }
+        }
+        
+        /* Status indicators */
+        .status-dot {
+            height: 8px;
+            width: 8px;
+            border-radius: 50%;
+        }
+        
+        .status-dot.active {
+            background-color: #10B981;
+            box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
+        }
+        
+        .status-dot.inactive {
+            background-color: #EF4444;
+            box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2);
+        }
+        
+        /* Code blocks */
+        .code-block {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+            font-size: 0.875rem;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        
+        /* Tooltips */
+        [data-tooltip] {
+            position: relative;
+        }
+        
+        [data-tooltip]:hover::before {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 0.25rem 0.5rem;
+            background-color: #1F2937;
+            color: white;
+            font-size: 0.75rem;
+            border-radius: 0.25rem;
+            white-space: nowrap;
+            z-index: 10;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-100">
+    <div class="h-screen flex flex-col">
+        <!-- Header -->
+        <header class="bg-white shadow-sm p-4">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-2xl font-bold text-gray-800">{{ service_name }}</h1>
+                    <p class="text-sm text-gray-600">Service Dashboard</p>
+                </div>
+                <div class="flex items-center gap-3">
+                    <div id="healthStatus" class="flex items-center px-3 py-1 bg-gray-100 rounded-full">
+                        <div id="healthDot" class="status-dot inactive mr-2"></div>
+                        <span class="text-sm font-medium">Health Status</span>
+                    </div>
+                    <a href="/websocket" 
+                       class="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 transition flex items-center gap-1">
+                        <span class="material-icons text-sm">wifi_tethering</span>
+                        <span class="text-sm">WebSocket Tester</span>
+                    </a>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="flex-1 p-4 overflow-hidden mobile-scroll">
+            <div class="h-full grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Left Column -->
+                <div class="space-y-4">
+                    <!-- Server Info -->
+                    <section class="bg-white rounded-lg shadow-sm p-4">
+                        <h2 class="text-lg font-semibold mb-3">Server Configuration</h2>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <h3 class="text-sm font-medium text-gray-700 mb-2">Environment</h3>
+                                <ul class="space-y-2 text-sm">
+                                    <li class="flex justify-between">
+                                        <span class="text-gray-600">Environment:</span>
+                                        <span>{{ server_config.environment }}</span>
+                                    </li>
+                                    <li class="flex justify-between">
+                                        <span class="text-gray-600">Version:</span>
+                                        <span>{{ server_config.version }}</span>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h3 class="text-sm font-medium text-gray-700 mb-2">Network</h3>
+                                <ul class="space-y-2 text-sm">
+                                    <li class="flex justify-between">
+                                        <span class="text-gray-600">Host:</span>
+                                        <span>{{ server_config.host }}</span>
+                                    </li>
+                                    <li class="flex justify-between">
+                                        <span class="text-gray-600">Port:</span>
+                                        <span>{{ server_config.port }}</span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Connection URLs -->
+                    <section class="bg-white rounded-lg shadow-sm p-4">
+                        <h2 class="text-lg font-semibold mb-3">Connection URLs</h2>
+                        <div class="space-y-2">
+                            <div data-tooltip="Click to copy">
+                                <div class="text-sm font-medium text-gray-700">HTTP Base URL</div>
+                                <div class="code-block p-2 bg-gray-50 rounded cursor-pointer" onclick="copyToClipboard(this)">
+                                    {{ server_config.base_url }}
+                                </div>
+                            </div>
+                            <div data-tooltip="Click to copy">
+                                <div class="text-sm font-medium text-gray-700">API URL</div>
+                                <div class="code-block p-2 bg-gray-50 rounded cursor-pointer" onclick="copyToClipboard(this)">
+                                    {{ server_config.base_url }}{{ server_config.api_prefix }}
+                                </div>
+                            </div>
+                            <div data-tooltip="Click to copy">
+                                <div class="text-sm font-medium text-gray-700">WebSocket URL</div>
+                                <div class="code-block p-2 bg-gray-50 rounded cursor-pointer" onclick="copyToClipboard(this)">
+                                    {{ server_config.ws_url }}{{ server_config.api_prefix }}/ws
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+
+                <!-- Right Column -->
+                <div class="space-y-4">
+                    <!-- Health Monitor -->
+                    <section class="bg-white rounded-lg shadow-sm p-4">
+                        <div class="flex items-center justify-between mb-3">
+                            <h2 class="text-lg font-semibold">Health Monitor</h2>
+                            <button id="refreshHealthBtn" 
+                                    class="px-2 py-1 text-sm bg-blue-500 text-white rounded hover:bg-blue-600 transition flex items-center gap-1">
+                                <span class="material-icons text-sm">refresh</span>
+                                <span>Refresh</span>
+                            </button>
+                        </div>
+                        <div id="healthData" class="space-y-4">
+                            <!-- Health data will be dynamically inserted here -->
+                            <div class="animate-pulse">
+                                <div class="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
+                                <div class="h-4 bg-gray-200 rounded w-1/2"></div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Quick Links -->
+                    <section class="bg-white rounded-lg shadow-sm p-4">
+                        <h2 class="text-lg font-semibold mb-3">Quick Links</h2>
+                        <div class="grid grid-cols-2 gap-3">
+                            <a href="{{ server_config.base_url }}{{ server_config.api_prefix }}/docs" 
+                               class="flex flex-col items-center p-3 bg-blue-50 rounded-lg hover:bg-blue-100 transition">
+                                <span class="material-icons text-blue-600 mb-1">description</span>
+                                <span class="text-sm text-blue-600 font-medium">Swagger UI</span>
+                            </a>
+                            <a href="{{ server_config.base_url }}{{ server_config.api_prefix }}/redoc" 
+                               class="flex flex-col items-center p-3 bg-green-50 rounded-lg hover:bg-green-100 transition">
+                                <span class="material-icons text-green-600 mb-1">menu_book</span>
+                                <span class="text-sm text-green-600 font-medium">ReDoc</span>
+                            </a>
+                            <a href="/websocket" 
+                               class="flex flex-col items-center p-3 bg-purple-50 rounded-lg hover:bg-purple-100 transition">
+                                <span class="material-icons text-purple-600 mb-1">wifi_tethering</span>
+                                <span class="text-sm text-purple-600 font-medium">WebSocket Tester</span>
+                            </a>
+                            <a href="/health" 
+                               class="flex flex-col items-center p-3 bg-yellow-50 rounded-lg hover:bg-yellow-100 transition">
+                                <span class="material-icons text-yellow-600 mb-1">monitor_heart</span>
+                                <span class="text-sm text-yellow-600 font-medium">Health Check</span>
+                            </a>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="bg-white shadow-sm p-2">
+            <div class="text-center text-sm text-gray-600">
+                {{ service_name }} v{{ server_config.version }} - {{ server_config.environment }}
+            </div>
+        </footer>
+
+        <!-- Toast Notification -->
+        <div id="toast" class="fixed bottom-4 right-4 transform translate-y-full transition-transform duration-300">
+            <div class="bg-gray-800 text-white px-4 py-2 rounded-lg shadow-lg">
+                <span id="toastMessage"></span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Health check polling
+        let healthCheckInterval;
+
+        async function checkHealth() {
+            try {
+                const response = await fetch('{{ server_config.base_url }}/health');
+                const data = await response.json();
+                updateHealthStatus(data);
+            } catch (error) {
+                console.error('Health check error:', error);
+                updateHealthStatus({ status: 'error' });
+            }
+        }
+
+        function updateHealthStatus(data) {
+            const healthDot = document.getElementById('healthDot');
+            const healthData = document.getElementById('healthData');
+            
+            // Update health indicator
+            healthDot.className = `status-dot ${data.status === 'healthy' ? 'active' : 'inactive'} mr-2`;
+            
+            // Update health data section
+            healthData.innerHTML = `
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <h3 class="text-sm font-medium text-gray-700 mb-2">Status</h3>
+                        <ul class="space-y-2 text-sm">
+                            <li class="flex justify-between">
+                                <span class="text-gray-600">Status:</span>
+                                <span class="${data.status === 'healthy' ? 'text-green-600' : 'text-red-600'}">${data.status}</span>
+                            </li>
+                            <li class="flex justify-between">
+                                <span class="text-gray-600">Version:</span>
+                                <span>${data.version}</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="text-sm font-medium text-gray-700 mb-2">Connections</h3>
+                        <ul class="space-y-2 text-sm">
+                            <li class="flex justify-between">
+                                <span class="text-gray-600">Server:</span>
+                                <span>${data.server_connections}</span>
+                            </li>
+                            <li class="flex justify-between">
+                                <span class="text-gray-600">Client:</span>
+                                <span>${data.client_connections}</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="text-xs text-gray-500 mt-2">
+                    Last updated: ${new Date(data.timestamp).toLocaleString()}
+                </div>
+            `;
+        }
+
+        // Copy to clipboard functionality
+        async function copyToClipboard(element) {
+            try {
+                await navigator.clipboard.writeText(element.textContent.trim());
+                showToast('Copied to clipboard');
+            } catch (error) {
+                showToast('Failed to copy');
+            }
+        }
+
+        // Toast notification
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toastMessage');
+            
+            toastMessage.textContent = message;
+            toast.classList.remove('translate-y-full');
+            
+            setTimeout(() => {
+                toast.classList.add('translate-y-full');
+            }, 3000);
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initial health check
+            checkHealth();
+            
+            // Set up health check polling
+            healthCheckInterval = setInterval(checkHealth, 30000);
+            
+            // Set up refresh button
+            document.getElementById('refreshHealthBtn').addEventListener('click', checkHealth);
+        });
+
+        // Cleanup
+        window.addEventListener('beforeunload', () => {
+            if (healthCheckInterval) {
+                clearInterval(healthCheckInterval);
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,60 @@
+I spent 400+ hours in Cursor, here’s what I learned
+
+My best advice for using Cursor
+
+Rob Shocks
+- Clone Any App Design Effortlessly with Cursor AI
+- Unlocking Cursor AI Pro Secrets Tutorial
+- Cursor AI Composer Agent - Idea to Full Stack App in Minutes
+- Can You Build a Pro Website With v0 and Cursor in Just 1 Hour?
+- Cursor AI & V0 Tutorial Series: Ultimate Workflow Part 2
+
+AI Jason
+- 1000x Cursor workflow for building apps
+- Best Cursor Workflow that no one talks about...
+- How to use Cursor AI build & deploy production app in 20 mins
+
+Greg Isenberg 🔥
+- I can't believe we built an IOS app with AI in under 33 min (V0, Cursor AI, Xcode)
+- Cursor AI tutorial for beginners
+
+The Metaverse Guy
+- Cursor AI Tips and Tricks - FREE AI Code Editor (The Best and Worst)
+- How to Develop Mobile Apps for Android and iOS using Cursor AI Coding in React Native and Expo 2025
+- The Complete App Development Tutorial for Beginners in React Native Expo using Cursor AI Coding
+
+
+- David Ondrej 🔥: How to use Cursor Agent for beginners
+- Web Dev Cody: My best advice for using Cursor
+- Tech With Tim: Cursor Tutorial for Beginners (AI Code Editor)
+- Frank Nillard | AI Studio: Discover the Cursor Agent Workflow Nobody Is Talking About (Yet!)
+- Creator Magic: Coding a FULL App with AI (You Won't Believe This)
+- Ras Mic: How To Build Web Apps using V0 + Claude AI + Cursor AI
+- Simon Grimm: Can Cursor AI build my React Native App?
+- ZeroToProduct: How to use Cline + DeepSeek R1 to build everything you want
+
+Corbin Brown
+- How To Use Cursor AI For Beginners
+- Let's build an app's Backend using AI in 153 min (Cursor AI, Claude AI, Firebase, GitHub, React)
+- Let's build an app's Backend using AI in 21 min (Cursor AI, Claude AI, Firebase, GitHub, React) 
+- Let's host our app's backend on a Website using AI in 9 min (Cursor AI, Claude AI, Firebase Hosting)
+- Build an app with Authentication using AI in 27 min (Cursor AI, Claude AI, Firebase Authentication)
+- Build an app with User Database using AI in 39 min (Cursor AI, Claude AI, Firebase Firestore)
+- Build an app with OpenAI Functions using AI in 36 min (Cursor AI, ChatGPT, Firebase Functions)
+- Build an app with Storage using AI in 10 min (Cursor AI, Claude AI, Firebase Storage)
+- Build an app with Google Analytics using AI in 7 min (Cursor AI, Claude AI, GA4)
+- Only API Documentation Tutorial You Will Ever Need
+
+All About AI
+- Coding With OpenAI-o1 in Cursor - Can We Replace Claude 3.5 Now?
+- How to Build an AI Web App with Claude 3.5 and Cursor | Full Tutorial
+- OpenAI-o1 x Cursor | Use Cases - XML Prompting - AI Coding ++
+- OpenAI-o1 on Cursor | First Impressions and Tests vs Claude 3.5
+- Coding With Cursor AI: Lets Build a Full-Stack Web App feat Stripe | Full Tutorial
+- 3 AI Coding Workflow Experiments feat Claude 3.5 and Cursor AI
+- Coding with Cursor AI: My Real Time Builder AI App
+- 10,000 LINES of CODE in 3 HOURS! | Full AI Coding Project Tutorial
+
+
+ZeroToProduct
+- Qwen2.5-Max just dropped - let's have a look, shall we?

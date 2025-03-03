@@ -1,0 +1,627 @@
+Introduction
+Hey there! 👋
+
+We're a team of AI researchers and developers who are passionate about helping you build the next generation of AI assistants. Our mission is to empower individuals and organizations with accurate, unbiased, and factual information.
+
+Tavily Search API​
+Building an AI agent that leverages realtime online information is not a simple task. Scraping doesn't scale and requires expertise to refine, current search engine APIs don't provide explicit information to queries but simply potential related articles (which are not always related), and are not very customziable for AI agent needs. This is why we're excited to introduce the first search engine for AI agents - Tavily Search API.
+
+Tavily Search API is a search engine optimized for LLMs, aimed at efficient, quick and persistent search results. Unlike other search APIs such as Serp or Google, Tavily focuses on optimizing search for AI developers and autonomous AI agents. We take care of all the burden of searching, scraping, filtering and extracting the most relevant information from online sources. All in a single API call!
+
+To try the API in action, you can now use our hosted version on our API Playground.
+
+If you're an AI developer looking to integrate your application with our API, or seek increased API limits, please reach out!
+
+Why choose the Tavily Search API?​
+Purpose-Built: Tailored just for LLM Agents, we ensure the search results are optimized for RAG. We take care of all the burden in searching, scraping, filtering and extracting information from online sources. All in a single API call! Simply pass the returned search results as context to your LLM.
+Versatility: Beyond just fetching results, Tavily Search API offers precision. With customizable search depths, domain management, and parsing HTML content controls, you're in the driver's seat.
+Performance: Committed to speed and efficiency, our API guarantees real-time and trusted information. Our team works hard to improve Tavily's performance over time.
+Integration-friendly: We appreciate the essence of adaptability. That's why integrating our API with your existing setup is a breeze. You can choose our Python library or a simple API call or any of our supported partners such as Langchain and LLamaIndex.
+Transparent & Informative: Our detailed documentation ensures you're never left in the dark. From setup basics to nuanced features, we've got you covered.
+How does the Search API work?​
+Current search APIs such as Google, Serp and Bing retrieve search results based on user query. However, the results are sometimes irrelevant to the goal of the search, and return simple site URLs and snippets of content which are not always relevant. Because of this, any developer would need to then scrape the sites to extract relevant content, filter irrelevant information, optimize the content to fit LLM context limits, and more. This task is a burden and requires a lot of time and effort to complete. The Tavily Search API takes care of all of this for you in a single API call.
+
+Tavily Search API aggregates up to 20 sites per a single API call, and uses proprietary AI to score, filter and rank the top most relevant sources and content to your task, query or goal. In addition, Tavily allows developers to add custom fields such as context and limit response tokens to enable the optimal search experience for LLMs.
+
+Tavily can also help your AI agent make better decisions by including a short answer for cross-agent communication.
+
+Remember: With LLM hallucinations, it's crucial to optimize for RAG with the right context and information.
+
+Getting started​
+Sign Up: Begin by signing up on our platform.
+Obtain Your API Key: Once registered, we will generate a Tavily API Key for you. You will also be able to generate additional keys.
+Test Drive in the API Playground: Before diving in, familiarize yourself by testing out endpoints in our interactive API playground.
+Explore & Learn: Dive into our Python SDK or REST API documentation to get familiar with the various features. The documentation offers a comprehensive rundown of functionalities, supplemented with practical sample inputs and outputs.
+Sample Use: Check out our Python examples page to see some code snippets showing you what you can accomplish with Tavily in only a few lines of code. Want a real-world application? Check out our Research Assistant — a prime example that showcases how the API can optimize your AI content generation with factual and unbiased results.
+Stay up to date: Join our Community to get latest updates on our continuous improvements and development
+🙋‍♂️ Got questions? Stumbled upon an issue? Or simply intrigued? Don't hesitate! Our support team is always on standby, eager to assist. Join us, dive deep, and redefine your search experience! Contact us!
+
+GPT Researcher​
+In this digital age, quickly accessing relevant and trustworthy information is more crucial than ever. However, we've learned that none of today's search engines provide a suitable tool that provides factual, explicit and objective answers without the need to continuously click and explore multiple sites for a given research task.
+
+This is why we've built the trending open source GPT Researcher. GPT Researcher is an autonomous agent that takes care of the tedious task of research for you, by scraping, filtering and aggregating over 20+ web sources per a single research task.
+
+To learn more about GPT Researcher, check out the documentation page.
+
+Getting Started with Tavily Search
+The Python SDK allows for easy interaction with the Tavily API, offering the full range of our search functionality directly from your Python programs. Easily integrate smart search capabilities into your applications, harnessing Tavily's powerful search features.
+
+📦 Installing​
+pip install tavily-python
+🛠️ Usage​
+Below are some code snippets that show you how to interact with our API. The different steps and components of this code are explained in more detail on the Python API Reference page.
+
+Getting and printing the full Search API response​
+from tavily import TavilyClient
+
+# Step 1. Instantiating your TavilyClient
+tavily_client = TavilyClient(api_key="tvly-YOUR_API_KEY")
+
+# Step 2. Executing a simple search query
+response = tavily_client.search("Who is Leo Messi?")
+
+# Step 3. That's it! You've done a Tavily Search!
+print(response)
+This is equivalent to directly querying our REST API.
+
+Generating context for a RAG Application​
+from tavily import TavilyClient
+
+# Step 1. Instantiating your TavilyClient
+tavily_client = TavilyClient(api_key="tvly-YOUR_API_KEY")
+
+# Step 2. Executing a context search query
+context = tavily_client.get_search_context(query="What happened during the Burning Man floods?")
+
+# Step 3. That's it! You now have a context string that you can feed directly into your RAG Application
+print(context)
+This is how you can generate precise and fact-based context for your RAG application in one line of code.
+
+Getting a quick answer to a question​
+from tavily import TavilyClient
+
+# Step 1. Instantiating your TavilyClient
+tavily_client = TavilyClient(api_key="tvly-YOUR_API_KEY")
+
+# Step 2. Executing a Q&A search query
+answer = tavily_client.qna_search(query="Who is Leo Messi?")
+
+# Step 3. That's it! Your question has been answered!
+print(answer)
+This is how you get accurate and concise answers to questions, in one line of code. Perfect for usage by LLMs!
+
+This snippet shows you how to set up a Tavily Hybrid RAG Client and connect it to a MongoDB database to perform a simple Hybrid RAG query! For more information on how to set up your
+
+📝 License​
+This project is licensed under the terms of the MIT license.
+
+💌 Contact​
+If you are encountering issues while using Tavily, please email us at support@tavily.com. We'll be happy to help you.
+
+If you want to stay updated on the latest Tavily news and releases, head to our Developer Community to learn more!
+
+API Reference
+Client​
+The TavilyClient class is the entry point to interacting with the Tavily API. Kickstart your journey by instantiating it with your API key. Once you do so, you're ready to search the Web in one line of code! All you need is to pass a str as a query to one of our methods (detailed below) and you'll start searching!
+
+Asynchronous Client​
+If you want to use Tavily asynchronously, you will need to instantiate an AsyncTavilyClient instead. The asynchronous client's interface is identical to the synchronous client's, the only difference being that all methods are asynchronous.
+
+Methods​
+search(query, **kwargs)
+
+Performs a Tavily Search query and returns the response as a well-structured dict.
+Additional parameters can be provided as keyword arguments (detailed below). The keyword arguments supported by this method are: search_depth, topic, days,max_results, include_domains, exclude_domains, include_answer, include_raw_content, include_images, include_image_descriptions.
+Returns a dict with all related response fields. If you decide to use the asynchronous client, returns a coroutine resolving to that dict. The details of the exact response format are given in the Search Responses section.
+get_search_context(query, **kwargs)
+
+Performs a Tavily Search query and returns a str of content and sources within the provided token limit. It's useful for getting only related content from retrieved websites without having to deal with context extraction and token management.
+The core parameter for this function is max_tokens, an int. It defaults to 4000. It is provided as a keyword argument.
+Additional parameters can be provided as keyword arguments (detailed below). The keyword arguments supported by this method are: search_depth, topic, days, max_results, include_domains, exclude_domains.
+Returns a str containing the content and sources of the results. If you decide to use the asynchronous client, returns a coroutine resolving to that str.
+qna_search(query, **kwargs)
+
+Performs a search and returns a str containing an answer to the original query. This is optimal to be used as a tool for AI agents.
+Additional parameters can be provided as keyword arguments (detailed below). The keyword arguments supported by this method are: search_depth (defaults to "advanced"), topic, days, max_results, include_domains, exclude_domains.
+Returns a str containing a short answer to the search query. If you decide to use the asynchronous client, returns a coroutine resolving to that str.
+Keyword Arguments (optional)​
+search_depth: str - The depth of the search. It can be "basic" or "advanced". Default is "basic" unless specified otherwise in a given method.
+
+topic: str - The category of the search. This will determine which of our agents will be used for the search. Currently, only "general" and "news" are supported. Default is "general".
+
+days: int (optional) - The number of days back from the current date to include in the search results. This specifies the time frame of data to be retrieved. Please note that this feature is only available when using the "news" search topic. Default is 3.
+
+max_results: int - The maximum number of search results to return. Default is 5.
+
+include_images: bool - Include a list of query-related images in the response. Default is False.
+
+include_image_descriptions: bool - Include a list of query-related images and their descriptions in the response. Default is False.
+
+include_answer: bool - Include a short answer to original query. Default is False.
+
+include_raw_content: bool - Include the cleaned and parsed HTML content of each search result. Default is False.
+
+include_domains: list[str] - A list of domains to specifically include in the search results. Default is None, which includes all domains.
+
+exclude_domains: list[str] - A list of domains to specifically exclude from the search results. Default is None, which doesn't exclude any domains.
+
+Search Responses​
+answer: str- The answer to your search query. This will be None unless include_answer is set to True.
+
+query: str - Your search query.
+
+response_time: float - Your search result response time.
+
+images: list[str | dict] - A list of query-related image URLs. If include_image_descriptions is set to True each entry will be a dictionary with url and description
+
+results: list - A list of sorted search results ranked by relevancy. Each result is in the following format:
+
+title: str - The title of the search result URL.
+url: str - The URL of the search result.
+content: str - The most query related content from the scraped URL. We use proprietary AI and algorithms to extract only the most relevant content from each URL, to optimize for context quality and size.
+raw_content: str - The parsed and cleaned HTML of the site. For now includes parsed text only. Please note that this will be None unless include_raw_content is set to True.
+score: float - The relevance score of the search result.
+published_date: str (optional) - The publication date of the source. This is only available if you are using "news" as your search topic.
+When you send a search query, the response dict you receive will be in the following format:
+
+response = {
+  "query": "The query provided in the request",
+  "answer": "A short answer to the query",  # This will be None if include_answer is set to False in the request
+  "follow_up_questions": None,  # This feature is still in development
+  "images": [ 
+    {
+      "url": "Image 1 URL",
+      "description": "Image 1 Description",  
+    },
+    {
+      "url": "Image 2 URL",
+      "description": "Image 2 Description",
+    },
+    {
+      "url": "Image 3 URL",
+      "description": "Image 3 Description",
+    },
+    {
+      "url": "Image 4 URL",
+      "description": "Image 4 Description",
+    },
+    {
+      "url": "Image 5 URL",
+      "description": "Image 5 Description",
+    }
+  ],  # This will be a list of string URLs if `include_images` is True and `include_image_descriptions` is False, or an empty list if both set to False.
+  "results": [
+    {
+      "title": "Source 1 Title",
+      "url": "Source 1 URL",
+      "content": "Source 1 Content",
+      "score": 0.99  # This is the "relevancy" score of the source. It ranges from 0 to 1.
+    },
+    {
+      "title": "Source 2 Title",
+      "url": "Source 2 URL",
+      "content": "Source 2 Content",
+      "score": 0.97
+    }
+  ],  # This list will have max_results elements
+  "response_time": 1.09 # This will be your search response time
+}
+⚠️ Error Handling​
+The Tavily Python SDK includes comprehensive error handling to ensure smooth interaction with the API. Below are the specific exceptions that might be raised during usage:
+
+Missing API Key: If no API key is provided when initializing the TavilyClient, a tavily.MissingAPIKeyError will be raised. Ensure you pass a valid API key to the TavilyClient during instantiation.
+
+from tavily import TavilyClient, MissingAPIKeyError
+
+try:
+    tavily_client = TavilyClient(api_key="")
+except MissingAPIKeyError:
+    print("API key is missing. Please provide a valid API key.")
+Invalid API Key: If the API key provided is invalid, a tavily.InvalidAPIKeyError will be raised when sending a search query. Double-check that your API key is correct and active.
+
+from tavily import TavilyClient, InvalidAPIKeyError
+
+tavily_client = TavilyClient(api_key="invalid-api-key")
+
+try:
+    response = tavily_client.search("Who is Leo Messi?")
+except InvalidAPIKeyError:
+    print("Invalid API key provided. Please check your API key.")
+Usage Limit Exceeded: If the API key provided is valid but the request fails due to exceeding the rate limit, surpassing the plan's monthly limit, or hitting the key's pre-set monthly limit, a tavily.UsageLimitExceededError will be raised. Consider upgrading your plan or checking your usage limits.
+
+from tavily import TavilyClient, UsageLimitExceededError
+
+tavily_client = TavilyClient(api_key="valid-api-key")
+
+try:
+    response = tavily_client.search("Who is Leo Messi?")
+except UsageLimitExceededError:
+    print("Usage limit exceeded. Please check your plan's usage limits or consider upgrading.")
+These errors ensure that you are aware of the specific issues related to your API key usage, allowing you to take appropriate actions to resolve them.
+
+Edit this page
+
+Examples
+Installation​
+pip install tavily-python
+Code Snippets​
+Sample 0: Getting Started with Tavily Search​
+This sample shows you how to perform a Tavily Search call through the Python package.
+
+# Step 1. Instantiating your TavilyClient
+from tavily import TavilyClient
+client = TavilyClient(api_key="tvly-YOUR_API_KEY")
+
+# Step 2. Executing a simple search query
+response = client.search("Who is Leo Messi?")
+
+# Step 3. That's it! You've done a Tavily Search!
+print(response)
+You should then get a response that looks like the following:
+
+{
+  'query': 'Who is Leo Messi?',
+  'follow_up_questions': None,
+  'answer': None,
+  'images': [],
+  'results': [
+    {
+      'title': 'Lionel Messi - Wikipedia', 
+      'url': 'https://en.wikipedia.org/wiki/Lionel_Messi', 
+      'content': 'He scored twice in the last group match, a 3–2 victory over Nigeria, his second goal coming from a free kick, as they finished first in their group.[423] Messi assisted a late goal in extra time to ensure a 1–0 win against Switzerland in the round of 16, and played in the 1–0 quarter-final win against Belgium as Argentina progressed to the semi-final of the World Cup for the first time since 1990.[424][425] Following a 0–0 draw in extra time, they eliminated the Netherlands 4–2 in a penalty shootout to reach the final, with Messi scoring his team\'s first penalty.[426]\nBilled as Messi versus Germany, the world\'s best player against the best team, the final was a repeat of the 1990 final featuring Diego Maradona.[427] Within the first half-hour, Messi had started the play that led to a goal, but it was ruled offside. "[582] Moreover, several pundits and footballing figures, including Maradona, questioned Messi\'s leadership with Argentina at times, despite his playing ability.[583][584][585] Vickery states the perception of Messi among Argentines changed in 2019, with Messi making a conscious effort to become "more one of the group, more Argentine", with Vickery adding that following the World Cup victory in 2022 Messi would now be held in the same esteem by his compatriots as Maradona.[581]\nComparisons with Cristiano Ronaldo\nAmong his contemporary peers, Messi is most often compared and contrasted with Portuguese forward Cristiano Ronaldo, as part of an ongoing rivalry that has been compared to past sports rivalries like the Muhammad Ali–Joe Frazier rivalry in boxing, the Roger Federer–Rafael Nadal rivalry in tennis, and the Prost–Senna rivalry from Formula One motor racing.[586][587]\nAlthough Messi has at times denied any rivalry,[588][589] they are widely believed to push one another in their aim to be the best player in the world.[160] Since 2008, Messi has won eight Ballons d\'Or to Ronaldo\'s five,[590] seven FIFA World\'s Best Player awards to Ronaldo\'s five, and six European Golden Shoes to Ronaldo\'s four.[591] Pundits and fans regularly argue the individual merits of both players.[160][592] On 11 July, Messi provided his 20th assist of the league season for Arturo Vidal in a 1–0 away win over Real Valladolid, equalling Xavi\'s record of 20 assists in a single La Liga season from 2008 to 2009;[281][282] with 22 goals, he also became only the second player ever, after Thierry Henry in the 2002–03 FA Premier League season with Arsenal (24 goals and 20 assists), to record at least 20 goals and 20 assists in a single league season in one of Europe\'s top-five leagues.[282][283] Following his brace in a 5–0 away win against Alavés in the final match of the season on 20 May, Messi finished the season as both the top scorer and top assist provider in La Liga, with 25 goals and 21 assists respectively, which saw him win his record seventh Pichichi trophy, overtaking Zarra; however, Barcelona missed out on the league title to Real Madrid.[284] On 7 March, two weeks after scoring four goals in a league fixture against Valencia, he scored five times in a Champions League last 16-round match against Bayer Leverkusen, an unprecedented achievement in the history of the competition.[126][127] In addition to being the joint top assist provider with five assists, this feat made him top scorer with 14 goals, tying José Altafini\'s record from the 1962–63 season, as well as becoming only the second player after Gerd Müller to be top scorer in four campaigns.[128][129] Two weeks later, on 20 March, Messi became the top goalscorer in Barcelona\'s history at 24 years old, overtaking the 57-year record of César Rodríguez\'s 232 goals with a hat-trick against Granada.[130]\nDespite Messi\'s individual form, Barcelona\'s four-year cycle of success under Guardiola – one of the greatest eras in the club\'s history – drew to an end.[131] He still managed to break two longstanding records in a span of seven days: a hat-trick on 16 March against Osasuna saw him overtake Paulino Alcántara\'s 369 goals to become Barcelona\'s top goalscorer in all competitions including friendlies, while another hat-trick against Real Madrid on 23 March made him the all-time top scorer in El Clásico, ahead of the 18 goals scored by former Real Madrid player Alfredo Di Stéfano.[160][162] Messi finished the campaign with his worst output in five seasons, though he still managed to score 41 goals in all competitions.[161][163] For the first time in five years, Barcelona ended the season without a major trophy; they were defeated in the Copa del Rey final by Real Madrid and lost the league in the last game to Atlético Madrid, causing Messi to be booed by sections of fans at the Camp Nou.[164]', 
+      'score': 0.98567, 
+      'raw_content': None
+    },
+    {
+      'title': "Lionel Messi | Biography, Barcelona, PSG, Ballon d'Or, Inter Miami ...",
+      'url': 'https://www.britannica.com/biography/Lionel-Messi',
+      'content': 'In early 2009 Messi capped off a spectacular 2008–09 season by helping FC Barcelona capture the club’s first “treble” (winning three major European club titles in one season): the team won the La Liga championship, the Copa del Rey (Spain’s major domestic cup), and the Champions League title. Messi’s play continued to rapidly improve over the years, and by 2008 he was one of the most dominant players in the world, finishing second to Manchester United’s Cristiano Ronaldo in the voting for the 2008 Ballon d’Or. At the 2014 World Cup, Messi put on a dazzling display, scoring four goals and almost single-handedly propelling an offense-deficient Argentina team through the group stage and into the knockout rounds, where Argentina then advanced to the World Cup final for the first time in 24 years. After Argentina was defeated in the Copa final—the team’s third consecutive finals loss in a major tournament—Messi said that he was quitting the national team, but his short-lived “retirement” lasted less than two months before he announced his return to the Argentine team. Messi helped Barcelona capture another treble during the 2014–15 season, leading the team with 43 goals scored over the course of the campaign, which resulted in his fifth world player of the year honour.', 
+      'score': 0.9818, 
+      'raw_content': None
+    },
+    {
+      'title': 'Lionel Messi: Biography, Soccer Player, Inter Miami CF, Athlete', 
+      'url': 'https://www.biography.com/athletes/lionel-messi', 
+      'content': 'The following year, after Messi heavily criticized the referees in the wake of a 2-0 loss to Brazil in the Copa America semifinals, the Argentine captain was slapped with a three-game ban by the South American Football Confederation.\n So, at the age of 13, when Messi was offered the chance to train at soccer powerhouse FC Barcelona’s youth academy, La Masia, and have his medical bills covered by the team, Messi’s family picked up and moved across the Atlantic to make a new home in Spain. Famous Athletes\nDennis Rodman\nBrett Favre\nTiger Woods\nJohn McEnroe\nKurt Warner\nSandy Koufax\n10 Things You Might Not Know About Travis Kelce\nPeyton Manning\nJames Harden\nKobe Bryant\nStephen Curry\nKyrie Irving\nA Part of Hearst Digital Media\n Their marriage, a civil ceremony dubbed by Argentina’s Clarín newspaper as the “wedding of the century,” was held at a luxury hotel in Rosario, with a number of fellow star soccer players and Colombian pop star Shakira on the 260-person guest list.\n In 2013, the soccer great came back to earth somewhat due to the persistence of hamstring injuries, but he regained his record-breaking form by becoming the all-time leading scorer in La Liga and Champions League play in late 2014.\n', 'score': 0.98086, 
+      'raw_content': None
+    },
+    {
+      'title': 'Lionel Messi and the unmistakeable sense of an ending',
+      'url': 'https://www.nytimes.com/athletic/5637953/2024/07/15/lionel-messi-argentina-ending-injury/', 
+      'content': 'The tears were for the moment — Argentina needed him; they always do — but it was impossible to abstract them from the wider context. For Messi, wherever he treads in this extended career ...', 
+      'score': 0.97386, 
+      'raw_content': None
+    }, 
+    {
+      'title': 'The life and times of Lionel Messi',
+      'url': 'https://www.nytimes.com/athletic/4783674/2023/08/18/lionel-messi-profile-soccer/',
+      'content': 'Lionel Messi: The life and times of the Barcelona, Paris Saint-Germain, Inter Miami and Argentina legend Darren Richman Aug 18, 2023', 
+      'score': 0.969, 
+      'raw_content': None
+    }
+  ], 
+  'response_time': 1.07
+}
+Congrats! You now know how to use the Tavily Search API through our Python package. Yes, it's that simple! Make sure to check our detailed Python API Reference to learn how to tune your API calls to best match your needs.
+
+Sample 1: Research Report using Tavily and GPT-4 with Langchain​
+# Step 0. Importing relevant Langchain libraries
+from langchain.adapters.openai import convert_openai_messages
+from langchain_community.chat_models import ChatOpenAI
+
+# Step 1. Instantiating your TavilyClient
+from tavily import TavilyClient
+client = TavilyClient(api_key="tvly-YOUR_API_KEY")
+
+# Step 2. Executing the search query and getting the results
+content = client.search("What happened in the latest burning man floods?", search_depth="advanced")["results"]
+
+# Step 3. Setting up the OpenAI prompts
+prompt = [{
+    "role": "system",
+    "content":  f'You are an AI critical thinker research assistant. '\
+                f'Your sole purpose is to write well written, critically acclaimed,'\
+                f'objective and structured reports on given text.'
+}, {
+    "role": "user",
+    "content": f'Information: """{content}"""\n\n' \
+               f'Using the above information, answer the following'\
+               f'query: "{query}" in a detailed report --'\
+               f'Please use MLA format and markdown syntax.'
+}]
+
+# Step 4. Running OpenAI through Langchain
+lc_messages = convert_openai_messages(prompt)
+report = ChatOpenAI(model='gpt-4',openai_api_key="sk-YOUR_OPENAI_KEY").invoke(lc_messages).content
+
+# Step 5. That's it! Your research report is now done!
+print(report)
+You should then get a response that looks like the following:
+
+# The Burning Man Festival 2023: A Festival Turned Mud Fest
+
+**Abstract:** The Burning Man Festival of 2023 in Nevada’s Black Rock desert will be remembered for a significant event: a heavy rainfall that turned the festival site into a muddy mess, testing the community spirit of the annual event attendees and stranding tens of thousands of festival-goers. 
+
+**Keywords:** Burning Man Festival, flooding, rainfall, mud, community spirit, Nevada, Black Rock desert, stranded attendees, shelter
+
+---
+## 1. Introduction
+
+The Burning Man Festival, an annual event known for its art installations, free spirit, and community ethos, faced an unprecedented challenge in 2023 due to heavy rains that flooded the festival site, turning it into a foot-deep mud pit[^1^][^2^]. The festival, held in Nevada's Black Rock desert, is known for its harsh weather conditions, including heat and dust, but this was the first time the event was affected to such an extent by rainfall[^4^].
+
+## 2. Impact of the Rain
+
+The heavy rains started on Friday, and more than a half-inch of rain fell, leading to flooding that turned the playa into a foot-deep mud pit[^2^]. The roads were closed due to the muddy conditions, stranding tens of thousands of festival-goers[^2^][^5^]. The burners, as the attendees are known, were forced to lean on each other for help[^2^].
+
+## 3. Community Spirit Tested
+
+The unexpected weather conditions put the Burning Man community spirit to the test[^1^]. Festival-goers found themselves sheltering in place, conserving food and water, and helping each other out[^3^]. For instance, Mark Fromson, who had been staying in an RV, was forced to find shelter at another camp due to the rains, where fellow burners provided him with food and cover[^2^].
+
+## 4. Exodus After Rain
+
+Despite the challenges, the festival-goers made the best of the situation. Once the rain stopped and things dried up a bit, the party quickly resumed[^3^]. A day later than scheduled, the massive wooden effigy known as the Man was set ablaze[^5^]. As the situation improved, thousands of Burning Man attendees began their mass exodus from the festival site[^5^].
+
+## 5. Conclusion
+
+The Burning Man Festival of 2023 will be remembered for the community spirit shown by the attendees in the face of heavy rainfall and flooding. Although the event was marred by the weather, the festival-goers managed to make the best of the situation, demonstrating the resilience and camaraderie that the Burning Man Festival is known for.
+
+---
+**References**
+
+[^1^]: "Attendees walk through a muddy desert plain..." NPR. 2023. https://www.npr.org/2023/09/02/1197441202/burning-man-festival-rains-floods-stranded-nevada.
+
+[^2^]: “'It was a perfect, typical Burning Man weather until Friday...'" ABC News. 2023. https://abcnews.go.com/US/wireStory/wait-times-exit-burning-man-drop-after-flooding-102936473.
+
+[^3^]: "The latest on the Burning Man flooding..." WUNC. 2023. https://www.wunc.org/2023-09-03/the-latest-on-the-burning-man-flooding.
+
+[^4^]: "Burning Man hit by heavy rains, now mud soaked..." The Guardian. 2023. https://www.theguardian.com/culture/2023/sep/02/burning-man-festival-mud-trapped-shelter-in-place.
+
+[^5^]: "One day later than scheduled, the massive wooden effigy known as the Man was set ablaze..." CNN. 2023. https://www.cnn.com/2023/09/05/us/burning-man-storms-shelter-exodus-tuesday/index.html.
+Edit this page
+
+Tavily API for Data Enrichment
+💡 Why Use Tavily API for Data Enrichment?​
+Tavily API offers several advantages for enhancing datasets:
+
+Advanced Search Capabilities: Tavily utilizes advanced search algorithms to gather relevant information from various online sources, making it ideal for filling in missing data points.
+
+Real-time Data Retrieval: By querying live sources, Tavily ensures that the data used for enrichment is up-to-date and relevant.
+
+Scalable and Efficient: Tavily can handle multiple queries simultaneously, allowing you to process large datasets efficiently and reduce overall execution time.
+
+Example Jupyter Notebook Overview​
+The following Jupyter Notebook illustrates how to build an AI agent that leverages the Tavily API for data enrichment.
+
+The system employs the LangGraph Framework to orchestrate the workflow, managing two agents: a Data Agent and an Enrich Agent. The Data Agent is responsible for retrieving, processing, and loading data into a DataFrame, as well as saving the enriched data in various formats, such as CSV, Excel, or Google Sheets. Meanwhile, the Enrich Agent automates the process of filling in missing data within the dataset. It utilizes Tavily's search capabilities to collect relevant information from the web and employs an OpenAI model to generate search queries and extract the necessary data points. The use of asynchronous tasks allows multiple rows to be processed concurrently, increasing the efficiency of the data enrichment process.
+
+Alt Text
+
+Overview of the Enrich Agent Class​
+Below is a partial implementation of the EnrichAgent class, highlighting its key components without showing all the internal details:
+
+class EnrichAgent():
+    def __init__(self):
+        # Initialize settings
+        self.MAX_COLS_PER_PASS = 5
+        self.MAX_PASSES = 5
+        self.model = ChatOpenAI(model="gpt-4o", temperature=0)
+
+    def is_missing_value(self, value):
+        """
+        Check if a value is considered missing.
+        """
+        ...
+
+    async def generate_search_query(self, head, columns):
+        """
+        Generate a search query for missing columns.
+        """
+        prompt = f"""You are a researcher with the task of filling in a spreadsheet...
+        """
+        response = await self.model.ainvoke(messages)
+        return response.content.strip('\'"')
+
+    async def fill_in_row(self, df, head, row_index, columns, search_query):
+        """
+        Call Tavily API to retrieve information using the search_query and prompt OpenAI to extract column values from the response
+        """
+        entry = str(df.iloc[row_index][head[0]])
+        ...
+        # Process Tavily API response
+        ...
+
+    async def run(self, state: AgentState):
+        """
+        Main function to for running the Enrichment Process
+        """
+        df = state['raw_data'].copy()
+        ...
+        # Loop through rows and apply enrichment
+        ...
+
+MAX_COLS_PER_PASS: This sets the maximum number of columns that the agent will try to fill in during a single operation, which can help in managing the complexity of the data retrieval and processing tasks.
+MAX_PASSES: This defines the maximum number of attempts the agent will make to fill in missing data across the dataset. By setting a limit, the agent avoids getting stuck in endless loops if the data cannot be fully retrieved.
+generate_search_query: This function generates a search query tailored to fill in specific missing columns. It constructs a prompt using the column headers and fields that need data, and then uses the OpenAI model to generate a suitable search query. This query is used to interact with the Tavily API for data retrieval.
+fill_in_row: This function attempts to fill in the missing data for a given row in the DataFrame. It constructs a search query for Tavily by replacing a placeholder ($ENTRY) with the actual entry being queried. After receiving the Tavily response, it uses OpenAI to interpret the data and fill in the missing fields. It ensures consistency by creating examples from existing data for the model to refer to during data extraction.
+run: This function is the main driver of the enrichment process. It starts by generating a general search query and then attempts to fill in as many missing fields as possible for each row using asynchronous tasks. The function loops through the dataset for a predefined number of passes, each time attempting to fill in missing fields with data retrieved from Tavily and processed by OpenAI.
+Possible Improvements​
+Customize Workflow for Specific Use Cases: Define more predefined workflows tailored to specific use cases, such as company data enrichment. This could include field-specific scraping techniques to ensure data consistency and enhance the search query by incorporating the values of certain fields to improve the likelihood of obtaining accurate results.
+
+Enhanced API Feature Utilization: Utilize specific features of the Tavily API, such as the 'include domain' option, to refine searches and improve data accuracy. For instance, if website links are available in the dataset, using the 'include domain' feature allows the search to be targeted to specific domains, thereby enhancing the relevance and precision of the retrieved information.
+
+Search Query Enhancement: Enhance search queries by incorporating additional field values alongside the main entry field. For example, if the data enrichment task involves gathering information about a person, and their company affiliation is also available, it can be beneficial to include the company name in the search query along with their name to improve the accuracy of the results.
+
+Integrate LangGraph with Tools: Bind the LangGraph framework with various tools and configure tavily web search as one of these tools. This will allow for more flexible and dynamic query generation and data retrieval.
+
+Incorporate a Local Database: Add a local database as an additional data source for the agent. This can help to cross-reference information and verify the accuracy of the enriched data.
+
+
+Tavily API for Company Research
+💡 Why Use Tavily API for Company Research?​
+Tavily API offers several advantages for conducting in-depth company research:
+
+Comprehensive Data Gathering: Tavily's advanced search algorithms pull relevant information from a wide range of online sources, providing a robust foundation for in-depth company research.
+
+Flexible Agentic Search: When Tavily is integrated into agentic workflows, such as those powered by frameworks like LangGraph, it allows AI agents to dynamically tailor their search strategies. The agents can decide to perform either a news or general search depending on the context, retrieve raw content for more in-depth analysis, or simply pull summaries when high-level insights are sufficient. This adaptability ensures that the research process is optimized according to the specific requirements of the task and the nature of the data available, bringing a new level of autonomy and intelligence to the research process.
+
+Real-time Data Retrieval: Tavily ensures that the data used for research is up-to-date by querying live sources. This is crucial for company research where timely information can impact the accuracy and relevance of the analysis.
+
+Efficient and Scalable: Tavily handles multiple queries simultaneously, making it capable of processing large datasets quickly. This efficiency reduces the time needed for comprehensive research, allowing for faster decision-making.
+
+Example Jupyter Notebook Overview​
+The following Jupyter Notebook demonstrates how to run weekly research process on companies using Tavily API, LangGraph framework, and OpenAI for content generation. This notebook outlines a comprehensive workflow that dynamically gathers relevant information on a company, processes the data, and generates a detailed PDF report.
+
+Alt Text
+
+Workflow Overview​
+The notebook utilizes several components to achieve its goal through a structured set of nodes representing different stages of the research process:
+
+ResearchState Setup:
+
+The ResearchState data structure manages the company's name, keywords, documents retrieved during research, and messages exchanged during the process. This state keeps track of all necessary data throughout the workflow.
+class ResearchState(TypedDict):
+    company: str
+    company_keywords: str
+    exclude_keywords: str
+    report: str
+    documents: Dict[str, Dict[Union[str, int], Union[str, float]]]
+    RAG_docs: Dict[str, Dict[Union[str, int], Union[str, float]]]
+    messages: Annotated[list[AnyMessage], add_messages]
+Research and Tool Nodes
+
+In the research step, the workflow initiates the information-gathering process using the research_model function. The function leverages OpenAI as the base model for analyzing and generating insights about the company's latest developments. It also determines the next course of action in the workflow. Depending on the information gathered so far, the model decides whether to continue executing the Tavily Search tool to gather more data or to proceed to curating the gathered documents using Tavily Extract. This decision-making capability is what makes the workflow agentic, allowing it to dynamically adapt to the specific research needs and ensure that the most relevant and comprehensive information is included in the final output.
+
+The should_continue function is used to determine whether tools should be executed or if the process should move on to the next phase (i.e., curation).
+
+Tavily Search API tool: The TavilyQuery and TavilySearchInput classes facilitate detailed and efficient searches with the Tavily Search API. Within an agentic workflow, the agent leverages the Tavily Search API to determine which queries to execute and under what conditions.
+
+By appending the current date to the query (e.g., query_with_date = f"{itm.query} {datetime.now().strftime('%m-%Y')}"), the agent ensures that the data retrieved by Tavily is current and pertinent.
+The tool_node processes the retrieved data into a dictionary so it can be easily accessible for further evaluation.
+
+# Invoke the model to gather data about the company and decide whether to continue invoking the Tavily Search tool
+def research_model(state: ResearchState):
+    prompt = f"""Today's date is {datetime.now().strftime('%d/%m/%Y')}.\n
+    You are an expert researcher tasked with gathering information for a weekly report on recent developments in portfolio companies.\n
+    Your current objective is to gather documents about any significant events that occurred in the past week for the following company: {state['company']}.\n
+    The user has provided the following company keywords: {state['company_keywords']} to help you find relevant documents.\n
+    **Instructions:**\n
+    - Use the 'tavily_search' tool to search for relevant documents
+    - Focus on gathering documents by making appropriate tool calls
+    - If you believe you have gathered enough information, state 'I have gathered enough information and am ready to proceed.'
+    """
+    messages = state['messages'] + [SystemMessage(content=prompt)]
+    # ...
+    response = model.bind_tools(tools).invoke(messages)
+    return {"messages": [response]}
+# Define the function to determine the next step in the workflow
+def should_continue(state: ResearchState) -> Literal["tools", "curate"]:
+    last_message = state['messages'][-1]
+    # If tool calls exist, continue with tools
+    if last_message.tool_calls:
+        return "tools"
+    # Otherwise, proceed to curation
+    return "curate"
+# Define the structure for Tavily search inputs
+
+# Add Tavily's arguments to enhance the web search tool's capabilities
+class TavilyQuery(BaseModel):
+    query: str = Field(description="web search query")
+    topic: str = Field(description="type of search, should be 'general' or 'news'. Choose 'news' ONLY when the company you searching is publicly traded and is likely to be featured on popular news")
+    days: int = Field(description="number of days back to run 'news' search")
+    domains: Optional[List[str]] = Field(default=None, description="list of domains to include in the research. Useful when trying to gather information from trusted and relevant domains")
+ 
+class TavilySearchInput(BaseModel):
+    sub_queries: List[TavilyQuery] = Field(description="set of sub-queries that can be answered in isolation")
+
+# Tavily search tool for performing searches concurrently
+@tool("tavily_search", args_schema=TavilySearchInput, return_direct=True)
+async def tavily_search(sub_queries: List[TavilyQuery]):
+    """Perform searches for each sub-query using the Tavily search tool concurrently."""  
+    async def perform_search(itm):
+        try:
+            # Construct query with date for the most recent results
+            query_with_date = f"{itm.query} {datetime.now().strftime('%m-%Y')}"
+            response = await tavily_client.search(query=query_with_date, topic=itm.topic, days=itm.days, max_results=10)
+            return response['results']
+        except Exception as e:
+            # Handle exceptions
+            print(f"Error occurred during search for query '{itm.query}': {str(e)}")
+            return []
+
+    # Run all search tasks concurrently
+    search_tasks = [perform_search(itm) for itm in sub_queries]
+    search_responses = await asyncio.gather(*search_tasks)
+
+    # Combine results
+    # ...
+
+    return search_results
+# Tool node for processing Tavily's search results
+async def tool_node(state: ResearchState):
+    docs = state.get('documents', {})
+    msgs = []
+    for tool_call in state["messages"][-1].tool_calls:
+        tool = tools_by_name[tool_call["name"]]
+        new_docs = await tool.ainvoke(tool_call["args"])
+        # Store only new documents
+        for doc in new_docs:
+            if not docs or doc['url'] not in docs:
+                docs[doc['url']] = doc
+                # ...
+        msgs.append(ToolMessage(content="Found the following new documents/information...", tool_call_id=tool_call["id"]))
+    return {"messages": msgs, "documents": docs}
+Curate Node:
+
+In the curate step, the workflow selects the most relevant documents from the data retrieved. This involves reviewing documents, applying keyword matching, and retrieving raw content to ensure a focused dataset.
+async def select_and_process(state: ResearchState):
+ prompt = f"""You are an expert researcher..."""
+ if state['exclude_keywords'] != "":
+     prompt += f"""Additionally, exclude the following keywords..."""
+ prompt += f"""\nHere is the list of documents..."""
+ # ...
+ # Use the model to filter documents
+ relevant_urls = model.with_structured_output(TavilyExtractInput).invoke(messages)
+     
+ try:
+     # Extract raw content from selected URLs
+     response = await tavily_client.extract(urls=relevant_urls.urls)
+     # ...
+ except Exception as e:
+     print(f"Error occurred during Tavily Extract request: {str(e)}")
+ # ...
+ return {"messages": [AIMessage(content=msg)], "RAG_docs": RAG_docs}
+Write Node:
+
+The write step involves generating the weekly report based on the curated documents using OpenAI, ensuring that the report is detailed and well-cited.
+def write_report(state: ResearchState):
+    prompt = f"""Today's date is {datetime.now().strftime('%d/%m/%Y')}.
+    You are an expert researcher, writing a weekly report..."""
+    response = model.with_structured_output(QuotedAnswer).invoke(messages)
+    full_report = response.answer
+    full_report += "\n\n### Citations\n"
+    # Append citations
+    return {"messages": [AIMessage(content=f"Generated Report:\n{full_report}")], "report": full_report}
+Publish Node:
+
+In the publish step, the generated report is converted into a PDF document for easy sharing and presentation.
+def generate_pdf(state: ResearchState):
+    directory = "reports"
+    file_name = f"{state['company']} Weekly Report..."
+    msg = generate_pdf_from_md(state['report'], filename=f'{directory}/{file_name}.pdf')
+    return {"messages": [AIMessage(content=msg)]}
+Conclusion​
+This notebook demonstrates a structured approach to automating company research using the Tavily API, LangGraph Agents, and OpenAI for content generation. By leveraging a multi-query strategy, document filtering techniques, and targeted extraction of relevant information from selected documents, the workflow ensures efficient and accurate data processing. The agentic workflow, with its dynamic decision-making capabilities, allows for adaptability to specific research requirements, resulting in well-informed and well-cited company reports. This makes it a powerful tool for continuous and reliable company analysis.
+
+You can view examples of company reports generated by the code in the notebook here.
+
+Possible Improvements​
+Advanced Content Generation Filtering: Enhance the workflow by incorporating more advanced filtering techniques, such as selecting the top K most relevant documents using relevance scoring or similarity measures. This pre-content generation filtering step, combined with keyword-based filtering, ensures that only the most pertinent information is used, allowing the content generation step to focus solely on producing high-quality, accurate reports without the burden of additional filtering.
+
+"Human on the Loop" Feedback Integration: Allow a human to provide feedback on the sources found during research and guide the agent to retrieve the most relevant sources. Instead of predefining keywords before the execution of the process, enable the dynamic inclusion or exclusion of keywords and other adjustments that only a human can provide when needed, improving the user experience as well as the quality and accuracy of the sources used.
+
+Advanced Curation Step: Instead of adding raw content to the RAG documents, include only the relevant information extracted from the raw text. This can be achieved through live chunking or using an LLM to extract or summarize the pertinent information, ensuring that the content fed into the generation step is highly focused and relevant.
+
+Customized Workflow for Specific Needs: Tailor the workflow to meet specific requirements by defining a precise report format or prioritizing the use of particular sources. For instance, you can specify that only certain trusted domains should be used for data retrieval or create a structured template that the generated reports must follow. This customization enhances the relevance and precision of the research output, ensuring it aligns closely with your unique needs.
+
+Edit this page
+

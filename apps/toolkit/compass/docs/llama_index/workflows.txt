@@ -1,0 +1,2044 @@
+Workflows introduction#
+What is a workflow?#
+A workflow is an event-driven, step-based way to control the execution flow of an application.
+
+Your application is divided into sections called Steps which are triggered by Events, and themselves emit Events which trigger further steps. By combining steps and events, you can create arbitrarily complex flows that encapsulate logic and make your application more maintainable and easier to understand. A step can be anything from a single line of code to a complex agent. They can have arbitrary inputs and outputs, which are passed around by Events.
+
+An example#
+In this visualization, you can see a moderately complex workflow designed to take a query, optionally improve upon it, and then attempt to answer the query using three different RAG strategies. The LLM gets answers from all three strategies and judges which is the "best", and returns that. We can break this flow down:
+
+It is triggered by a StartEvent
+A step called judge_query determines if the query is of high quality. If not, a BadQueryEvent is generated.
+A BadQueryEvent will trigger a step called improve_query which will attempt to improve the query, which will then trigger a JudgeEvent
+A JudgeEvent will trigger judge_query again, creating a loop which can continue until the query is judged of sufficient quality. This is called "Reflection" and is a key part of agentic applications that Workflows make easy to implement.
+If the query is of sufficient quality, 3 simultaneous events are generated: a NaiveRAGEvent, a HighTopKEvent, and a RerankEvent. These three events trigger 3 associated steps in parallel, which each run a different RAG strategy.
+Each of the query steps generates a ResponseEvent. A ResponseEvent triggers a step called judge_response which will wait until it has received all 3 responses.
+judge_response will then pick the "best" response and return it to the user via a StopEvent.
+A complex workflow
+
+Why workflows?#
+As generative AI applications become more complex, it becomes harder to manage the flow of data and control the execution of the application. Workflows provide a way to manage this complexity by breaking the application into smaller, more manageable pieces.
+
+Other frameworks and LlamaIndex itself have attempted to solve this problem previously with directed acyclic graphs (DAGs) but these have a number of limitations that workflows do not:
+
+Logic like loops and branches needed to be encoded into the edges of graphs, which made them hard to read and understand.
+Passing data between nodes in a DAG created complexity around optional and default values and which parameters should be passed.
+DAGs did not feel natural to developers trying to developing complex, looping, branching AI applications.
+The event-based pattern and vanilla python approach of Workflows resolves these problems.
+
+For simple RAG pipelines and linear demos we do not expect you will need Workflows, but as your application grows in complexity, we hope you will reach for them.
+
+Next steps#
+Let's build a basic workflow. Follow the tutorial sequence step-by-step to learn the core concepts.
+
+Once you're done, check out our Workflows component guide as a reference guide + more practical examples on building RAG/agents.
+
+If you're done building and want to deploy your workflow to production, check out our llama_deploy guide (repo).
+
+Basic workflow#
+Getting started#
+Workflows are built into LlamaIndex core, so to use them all you need is
+
+
+pip install llama-index-core
+During development you will probably find it helpful to visualize your workflow; you can use our built-in visualizer for this by installing it:
+
+
+pip install llama-index-utils-workflow
+Dependencies#
+The minimal dependencies for a workflow are:
+
+
+from llama_index.core.workflow import (
+    StartEvent,
+    StopEvent,
+    Workflow,
+    step,
+)
+Single-step workflow#
+A workflow is usually implemented as a class that inherits from Workflow. The class can define an arbitrary number of steps, each of which is a method decorated with @step. Here is the simplest possible workflow:
+
+
+class MyWorkflow(Workflow):
+    @step
+    async def my_step(self, ev: StartEvent) -> StopEvent:
+        # do something here
+        return StopEvent(result="Hello, world!")
+
+
+w = MyWorkflow(timeout=10, verbose=False)
+result = await w.run()
+print(result)
+This will simply print "Hello, World!" to the console.
+
+In this code we: * Define a class MyWorkflow that inherits from Workflow * Use the @step decorator to define a single step my_step * The step takes a single argument, ev, which is an instance of StartEvent * The step returns a StopEvent with a result of "Hello, world!" * We create an instance of MyWorkflow with a timeout of 10 seconds and verbosity off * We run the workflow and print the result
+
+Type annotations for steps#
+The type annotations (e.g. ev: StartEvent) and -> StopEvent are essential to the way Workflows work. The expected types determine what event types will trigger a step. Tools like the visualizer (see below) also rely on these annotations to determine what types are generated and therefore where control flow goes next.
+
+Type annotations are validated at compile time, so you will get an error message if for instance you emit an event that is never consumed by another step.
+
+Start and Stop events#
+StartEvent and StopEvent are special events that are used to start and stop a workflow. Any step that accepts a StartEvent will be triggered by the run command. Emitting a StopEvent will end the execution of the workflow and return a final result, even if other steps remain un-executed.
+
+Running a workflow in regular python#
+Workflows are async by default, so you use await to get the result of the run command. This will work fine in a notebook environment; in a vanilla python script you will need to import asyncio and wrap your code in an async function, like this:
+
+
+async def main():
+    w = MyWorkflow(timeout=10, verbose=False)
+    result = await w.run()
+    print(result)
+
+
+if __name__ == "__main__":
+    import asyncio
+
+    asyncio.run(main())
+In the remaining examples in this tutorial we will assume an async environment for simplicity.
+
+Visualizing a workflow#
+A great feature of workflows is the built-in visualizer, which we already installed. Let's visualize the simple workflow we just created:
+
+
+from llama_index.utils.workflow import draw_all_possible_flows
+
+draw_all_possible_flows(MyWorkflow, filename="basic_workflow.html")
+This will create a file called basic_workflow.html in the current directory. Open it in your browser to see an interactive, visual representation of the workflow. It will look something like this:
+
+Basic workflow
+
+Of course, a flow with a single step is not very useful! Let's define a multi-step workflow.
+
+Custom Events#
+Multiple steps are created by defining custom events that can be emitted by steps and trigger other steps. Let's define a simple 3-step workflow.
+
+We bring in our imports as before, plus a new import for Event:
+
+
+from llama_index.core.workflow import (
+    StartEvent,
+    StopEvent,
+    Workflow,
+    step,
+    Event,
+)
+from llama_index.utils.workflow import draw_all_possible_flows
+Now we define two custom events, FirstEvent and SecondEvent. These classes can have any names and properties, but must inherit from Event:
+
+
+class FirstEvent(Event):
+    first_output: str
+
+
+class SecondEvent(Event):
+    second_output: str
+Defining the workflow#
+Now we define the workflow itself. We do this by defining the input and output types on each step. * step_one takes a StartEvent and returns a FirstEvent * step_two takes a FirstEvent and returns a SecondEvent * step_three takes a SecondEvent and returns a StopEvent
+
+
+class MyWorkflow(Workflow):
+    @step
+    async def step_one(self, ev: StartEvent) -> FirstEvent:
+        print(ev.first_input)
+        return FirstEvent(first_output="First step complete.")
+
+    @step
+    async def step_two(self, ev: FirstEvent) -> SecondEvent:
+        print(ev.first_output)
+        return SecondEvent(second_output="Second step complete.")
+
+    @step
+    async def step_three(self, ev: SecondEvent) -> StopEvent:
+        print(ev.second_output)
+        return StopEvent(result="Workflow complete.")
+
+
+w = MyWorkflow(timeout=10, verbose=False)
+result = await w.run(first_input="Start the workflow.")
+print(result)
+The full output will be
+
+
+Start the workflow.
+First step complete.
+Second step complete.
+Workflow complete.
+And we can use our visualizer to see all possible flows through this workflow:
+
+
+from llama_index.utils.workflow import draw_all_possible_flows
+
+draw_all_possible_flows(MyWorkflow, filename="multi_step_workflow.html")
+A simple multi-step workflow
+
+Of course there is still not much point to a workflow if you just run through it from beginning to end! Let's do some branching and looping.
+
+Branches and loops#
+A key feature of Workflows is their enablement of branching and looping logic, more simply and flexibly than graph-based approaches.
+
+Loops in workflows#
+To create a loop, we'll take our example MyWorkflow from the previous tutorial and add one new custom event type. We'll call it LoopEvent but again it can have any arbitrary name.
+
+
+class LoopEvent(Event):
+    loop_output: str
+Now we'll import random and modify our step_one function to randomly decide either to loop or to continue:
+
+
+@step
+async def step_one(self, ev: StartEvent | LoopEvent) -> FirstEvent | LoopEvent:
+    if random.randint(0, 1) == 0:
+        print("Bad thing happened")
+        return LoopEvent(loop_output="Back to step one.")
+    else:
+        print("Good thing happened")
+        return FirstEvent(first_output="First step complete.")
+Let's visualize this:
+
+A simple loop
+
+You can create a loop from any step to any other step by defining the appropriate event types and return types.
+
+Branches in workflows#
+Closely related to looping is branching. As you've already seen, you can conditionally return different events. Let's see a workflow that branches into two different paths:
+
+
+class BranchA1Event(Event):
+    payload: str
+
+
+class BranchA2Event(Event):
+    payload: str
+
+
+class BranchB1Event(Event):
+    payload: str
+
+
+class BranchB2Event(Event):
+    payload: str
+
+
+class BranchWorkflow(Workflow):
+    @step
+    async def start(self, ev: StartEvent) -> BranchA1Event | BranchB1Event:
+        if random.randint(0, 1) == 0:
+            print("Go to branch A")
+            return BranchA1Event(payload="Branch A")
+        else:
+            print("Go to branch B")
+            return BranchB1Event(payload="Branch B")
+
+    @step
+    async def step_a1(self, ev: BranchA1Event) -> BranchA2Event:
+        print(ev.payload)
+        return BranchA2Event(payload=ev.payload)
+
+    @step
+    async def step_b1(self, ev: BranchB1Event) -> BranchB2Event:
+        print(ev.payload)
+        return BranchB2Event(payload=ev.payload)
+
+    @step
+    async def step_a2(self, ev: BranchA2Event) -> StopEvent:
+        print(ev.payload)
+        return StopEvent(result="Branch A complete.")
+
+    @step
+    async def step_b2(self, ev: BranchB2Event) -> StopEvent:
+        print(ev.payload)
+        return StopEvent(result="Branch B complete.")
+Our imports are the same as before, but we've created 4 new event types. start randomly decides to take one branch or another, and then multiple steps in each branch complete the workflow. Let's visualize this:
+
+A simple branch
+
+You can of course combine branches and loops in any order to fulfill the needs of your application. Later in this tutorial you'll learn how to run multiple branches in parallel using send_event and synchronize them using collect_events.
+
+Up next we'll learn about maintaining state with Context.
+
+
+Maintaining state#
+In our examples so far, we have passed data from step to step using properties of custom events. This is a powerful way to pass data around, but it has limitations. For example, if you want to pass data between steps that are not directly connected, you need to pass the data through all the steps in between. This can make your code harder to read and maintain.
+
+To avoid this pitfall, we have a Context object available to every step in the workflow. To use it, declare an argument of type Context to your step. Here's how you do that.
+
+We need one new import, the Context type:
+
+
+from llama_index.core.workflow import (
+    StartEvent,
+    StopEvent,
+    Workflow,
+    step,
+    Event,
+    Context,
+)
+Now we define a start event that checks if data has been loaded into the context. If not, it returns a SetupEvent which triggers setup that loads the data and loops back to start.
+
+
+class SetupEvent(Event):
+    query: str
+
+
+class StepTwoEvent(Event):
+    query: str
+
+
+class StatefulFlow(Workflow):
+    @step
+    async def start(
+        self, ctx: Context, ev: StartEvent
+    ) -> SetupEvent | StepTwoEvent:
+        db = await ctx.get("some_database", default=None)
+        if db is None:
+            print("Need to load data")
+            return SetupEvent(query=ev.query)
+
+        # do something with the query
+        return StepTwoEvent(query=ev.query)
+
+    @step
+    async def setup(self, ctx: Context, ev: SetupEvent) -> StartEvent:
+        # load data
+        await ctx.set("some_database", [1, 2, 3])
+        return StartEvent(query=ev.query)
+Then in step_two we can access data directly from the context without having it passed explicitly. In gen AI applications this is useful for loading indexes and other large data operations.
+
+
+@step
+async def step_two(self, ctx: Context, ev: StepTwoEvent) -> StopEvent:
+    # do something with the data
+    print("Data is ", await ctx.get("some_database"))
+
+    return StopEvent(result=await ctx.get("some_database")[1])
+
+
+w = StatefulFlow(timeout=10, verbose=False)
+result = await w.run(query="Some query")
+print(result)
+Up next we'll learn how to stream events from an in-progress workflow.
+
+Streaming events#
+Workflows can be complex -- they are designed to handle complex, branching, concurrent logic -- which means they can take time to fully execute. To provide your user with a good experience, you may want to provide an indication of progress by streaming events as they occur. Workflows have built-in support for this on the Context object.
+
+To get this done, let's bring in all the deps we need:
+
+
+from llama_index.core.workflow import (
+    StartEvent,
+    StopEvent,
+    Workflow,
+    step,
+    Event,
+    Context,
+)
+import asyncio
+from llama_index.llms.openai import OpenAI
+from llama_index.utils.workflow import draw_all_possible_flows
+Let's set up some events for a simple three-step workflow:
+
+
+class FirstEvent(Event):
+    first_output: str
+
+
+class SecondEvent(Event):
+    second_output: str
+    response: str
+And define a workflow class that sends events:
+
+
+class MyWorkflow(Workflow):
+    @step
+    async def step_one(self, ctx: Context, ev: StartEvent) -> FirstEvent:
+        ctx.write_event_to_stream(Event(msg="Step one is happening"))
+        return FirstEvent(first_output="First step complete.")
+
+    @step
+    async def step_two(self, ctx: Context, ev: FirstEvent) -> SecondEvent:
+        llm = OpenAI(model="gpt-4o-mini")
+        generator = await llm.astream_complete(
+            "Please give me the first 3 paragraphs of Moby Dick, a book in the public domain."
+        )
+        async for response in generator:
+            # Allow the workflow to stream this piece of response
+            ctx.write_event_to_stream(Event(msg=response.delta))
+        return SecondEvent(
+            second_output="Second step complete, full response attached",
+            response=str(response),
+        )
+
+    @step
+    async def step_three(self, ctx: Context, ev: SecondEvent) -> StopEvent:
+        ctx.write_event_to_stream(Event(msg="Step three is happening"))
+        return StopEvent(result="Workflow complete.")
+Tip
+
+OpenAI() here assumes you have an OPENAI_API_KEY set in your environment. You could also pass one in using the api_key parameter.
+
+In step_one and step_three we write individual events to the event stream. In step_two we use astream_complete to produce an iterable generator of the LLM's response, then we produce an event for each chunk of data the LLM sends back to us -- roughly one per word -- before returning the final response to step_three.
+
+To actually get this output, we need to run the workflow asynchronously and listen for the events, like this:
+
+
+async def main():
+    w = MyWorkflow(timeout=30, verbose=True)
+    handler = w.run(first_input="Start the workflow.")
+
+    async for ev in handler.stream_events():
+        print(ev.msg)
+
+    final_result = await handler
+    print("Final result", final_result)
+
+    draw_all_possible_flows(MyWorkflow, filename="streaming_workflow.html")
+
+
+if __name__ == "__main__":
+    asyncio.run(main())
+create_task runs the workflow in the background, while stream_events will provide any event that gets written to the stream. It stops when the stream delivers a StopEvent, after which you can get the final result of the workflow as you normally would.
+
+Next let's look at concurrent execution.
+
+Concurrent execution of workflows#
+In addition to looping and branching, workflows can run steps concurrently. This is useful when you have multiple steps that can be run independently of each other and they have time-consuming operations that they await, allowing other steps to run in parallel.
+
+Emitting multiple events#
+In our examples so far, we've only emitted one event from each step. But there are many cases where you would want to run steps in parallel. To do this, you need to emit multiple events. You can do this using send_event:
+
+
+class ParallelFlow(Workflow):
+    @step
+    async def start(self, ctx: Context, ev: StartEvent) -> StepTwoEvent:
+        ctx.send_event(StepTwoEvent(query="Query 1"))
+        ctx.send_event(StepTwoEvent(query="Query 2"))
+        ctx.send_event(StepTwoEvent(query="Query 3"))
+
+    @step(num_workers=4)
+    async def step_two(self, ctx: Context, ev: StepTwoEvent) -> StopEvent:
+        print("Running slow query ", ev.query)
+        await asyncio.sleep(random.randint(1, 5))
+
+        return StopEvent(result=ev.query)
+In this example, our start step emits 3 StepTwoEvents. The step_two step is decorated with num_workers=4, which tells the workflow to run up to 4 instances of this step concurrently (this is the default).
+
+Collecting events#
+If you execute the previous example, you'll note that the workflow stops after whichever query is first to complete. Sometimes that's useful, but other times you'll want to wait for all your slow operations to complete before moving on to another step. You can do this using collect_events:
+
+
+class ConcurrentFlow(Workflow):
+    @step
+    async def start(self, ctx: Context, ev: StartEvent) -> StepTwoEvent:
+        ctx.send_event(StepTwoEvent(query="Query 1"))
+        ctx.send_event(StepTwoEvent(query="Query 2"))
+        ctx.send_event(StepTwoEvent(query="Query 3"))
+
+    @step(num_workers=4)
+    async def step_two(self, ctx: Context, ev: StepTwoEvent) -> StepThreeEvent:
+        print("Running query ", ev.query)
+        await asyncio.sleep(random.randint(1, 5))
+        return StepThreeEvent(result=ev.query)
+
+    @step
+    async def step_three(self, ctx: Context, ev: StepThreeEvent) -> StopEvent:
+        # wait until we receive 3 events
+        result = ctx.collect_events(ev, [StepThreeEvent] * 3)
+        if result is None:
+            return None
+
+        # do something with all 3 results together
+        print(result)
+        return StopEvent(result="Done")
+The collect_events method lives on the Context and takes the event that triggered the step and an array of event types to wait for. In this case, we are awaiting 3 events of the same StepThreeEvent type.
+
+The step_three step is fired every time a StepThreeEvent is received, but collect_events will return None until all 3 events have been received. At that point, the step will continue and you can do something with all 3 results together.
+
+The result returned from collect_events is an array of the events that were collected, in the order that they were received.
+
+Multiple event types#
+Of course, you do not need to wait for the same type of event. You can wait for any combination of events you like, such as in this example:
+
+
+class ConcurrentFlow(Workflow):
+    @step
+    async def start(
+        self, ctx: Context, ev: StartEvent
+    ) -> StepAEvent | StepBEvent | StepCEvent:
+        ctx.send_event(StepAEvent(query="Query 1"))
+        ctx.send_event(StepBEvent(query="Query 2"))
+        ctx.send_event(StepCEvent(query="Query 3"))
+
+    @step
+    async def step_a(self, ctx: Context, ev: StepAEvent) -> StepACompleteEvent:
+        print("Doing something A-ish")
+        return StepACompleteEvent(result=ev.query)
+
+    @step
+    async def step_b(self, ctx: Context, ev: StepBEvent) -> StepBCompleteEvent:
+        print("Doing something B-ish")
+        return StepBCompleteEvent(result=ev.query)
+
+    @step
+    async def step_c(self, ctx: Context, ev: StepCEvent) -> StepCCompleteEvent:
+        print("Doing something C-ish")
+        return StepCCompleteEvent(result=ev.query)
+
+    @step
+    async def step_three(
+        self,
+        ctx: Context,
+        ev: StepACompleteEvent | StepBCompleteEvent | StepCCompleteEvent,
+    ) -> StopEvent:
+        print("Received event ", ev.result)
+
+        # wait until we receive 3 events
+        if (
+            ctx.collect_events(
+                ev,
+                [StepCCompleteEvent, StepACompleteEvent, StepBCompleteEvent],
+            )
+            is None
+        ):
+            return None
+
+        # do something with all 3 results together
+        return StopEvent(result="Done")
+There are several changes we've made to handle multiple event types: * start is now declared as emitting 3 different event types * step_three is now declared as accepting 3 different event types * collect_events now takes an array of the event types to wait for
+
+Note that the order of the event types in the array passed to collect_events is important. The events will be returned in the order they are passed to collect_events, regardless of when they were received.
+
+The visualization of this workflow is quite pleasing:
+
+A concurrent workflow
+
+Now let's look at how we can extend workflows with subclassing and other techniques.
+
+Subclassing workflows#
+Another great feature of workflows is their extensibility. You can take workflows written by others or built-ins from LlamaIndex and extend them to customize them to your needs. We'll look at two ways to do that.
+
+The first is subclassing: workflows are just regular Python classes, which means you can subclass them to add new functionality. For example, let's say you have an agentic workflow that does some processing and then sends an email. You can subclass the workflow to add an extra step to send a text message as well.
+
+Here's our base workflow:
+
+
+from llama_index.core.workflow import (
+    StartEvent,
+    StopEvent,
+    Workflow,
+    step,
+    Event,
+    Context,
+)
+
+
+class Step2Event(Event):
+    query: str
+
+
+class Step3Event(Event):
+    query: str
+
+
+class MainWorkflow(Workflow):
+    @step
+    async def start(self, ev: StartEvent) -> Step2Event:
+        print("Starting up")
+        return Step2Event(query=ev.query)
+
+    @step
+    async def step_two(self, ev: Step2Event) -> Step3Event:
+        print("Sending an email")
+        return Step3Event(query=ev.query)
+
+    @step
+    async def step_three(self, ev: Step3Event) -> StopEvent:
+        print("Finishing up")
+        return StopEvent(result=ev.query)
+If we run this:
+
+
+w = MainWorkflow(timeout=10, verbose=False)
+result = await w.run(query="Initial query")
+print(result)
+We get:
+
+
+Starting up
+Sending an email
+Finishing up
+Initial query
+Now let's subclass this workflow to send a text message as well:
+
+
+class Step2BEvent(Event):
+    query: str
+
+
+class CustomWorkflow(MainWorkflow):
+    @step
+    async def step_two(self, ev: Step2Event) -> Step2BEvent:
+        print("Sending an email")
+        return Step2BEvent(query=ev.query)
+
+    @step
+    async def step_two_b(self, ev: Step2BEvent) -> Step3Event:
+        print("Also sending a text message")
+        return Step3Event(query=ev.query)
+Which will instead give us
+
+
+Starting up
+Sending an email
+Also sending a text message
+Finishing up
+Initial query
+We can visualize the subclassed workflow and it will show all the steps, like this:
+
+
+draw_all_possible_flows(CustomWorkflow, "custom_workflow.html")
+Custom workflow
+
+Next, let's look at another way to extend a workflow: nested workflows.
+
+Nested workflows#
+Another way to extend workflows is to nest additional workflows. It's possible to create explicit slots in existing flows where you can supply an entire additional workflow. For example, let's say we had a query that used an LLM to reflect on the quality of that query. The author might expect that you would want to modify the reflection step, and leave a slot for you to do that.
+
+Here's our base workflow:
+
+
+from llama_index.core.workflow import (
+    StartEvent,
+    StopEvent,
+    Workflow,
+    step,
+    Event,
+    Context,
+)
+from llama_index.utils.workflow import draw_all_possible_flows
+
+
+class Step2Event(Event):
+    query: str
+
+
+class MainWorkflow(Workflow):
+    @step
+    async def start(
+        self, ctx: Context, ev: StartEvent, reflection_workflow: Workflow
+    ) -> Step2Event:
+        print("Need to run reflection")
+        res = await reflection_workflow.run(query=ev.query)
+
+        return Step2Event(query=res)
+
+    @step
+    async def step_two(self, ctx: Context, ev: Step2Event) -> StopEvent:
+        print("Query is ", ev.query)
+        # do something with the query here
+        return StopEvent(result=ev.query)
+This workflow by itself will not run; it needs a valid workflow for the reflection step. Let's create one:
+
+
+class ReflectionFlow(Workflow):
+    @step
+    async def sub_start(self, ctx: Context, ev: StartEvent) -> StopEvent:
+        print("Doing custom reflection")
+        return StopEvent(result="Improved query")
+Now we can run the main workflow by supplying this custom reflection nested flow using the add_workflows method, to which we pass an instance of the ReflectionFlow class:
+
+
+w = MainWorkflow(timeout=10, verbose=False)
+w.add_workflows(reflection_workflow=ReflectionFlow())
+result = await w.run(query="Initial query")
+print(result)
+Note that because the nested flow is a totally different workflow rather than a step, draw_all_possible_flows will only draw the flow of MainWorkflow.
+
+Default workflows#
+If you're creating a workflow with multiple slots for nested workflows, you might want to provide default workflows for each slot. You can do this by setting the default value of the slot to an instance of the workflow class. Here's an example.
+
+First, let's create a default sub-workflow to use:
+
+
+class DefaultSubflow(Workflow):
+    @step()
+    async def sub_start(self, ctx: Context, ev: StartEvent) -> StopEvent:
+        print("Doing basic reflection")
+        return StopEvent(result="Improved query")
+Now we can modify the MainWorkflow to include a default sub-workflow:
+
+
+class MainWorkflow(Workflow):
+    @step()
+    async def start(
+        self,
+        ctx: Context,
+        ev: StartEvent,
+        reflection_workflow: Workflow = DefaultSubflow(),
+    ) -> Step2Event:
+        print("Need to run reflection")
+        res = await reflection_workflow.run(query=ev.query)
+
+        return Step2Event(query=res)
+Now, if you run the workflow without providing a custom reflection workflow, it will use the default one. This can be very useful for providing a good "out of the box" experience for users who may not want to customize everything.
+
+Finally, let's take a look at observability and debugging in workflows.
+
+Observability#
+Debugging is essential to any application development, and Workflows provide you a number of ways to do that.
+
+Visualization#
+The simplest form of debugging is visualization, which we've already used extensively in this tutorial. You can visualize your workflow at any time by running the following code:
+
+
+from llama_index.utils.workflow import draw_all_possible_flows
+
+draw_all_possible_flows(MyWorkflow, filename="some_filename.html")
+This will output an interactive visualization of your flow to some_filename.html that you can view in any browser.
+
+A concurrent workflow
+
+Verbose mode#
+When running any workflow you can always pass verbose=True. This will output the name of each step as it's executed, and whether and which type of event it returns. Using the ConcurrentWorkflow from the previous stage of this tutorial:
+
+
+class ConcurrentFlow(Workflow):
+    @step
+    async def start(
+        self, ctx: Context, ev: StartEvent
+    ) -> StepAEvent | StepBEvent | StepCEvent:
+        ctx.send_event(StepAEvent(query="Query 1"))
+        ctx.send_event(StepBEvent(query="Query 2"))
+        ctx.send_event(StepCEvent(query="Query 3"))
+
+    @step
+    async def step_a(self, ctx: Context, ev: StepAEvent) -> StepACompleteEvent:
+        print("Doing something A-ish")
+        return StepACompleteEvent(result=ev.query)
+
+    @step
+    async def step_b(self, ctx: Context, ev: StepBEvent) -> StepBCompleteEvent:
+        print("Doing something B-ish")
+        return StepBCompleteEvent(result=ev.query)
+
+    @step
+    async def step_c(self, ctx: Context, ev: StepCEvent) -> StepCCompleteEvent:
+        print("Doing something C-ish")
+        return StepCCompleteEvent(result=ev.query)
+
+    @step
+    async def step_three(
+        self,
+        ctx: Context,
+        ev: StepACompleteEvent | StepBCompleteEvent | StepCCompleteEvent,
+    ) -> StopEvent:
+        print("Received event ", ev.result)
+
+        # wait until we receive 3 events
+        if (
+            ctx.collect_events(
+                ev,
+                [StepCCompleteEvent, StepACompleteEvent, StepBCompleteEvent],
+            )
+            is None
+        ):
+            return None
+
+        # do something with all 3 results together
+        return StopEvent(result="Done")
+You can run the workflow with verbose mode like this:
+
+
+w = ConcurrentFlow(timeout=10, verbose=True)
+result = await w.run()
+And you'll see output like this:
+
+
+Running step start
+Step start produced no event
+Running step step_a
+Doing something A-ish
+Step step_a produced event StepACompleteEvent
+Running step step_b
+Doing something B-ish
+Step step_b produced event StepBCompleteEvent
+Running step step_c
+Doing something C-ish
+Step step_c produced event StepCCompleteEvent
+Running step step_three
+Received event  Query 1
+Step step_three produced no event
+Running step step_three
+Received event  Query 2
+Step step_three produced no event
+Running step step_three
+Received event  Query 3
+Step step_three produced event StopEvent
+Stepwise execution#
+In a notebook environment it can be helpful to run a workflow step by step. You can do this by calling run_step on the handler object:
+
+
+w = ConcurrentFlow(timeout=10, verbose=True)
+handler = w.run()
+
+while not handler.is_done():
+    # run_step returns the step's output event
+    ev = await handler.run_step()
+    # can make modifications to the results before dispatching the event
+    # val = ev.get("some_key")
+    # ev.set("some_key", new_val)
+    # can also inspect context
+    # val = await handler.ctx.get("key")
+    handler.ctx.send_event(ev)
+    continue
+
+# get the result
+result = handler.result()
+You can call run_step multiple times to step through the workflow one step at a time.
+
+Visualizing most recent execution#
+If you're running a workflow step by step, or you have just executed a workflow with branching, you can get the visualizer to draw only exactly which steps just executed using draw_most_recent_execution:
+
+
+from llama_index.utils.workflow import draw_most_recent_execution
+
+draw_most_recent_execution(w, filename="last_execution.html")
+Note that instead of passing the class name you are passing the instance of the workflow, w.
+
+Third party tools#
+You can also use any of the third-party tools for visualizing and debugging that we support, such as Arize.
+
+Arize flow
+
+One more thing#
+Our last step in this tutorial is an alternative syntax for defining workflows using unbound functions instead of classes.
+
+Workflows from unbound functions#
+Throughout this tutorial we have been showing workflows defined as classes. However, this is not the only way to define a workflow: you can also define the steps in your workflow through independent or "unbound" functions and assign them to a workflow using the @step() decorator. Let's see how that works.
+
+First we create an empty class to hold the steps:
+
+
+class TestWorkflow(Workflow):
+    pass
+Now we can add steps to the workflow by defining functions and decorating them with the @step() decorator:
+
+
+@step(workflow=TestWorkflow)
+def some_step(ev: StartEvent) -> StopEvent:
+    return StopEvent()
+In this example, we're adding a starting step to the TestWorkflow class. The @step() decorator takes the workflow argument, which is the class to which the step will be added. The function signature is the same as for a regular step, with the exception of the workflow argument.
+
+You can also add steps this way to any existing workflow class! This can be handy if you just need one extra step in your workflow and don't want to subclass an entire workflow to do it.
+
+That's it!#
+Congratulations, you've completed the workflows tutorial!
+
+Workflows#
+A Workflow in LlamaIndex is an event-driven abstraction used to chain together several events. Workflows are made up of steps, with each step responsible for handling certain event types and emitting new events.
+
+Workflows in LlamaIndex work by decorating function with a @step decorator. This is used to infer the input and output types of each workflow for validation, and ensures each step only runs when an accepted event is ready.
+
+You can create a Workflow to do anything! Build an agent, a RAG flow, an extraction flow, or anything else you want.
+
+Workflows are also automatically instrumented, so you get observability into each step using tools like Arize Pheonix. (NOTE: Observability works for integrations that take advantage of the newer instrumentation system. Usage may vary.)
+
+Tip
+
+Workflows make async a first-class citizen, and this page assumes you are running in an async environment. What this means for you is setting up your code for async properly. If you are already running in a server like FastAPI, or in a notebook, you can freely use await already!
+
+If you are running your own python scripts, its best practice to have a single async entry point.
+
+
+async def main():
+    w = MyWorkflow(...)
+    result = await w.run(...)
+    print(result)
+
+
+if __name__ == "__main__":
+    import asyncio
+
+    asyncio.run(main())
+Getting Started#
+As an illustrative example, let's consider a naive workflow where a joke is generated and then critiqued.
+
+
+from llama_index.core.workflow import (
+    Event,
+    StartEvent,
+    StopEvent,
+    Workflow,
+    step,
+)
+
+# `pip install llama-index-llms-openai` if you don't already have it
+from llama_index.llms.openai import OpenAI
+
+
+class JokeEvent(Event):
+    joke: str
+
+
+class JokeFlow(Workflow):
+    llm = OpenAI()
+
+    @step
+    async def generate_joke(self, ev: StartEvent) -> JokeEvent:
+        topic = ev.topic
+
+        prompt = f"Write your best joke about {topic}."
+        response = await self.llm.acomplete(prompt)
+        return JokeEvent(joke=str(response))
+
+    @step
+    async def critique_joke(self, ev: JokeEvent) -> StopEvent:
+        joke = ev.joke
+
+        prompt = f"Give a thorough analysis and critique of the following joke: {joke}"
+        response = await self.llm.acomplete(prompt)
+        return StopEvent(result=str(response))
+
+
+w = JokeFlow(timeout=60, verbose=False)
+result = await w.run(topic="pirates")
+print(str(result))
+There's a few moving pieces here, so let's go through this piece by piece.
+
+Defining Workflow Events#
+
+class JokeEvent(Event):
+    joke: str
+Events are user-defined pydantic objects. You control the attributes and any other auxiliary methods. In this case, our workflow relies on a single user-defined event, the JokeEvent.
+
+Setting up the Workflow Class#
+
+class JokeFlow(Workflow):
+    llm = OpenAI(model="gpt-4o-mini")
+    ...
+Our workflow is implemented by subclassing the Workflow class. For simplicity, we attached a static OpenAI llm instance.
+
+Workflow Entry Points#
+
+class JokeFlow(Workflow):
+    ...
+
+    @step
+    async def generate_joke(self, ev: StartEvent) -> JokeEvent:
+        topic = ev.topic
+
+        prompt = f"Write your best joke about {topic}."
+        response = await self.llm.acomplete(prompt)
+        return JokeEvent(joke=str(response))
+
+    ...
+Here, we come to the entry-point of our workflow. While events are use-defined, there are two special-case events, the StartEvent and the StopEvent. Here, the StartEvent signifies where to send the initial workflow input.
+
+The StartEvent is a bit of a special object since it can hold arbitrary attributes. Here, we accessed the topic with ev.topic, which would raise an error if it wasn't there. You could also do ev.get("topic") to handle the case where the attribute might not be there without raising an error.
+
+At this point, you may have noticed that we haven't explicitly told the workflow what events are handled by which steps. Instead, the @step decorator is used to infer the input and output types of each step. Furthermore, these inferred input and output types are also used to verify for you that the workflow is valid before running!
+
+Workflow Exit Points#
+
+class JokeFlow(Workflow):
+    ...
+
+    @step
+    async def critique_joke(self, ev: JokeEvent) -> StopEvent:
+        joke = ev.joke
+
+        prompt = f"Give a thorough analysis and critique of the following joke: {joke}"
+        response = await self.llm.acomplete(prompt)
+        return StopEvent(result=str(response))
+
+    ...
+Here, we have our second, and last step, in the workflow. We know its the last step because the special StopEvent is returned. When the workflow encounters a returned StopEvent, it immediately stops the workflow and returns whatever the result was.
+
+In this case, the result is a string, but it could be a dictionary, list, or any other object.
+
+Running the Workflow#
+
+w = JokeFlow(timeout=60, verbose=False)
+result = await w.run(topic="pirates")
+print(str(result))
+Lastly, we create and run the workflow. There are some settings like timeouts (in seconds) and verbosity to help with debugging.
+
+The .run() method is async, so we use await here to wait for the result.
+
+Drawing the Workflow#
+Workflows can be visualized, using the power of type annotations in your step definitions. You can either draw all possible paths through the workflow, or the most recent execution, to help with debugging.
+
+Firs install:
+
+
+pip install llama-index-utils-workflow
+Then import and use:
+
+
+from llama_index.utils.workflow import (
+    draw_all_possible_flows,
+    draw_most_recent_execution,
+)
+
+# Draw all
+draw_all_possible_flows(JokeFlow, filename="joke_flow_all.html")
+
+# Draw an execution
+w = JokeFlow()
+await w.run(topic="Pirates")
+draw_most_recent_execution(w, filename="joke_flow_recent.html")
+Working with Global Context/State#
+Optionally, you can choose to use global context between steps. For example, maybe multiple steps access the original query input from the user. You can store this in global context so that every step has access.
+
+
+from llama_index.core.workflow import Context
+
+
+@step
+async def query(self, ctx: Context, ev: MyEvent) -> StopEvent:
+    # retrieve from context
+    query = await ctx.get("query")
+
+    # do something with context and event
+    val = ...
+    result = ...
+
+    # store in context
+    await ctx.set("key", val)
+
+    return StopEvent(result=result)
+Waiting for Multiple Events#
+The context does more than just hold data, it also provides utilities to buffer and wait for multiple events.
+
+For example, you might have a step that waits for a query and retrieved nodes before synthesizing a response:
+
+
+from llama_index.core import get_response_synthesizer
+
+
+@step
+async def synthesize(
+    self, ctx: Context, ev: QueryEvent | RetrieveEvent
+) -> StopEvent | None:
+    data = ctx.collect_events(ev, [QueryEvent, RetrieveEvent])
+    # check if we can run
+    if data is None:
+        return None
+
+    # unpack -- data is returned in order
+    query_event, retrieve_event = data
+
+    # run response synthesis
+    synthesizer = get_response_synthesizer()
+    response = synthesizer.synthesize(
+        query_event.query, nodes=retrieve_event.nodes
+    )
+
+    return StopEvent(result=response)
+Using ctx.collect_events() we can buffer and wait for ALL expected events to arrive. This function will only return data (in the requested order) once all events have arrived.
+
+Manually Triggering Events#
+Normally, events are triggered by returning another event during a step. However, events can also be manually dispatched using the ctx.send_event(event) method within a workflow.
+
+Here is a short toy example showing how this would be used:
+
+
+from llama_index.core.workflow import step, Context, Event, Workflow
+
+
+class MyEvent(Event):
+    pass
+
+
+class MyEventResult(Event):
+    result: str
+
+
+class GatherEvent(Event):
+    pass
+
+
+class MyWorkflow(Workflow):
+    @step
+    async def dispatch_step(
+        self, ctx: Context, ev: StartEvent
+    ) -> MyEvent | GatherEvent:
+        ctx.send_event(MyEvent())
+        ctx.send_event(MyEvent())
+
+        return GatherEvent()
+
+    @step
+    async def handle_my_event(self, ev: MyEvent) -> MyEventResult:
+        return MyEventResult(result="result")
+
+    @step
+    async def gather(
+        self, ctx: Context, ev: GatherEvent | MyEventResult
+    ) -> StopEvent | None:
+        # wait for events to finish
+        events = ctx.collect_events([MyEventResult, MyEventResult])
+        if not events:
+            return None
+
+        return StopEvent(result=events)
+Streaming Events#
+You can also iterate over events as they come in. This is useful for streaming purposes, showing progress, or for debugging.
+
+
+w = MyWorkflow(...)
+
+handler = w.run(topic="Pirates")
+
+async for event in handler.stream_events():
+    print(event)
+
+result = await handler
+Retry steps execution in case of failures#
+A step that fails its execution might result in the failure of the entire workflow, but oftentimes errors are expected and the execution can be safely retried. Think of a HTTP request that times out because of a transient congestion of the network, or an external API call that hits a rate limiter.
+
+For all those situation where you want the step to try again, you can use a "Retry Policy". A retry policy is an object that instructs the workflow to execute a step multiple times, dictating how much time has to pass before a new attempt. Policies take into consideration how much time passed since the first failure, how many consecutive failures happened and which was the last error occurred.
+
+To set a policy for a specific step, all you have to do is passing a policy object to the @step decorator:
+
+
+from llama_index.core.workflow.retry_policy import ConstantDelayRetryPolicy
+
+
+class MyWorkflow(Workflow):
+    # ...more workflow definition...
+
+    # This policy will retry this step on failure every 5 seconds for at most 10 times
+    @step(retry_policy=ConstantDelayRetryPolicy(delay=5, maximum_attempts=10))
+    async def flaky_step(self, ctx: Context, ev: StartEvent) -> StopEvent:
+        result = flaky_call()  # this might raise
+        return StopEvent(result=result)
+You can see the API docs for a detailed description of the policies available in the framework. If you can't find a policy that's suitable for your use case, you can easily write a custom one. The only requirement for custom policies is to write a Python class that respects the RetryPolicy protocol. In other words, your custom policy class must have a method with the following signature:
+
+
+def next(
+    self, elapsed_time: float, attempts: int, error: Exception
+) -> Optional[float]:
+    ...
+For example, this is a retry policy that's excited about the weekend and only retries a step if it's Friday:
+
+
+from datetime import datetime
+
+
+class RetryOnFridayPolicy:
+    def next(
+        self, elapsed_time: float, attempts: int, error: Exception
+    ) -> Optional[float]:
+        if datetime.today().strftime("%A") == "Friday":
+            # retry in 5 seconds
+            return 5
+        # tell the workflow we don't want to retry
+        return None
+Human-in-the-loop#
+Since workflows are so flexible, there are many possible ways to implement human-in-the-loop patterns.
+
+The easiest way to implement a human-in-the-loop is to use the InputRequiredEvent and HumanResponseEvent events during event streaming.
+
+
+class HumanInTheLoopWorkflow(Workflow):
+    @step
+    async def step1(self, ev: StartEvent) -> InputRequiredEvent:
+        return InputRequiredEvent(prefix="Enter a number: ")
+
+    @step
+    async def step2(self, ev: HumanResponseEvent) -> StopEvent:
+        return StopEvent(result=ev.response)
+
+
+# workflow should work with streaming
+workflow = HumanInTheLoopWorkflow()
+
+handler = workflow.run()
+async for event in handler.stream_events():
+    if isinstance(event, InputRequiredEvent):
+        # here, we can handle human input however you want
+        # this means using input(), websockets, accessing async state, etc.
+        # here, we just use input()
+        response = input(event.prefix)
+        handler.ctx.send_event(HumanResponseEvent(response=response))
+
+final_result = await handler
+Here, the workflow will wait until the HumanResponseEvent is emitted.
+
+Also note that you can break out of the loop, and resume it later. This is useful if you want to pause the workflow to wait for a human response, but continue the workflow later.
+
+
+handler = workflow.run()
+async for event in handler.stream_events():
+    if isinstance(event, InputRequiredEvent):
+        break
+
+# now we handle the human response
+response = input(event.prefix)
+handler.ctx.send_event(HumanResponseEvent(response=response))
+
+# now we resume the workflow streaming
+async for event in handler.stream_events():
+    continue
+
+final_result = await handler
+Stepwise Execution#
+Workflows have built-in utilities for stepwise execution, allowing you to control execution and debug state as things progress.
+
+
+w = JokeFlow(...)
+
+# Kick off the workflow
+handler = w.run(topic="Pirates")
+
+# Iterate until done
+async for _ in handler:
+    # inspect context
+    # val = await handler.ctx.get("key")
+    continue
+
+# Get the final result
+result = await handler
+Decorating non-class Functions#
+You can also decorate and attach steps to a workflow without subclassing it.
+
+Below is the JokeFlow from earlier, but defined without subclassing.
+
+
+from llama_index.core.workflow import (
+    Event,
+    StartEvent,
+    StopEvent,
+    Workflow,
+    step,
+)
+from llama_index.llms.openai import OpenAI
+
+
+class JokeEvent(Event):
+    joke: str
+
+
+joke_flow = Workflow(timeout=60, verbose=True)
+
+
+@step(workflow=joke_flow)
+async def generate_joke(ev: StartEvent) -> JokeEvent:
+    topic = ev.topic
+
+    prompt = f"Write your best joke about {topic}."
+
+    llm = OpenAI()
+    response = await llm.acomplete(prompt)
+    return JokeEvent(joke=str(response))
+
+
+@step(workflow=joke_flow)
+async def critique_joke(ev: JokeEvent) -> StopEvent:
+    joke = ev.joke
+
+    prompt = (
+        f"Give a thorough analysis and critique of the following joke: {joke}"
+    )
+    response = await llm.acomplete(prompt)
+    return StopEvent(result=str(response))
+Maintaining Context Across Runs#
+As you have seen, workflows have a Context object that can be used to maintain state across steps.
+
+If you want to maintain state across multiple runs of a workflow, you can pass a previous context into the .run() method.
+
+
+handler = w.run()
+result = await handler
+
+# continue with next run
+handler = w.run(ctx=handler.ctx)
+result = await handler
+Deploying a Workflow#
+You can deploy a workflow as a multi-agent service with llama_deploy (repo). Each agent service is orchestrated via a control plane and communicates via a message queue. Deploy locally or on Kubernetes.
+
+Examples#
+To help you become more familiar with the workflow concept and its features, LlamaIndex documentation offers example notebooks that you can run for hands-on learning:
+
+Common Workflow Patterns walks you through common usage patterns like looping and state management using simple workflows. It's usually a great place to start.
+RAG + Reranking shows how to implement a real-world use case with a fairly simple workflow that performs both ingestion and querying.
+Citation Query Engine similar to RAG + Reranking, the notebook focuses on how to implement intermediate steps in between retrieval and generation. A good example of how to use the Context object in a workflow.
+Corrective RAG adds some more complexity on top of a RAG workflow, showcasing how to query a web search engine after an evaluation step.
+Utilizing Concurrency explains how to manage the parallel execution of steps in a workflow, something that's important to know as your workflows grow in complexity.
+RAG applications are easy to understand and offer a great opportunity to learn the basics of workflows. However, more complex agentic scenarios involving tool calling, memory, and routing are where workflows excel.
+
+The examples below highlight some of these use-cases.
+
+ReAct Agent is obviously the perfect example to show how to implement tools in a workflow.
+Function Calling Agent is a great example of how to use the LlamaIndex framework primitives in a workflow, keeping it small and tidy even in complex scenarios like function calling.
+Human In The Loop: Story Crafting is a powerful example showing how workflow runs can be interactive and stateful. In this case, to collect input from a human.
+Reliable Structured Generation shows how to implement loops in a workflow, in this case to improve structured output through reflection.
+Last but not least, a few more advanced use cases that demonstrate how workflows can be extremely handy if you need to quickly implement prototypes, for example from literature:
+
+Advanced Text-to-SQL
+JSON Query Engine
+Long RAG
+Multi-Step Query Engine
+Multi-Strategy Workflow
+Router Query Engine
+Self Discover Workflow
+Sub-Question Query Engine
+
+🦙 llama_deploy 🤖#
+llama_deploy (formerly llama-agents) is an async-first framework for deploying, scaling, and productionizing agentic multi-service systems based on workflows from llama_index. With llama_deploy, you can build any number of workflows in llama_index and then bring them into llama_deploy for deployment.
+
+In llama_deploy, each workflow is seen as a service, endlessly processing incoming tasks. Each workflow pulls and publishes messages to and from a message queue.
+
+At the top of a llama_deploy system is the control plane. The control plane handles ongoing tasks, manages state, keeps track of which services are in the network, and also decides which service should handle the next step of a task using an orchestrator. The default orchestrator is purely programmatic, handling failures, retries, and state-passing.
+
+The overall system layout is pictured below.
+
+A basic system in llama_deploy
+
+Why llama_deploy?#
+Seamless Deployment: It bridges the gap between development and production, allowing you to deploy llama_index workflows with minimal changes to your code.
+
+Scalability: The microservices architecture enables easy scaling of individual components as your system grows.
+
+Flexibility: By using a hub-and-spoke architecture, you can easily swap out components (like message queues) or add new services without disrupting the entire system.
+
+Fault Tolerance: With built-in retry mechanisms and failure handling, llama_deploy ensures robustness in production environments.
+
+State Management: The control plane manages state across services, simplifying complex multi-step processes.
+
+Async-First: Designed for high-concurrency scenarios, making it suitable for real-time and high-throughput applications.
+
+Wait, where is llama-agents?#
+The introduction of Workflows in llama_indexproduced the most intuitive way to develop agentic applications. The question then became: how can we close the gap between developing an agentic application as a workflow, and deploying it?
+
+With llama_deploy, the goal is to make it as 1:1 as possible between something that you built in a notebook, and something running on the cloud in a cluster. llama_deploy enables this by simply being able to pass in and deploy any workflow.
+
+Installation#
+llama_deploy can be installed with pip, and relies mainly on llama_index_core:
+
+
+pip install llama_deploy
+Getting Started#
+High-Level Deployment#
+llama_deploy provides a simple way to deploy your workflows using configuration objects and helper functions.
+
+When deploying, generally you'll want to deploy the core services and workflows each from their own python scripts (or docker images, etc.).
+
+Here's how you can deploy a core system and a workflow:
+
+Deploying the Core System#
+To deploy the core system (message queue, control plane, and orchestrator), you can use the deploy_core function:
+
+
+from llama_deploy import (
+    deploy_core,
+    ControlPlaneConfig,
+    SimpleMessageQueueConfig,
+)
+
+
+async def main():
+    await deploy_core(
+        control_plane_config=ControlPlaneConfig(),
+        message_queue_config=SimpleMessageQueueConfig(),
+    )
+
+
+if __name__ == "__main__":
+    import asyncio
+
+    asyncio.run(main())
+This will set up the basic infrastructure for your llama_deploy system. You can customize the configs to adjust ports and basic settings, as well as swap in different message queue configs (Redis, Kafka, RabbiMQ, etc.).
+
+Deploying a Workflow#
+To deploy a workflow as a service, you can use the deploy_workflow function:
+
+
+from llama_deploy import (
+    deploy_workflow,
+    WorkflowServiceConfig,
+    ControlPlaneConfig,
+    SimpleMessageQueueConfig,
+)
+from llama_index.core.workflow import (
+    Context,
+    Event,
+    Workflow,
+    StartEvent,
+    StopEvent,
+    step,
+)
+
+
+class ProgressEvent(Event):
+    progress: str
+
+
+# create a dummy workflow
+class MyWorkflow(Workflow):
+    @step()
+    async def run_step(self, ctx: Context, ev: StartEvent) -> StopEvent:
+        # Your workflow logic here
+        arg1 = str(ev.get("arg1", ""))
+        result = arg1 + "_result"
+
+        # stream events as steps run
+        ctx.write_event_to_stream(
+            ProgressEvent(progress="I am doing something!")
+        )
+
+        return StopEvent(result=result)
+
+
+async def main():
+    await deploy_workflow(
+        workflow=MyWorkflow(),
+        workflow_config=WorkflowServiceConfig(
+            host="127.0.0.1", port=8002, service_name="my_workflow"
+        ),
+        control_plane_config=ControlPlaneConfig(),
+    )
+
+
+if __name__ == "__main__":
+    import asyncio
+
+    asyncio.run(main())
+This will deploy your workflow as a service within the llama_deploy system, and register the service with the existing control plane and message queue.
+
+Interacting with your Deployment#
+Once deployed, you can interact with your deployment using a client.
+
+
+from llama_deploy import LlamaDeployClient, ControlPlaneConfig
+
+# points to deployed control plane
+client = LlamaDeployClient(ControlPlaneConfig())
+
+session = client.create_session()
+result = session.run("my_workflow", arg1="hello_world")
+print(result)
+# prints 'hello_world_result'
+If you want to see the event stream as well, you can do:
+
+
+# create a session
+session = client.create_session()
+
+# kick off run
+task_id = session.run_nowait("streaming_workflow", arg1="hello_world")
+
+# stream events -- the will yield a dict representing each event
+for event in session.get_task_result_stream(task_id):
+    print(event)
+
+# get final result
+result = session.get_task_result(task_id)
+print(result)
+# prints 'hello_world_result'
+Deploying Nested Workflows#
+Every Workflow is capable of injecting and running nested workflows. For example
+
+
+from llama_index.core.workflow import Workflow, StartEvent, StopEvent, step
+
+
+class InnerWorkflow(Workflow):
+    @step()
+    async def run_step(self, ev: StartEvent) -> StopEvent:
+        arg1 = ev.get("arg1")
+        if not arg1:
+            raise ValueError("arg1 is required.")
+
+        return StopEvent(result=str(arg1) + "_result")
+
+
+class OuterWorkflow(Workflow):
+    @step()
+    async def run_step(
+        self, ev: StartEvent, inner: InnerWorkflow
+    ) -> StopEvent:
+        arg1 = ev.get("arg1")
+        if not arg1:
+            raise ValueError("arg1 is required.")
+
+        arg1 = await inner.run(arg1=arg1)
+
+        return StopEvent(result=str(arg1) + "_result")
+
+
+inner = InnerWorkflow()
+outer = OuterWorkflow()
+outer.add_workflows(inner=InnerWorkflow())
+llama_deploy makes it dead simple to spin up each workflow above as a service, and run everything without any changes to your code!
+
+Just deploy each workflow:
+
+[!NOTE] This code is launching both workflows from the same script, but these could easily be separate scripts, machines, or docker containers!
+
+
+import asyncio
+from llama_deploy import (
+    WorkflowServiceConfig,
+    ControlPlaneConfig,
+    deploy_workflow,
+)
+
+
+async def main():
+    inner_task = asyncio.create_task(
+        deploy_workflow(
+            inner,
+            WorkflowServiceConfig(
+                host="127.0.0.1", port=8003, service_name="inner"
+            ),
+            ControlPlaneConfig(),
+        )
+    )
+
+    outer_task = asyncio.create_task(
+        deploy_workflow(
+            outer,
+            WorkflowServiceConfig(
+                host="127.0.0.1", port=8002, service_name="outer"
+            ),
+            ControlPlaneConfig(),
+        )
+    )
+
+    await asyncio.gather(inner_task, outer_task)
+
+
+if __name__ == "__main__":
+    import asyncio
+
+    asyncio.run(main())
+And then use it as before:
+
+
+from llama_deploy import LlamaDeployClient
+
+# points to deployed control plane
+client = LlamaDeployClient(ControlPlaneConfig())
+
+session = client.create_session()
+result = session.run("outer", arg1="hello_world")
+print(result)
+# prints 'hello_world_result_result'
+Components of a llama_deploy System#
+In llama_deploy, there are several key components that make up the overall system
+
+message queue -- the message queue acts as a queue for all services and the control plane. It has methods for publishing methods to named queues, and delegates messages to consumers.
+control plane -- the control plane is a the central gateway to the llama_deploy system. It keeps track of current tasks and the services that are registered to the system. The control plane also performs state and session management and utilizes the orchestrator.
+orchestrator -- The module handles incoming tasks and decides what service to send it to, as well as how to handle results from services. By default, the orchestrator is very simple, and assumes incoming tasks have a destination already specified. Beyond that, the default orchestrator handles retries, failures, and other nice-to-haves.
+services -- Services are where the actual work happens. A services accepts some incoming task and context, processes it, and publishes a result. When you deploy a workflow, it becomes a service.
+Low-Level Deployment#
+For more control over the deployment process, you can use the lower-level API. Here's what's happening under the hood when you use deploy_core and deploy_workflow:
+
+deploy_core#
+The deploy_core function sets up the message queue, control plane, and orchestrator. Here's what it does:
+
+
+async def deploy_core(
+    control_plane_config: ControlPlaneConfig,
+    message_queue_config: BaseSettings,
+    orchestrator_config: Optional[SimpleOrchestratorConfig] = None,
+) -> None:
+    orchestrator_config = orchestrator_config or SimpleOrchestratorConfig()
+
+    message_queue_client = _get_message_queue_client(message_queue_config)
+
+    control_plane = ControlPlaneServer(
+        message_queue_client,
+        SimpleOrchestrator(**orchestrator_config.model_dump()),
+        **control_plane_config.model_dump(),
+    )
+
+    message_queue_task = None
+    if isinstance(message_queue_config, SimpleMessageQueueConfig):
+        message_queue_task = _deploy_local_message_queue(message_queue_config)
+
+    control_plane_task = asyncio.create_task(control_plane.launch_server())
+
+    # let services spin up
+    await asyncio.sleep(1)
+
+    # register the control plane as a consumer
+    control_plane_consumer_fn = await control_plane.register_to_message_queue()
+
+    consumer_task = asyncio.create_task(control_plane_consumer_fn())
+
+    # let things sync up
+    await asyncio.sleep(1)
+
+    # let things run
+    if message_queue_task:
+        all_tasks = [control_plane_task, consumer_task, message_queue_task]
+    else:
+        all_tasks = [control_plane_task, consumer_task]
+
+    shutdown_handler = _get_shutdown_handler(all_tasks)
+    loop = asyncio.get_event_loop()
+    while loop.is_running():
+        await asyncio.sleep(0.1)
+        signal.signal(signal.SIGINT, shutdown_handler)
+
+        for task in all_tasks:
+            if task.done() and task.exception():  # type: ignore
+                raise task.exception()  # type: ignore
+This function:
+
+Sets up the message queue client
+Creates the control plane server
+Launches the message queue (if using SimpleMessageQueue)
+Launches the control plane server
+Registers the control plane as a consumer
+Sets up a shutdown handler and keeps the event loop running
+deploy_workflow#
+The deploy_workflow function deploys a workflow as a service. Here's what it does:
+
+
+async def deploy_workflow(
+    workflow: Workflow,
+    workflow_config: WorkflowServiceConfig,
+    control_plane_config: ControlPlaneConfig,
+) -> None:
+    control_plane_url = control_plane_config.url
+
+    async with httpx.AsyncClient() as client:
+        response = await client.get(f"{control_plane_url}/queue_config")
+        queue_config_dict = response.json()
+
+    message_queue_config = _get_message_queue_config(queue_config_dict)
+    message_queue_client = _get_message_queue_client(message_queue_config)
+
+    service = WorkflowService(
+        workflow=workflow,
+        message_queue=message_queue_client,
+        **workflow_config.model_dump(),
+    )
+
+    service_task = asyncio.create_task(service.launch_server())
+
+    # let service spin up
+    await asyncio.sleep(1)
+
+    # register to message queue
+    consumer_fn = await service.register_to_message_queue()
+
+    # register to control plane
+    control_plane_url = (
+        f"http://{control_plane_config.host}:{control_plane_config.port}"
+    )
+    await service.register_to_control_plane(control_plane_url)
+
+    # create consumer task
+    consumer_task = asyncio.create_task(consumer_fn())
+
+    # let things sync up
+    await asyncio.sleep(1)
+
+    all_tasks = [consumer_task, service_task]
+
+    shutdown_handler = _get_shutdown_handler(all_tasks)
+    loop = asyncio.get_event_loop()
+    while loop.is_running():
+        await asyncio.sleep(0.1)
+        signal.signal(signal.SIGINT, shutdown_handler)
+
+        for task in all_tasks:
+            if task.done() and task.exception():  # type: ignore
+                raise task.exception()  # type: ignore
+This function:
+
+Sets up the message queue client
+Creates a WorkflowService with the provided workflow
+Launches the service server
+Registers the service to the message queue
+Registers the service to the control plane
+Sets up a consumer task for the service
+Sets up a shutdown handler and keeps the event loop running
+Using the llama_deploy client#
+llama_deploy provides both a synchronous and an asynchronous client for interacting with a deployed system.
+
+Both clients have the same interface, but the asynchronous client is recommended for production use to enable concurrent operations.
+
+Generally, there is a top-level client for interacting with the control plane, and a session client for interacting with a specific session. The session client is created automatically for you by the top-level client and returned from specific methods.
+
+To create a client, you need to point it to a control plane.
+
+
+from llama_deploy import (
+    LlamaDeployClient,
+    AsyncLlamaDeployClient,
+    ControlPlaneConfig,
+)
+
+client = LlamaDeployClient(ControlPlaneConfig())
+async_client = AsyncLlamaDeployClient(ControlPlaneConfig())
+Client Methods#
+client.create_session(poll_interval=DEFAULT_POLL_INTERVAL): Creates a new session for running workflows and returns a SessionClient for it. A session encapsulates the context and state for a single workflow run. Example:
+
+session = client.create_session()
+client.list_sessions(): Lists all sessions registered with the control plane. Example:
+
+sessions = client.list_sessions()
+for session in sessions:
+    print(session.session_id)
+client.get_session(session_id, poll_interval=DEFAULT_POLL_INTERVAL): Gets an existing session by ID and returns a SessionClient for it. Example:
+
+session = client.get_session("session_123")
+client.get_or_create_session(session_id, poll_interval=DEFAULT_POLL_INTERVAL): Gets an existing session by ID, or creates a new one if it doesn't exist. Example:
+
+session = client.get_or_create_session("session_123")
+client.get_service(service_name): Gets the definition of a service by name. Example:
+
+service = client.get_service("my_workflow")
+print(service.service_name, service.host, service.port)
+client.delete_session(session_id): Deletes a session by ID. Example:
+
+client.delete_session("session_123")
+client.list_services(): Lists all services registered with the control plane. Example:
+
+services = client.list_services()
+for service in services:
+    print(service.service_name)
+client.register_service(service_def): Registers a service with the control plane. Example:
+
+service_def = ServiceDefinition(
+    service_name="my_workflow", host="localhost", port=8000
+)
+client.register_service(service_def)
+client.deregister_service(service_name): Deregisters a service from the control plane. Example:
+
+client.deregister_service("my_workflow")
+SessionClient Methods#
+session.run(service_name, **run_kwargs): Implements the workflow-based run API for a session. Example:
+
+result = session.run("my_workflow", arg1="hello", arg2="world")
+print(result)
+session.create_task(task_def): Creates a new task in the session. Example:
+
+task_def = TaskDefinition(input='{"arg1": "hello"}', agent_id="my_workflow")
+task_id = session.create_task(task_def)
+session.get_tasks(): Gets all tasks in the session. Example:
+
+tasks = session.get_tasks()
+for task in tasks:
+    print(task.task_id, task.status)
+session.get_current_task(): Gets the current (most recent) task in the session. Example:
+
+current_task = session.get_current_task()
+if current_task:
+    print(current_task.task_id, current_task.status)
+session.get_task_result(task_id): Gets the result of a task in the session if it has one. Example:
+
+result = session.get_task_result("task_123")
+if result:
+    print(result.result)
+Message Queue Integrations#
+In addition to SimpleMessageQueue, we provide integrations for various message queue providers, such as RabbitMQ, Redis, etc. The general usage pattern for any of these message queues is the same as that for SimpleMessageQueue, however the appropriate extra would need to be installed along with llama-deploy.
+
+For example, for RabbitMQMessageQueue, we need to install the "rabbitmq" extra:
+
+
+# using pip install
+pip install llama-agents[rabbitmq]
+
+# using poetry
+poetry add llama-agents -E "rabbitmq"
+Using the RabbitMQMessageQueue is then done as follows:
+
+
+from llama_agents.message_queue.rabbitmq import (
+    RabbitMQMessageQueueConfig,
+    RabbitMQMessageQueue,
+)
+
+message_queue_config = (
+    RabbitMQMessageQueueConfig()
+)  # loads params from environment vars
+message_queue = RabbitMQMessageQueue(**message_queue_config)
+[!NOTE] RabbitMQMessageQueueConfig can load its params from environment variables.
+
+Introducing llama-agents: A Powerful Framework for Building Production Multi-Agent AI Systems
+Agents
+We're excited to announce the alpha release of llama-agents, a new open-source framework designed to simplify the process of building, iterating, and deploying multi-agent AI systems and turn your agents into production microservices. Whether you're working on complex question-answering systems, collaborative AI assistants, or distributed AI workflows, llama-agents provides the tools and structure you need to bring your ideas to life.
+
+Key Features of llama-agents
+Distributed Service Oriented Architecture: every agent in LlamaIndex can be its own independently running microservice, orchestrated by a fully customizable LLM-powered control plane that routes and distributes tasks.
+Communication via standardized API interfaces: interface between agents using a central control plane orchestrator. Pass messages between agents using a message queue.
+Define agentic and explicit orchestration flows: developers have the flexibility to directly define the sequence of interactions between agents, or leave it up to an “agentic orchestrator” that decides which agents are relevant to the task.
+Ease of deployment: launch, scale and monitor each agent and your control plane independently.
+Scalability and resource management: use our built-in observability tools to monitor the quality and performance of the system and each individual agent service
+Let's dive into how you can start using llama-agents to build your own multi-agent systems.
+
+Getting Started with llama-agents
+First, install the framework using pip:
+
+pip install llama-agents llama-index-agent-openai
+Basic System Setup
+Here's a simple example of how to set up a basic multi-agent system using llama-agents. First we’ll bring in our dependencies and set up our control plane, which contains our LLM-powered orchestrator
+
+import dotenv
+dotenv.load_dotenv() # our .env file defines OPENAI_API_KEY
+from llama_agents import (
+    AgentService,
+    ControlPlaneServer,
+    SimpleMessageQueue,
+    AgentOrchestrator,
+)
+from llama_index.core.agent import FunctionCallingAgentWorker
+from llama_index.core.tools import FunctionTool
+from llama_index.llms.openai import OpenAI
+import logging
+
+# turn on logging so we can see the system working
+logging.getLogger("llama_agents").setLevel(logging.INFO)
+
+# Set up the message queue and control plane
+message_queue = SimpleMessageQueue()
+control_plane = ControlPlaneServer(
+    message_queue=message_queue,
+    orchestrator=AgentOrchestrator(llm=OpenAI()),
+)
+Next we create our tools using LlamaIndex’s existing abstractions, provide those tools to an agent, and turn that agent into an independent microservice:
+
+# create a tool
+def get_the_secret_fact() -> str:
+    """Returns the secret fact."""
+    return "The secret fact is: A baby llama is called a 'Cria'."
+
+tool = FunctionTool.from_defaults(fn=get_the_secret_fact)
+
+# Define an agent
+worker = FunctionCallingAgentWorker.from_tools([tool], llm=OpenAI())
+agent = worker.as_agent()
+
+# Create an agent service
+agent_service = AgentService(
+    agent=agent,
+    message_queue=message_queue,
+    description="General purpose assistant",
+    service_name="assistant",
+)
+Finally we launch the service and the control plane. Note that here we’re using a helper function to run a single query through the system and then exit; next we’ll show how to deploy this to production.
+
+# Set up the launcher for local testing
+from llama_agents import LocalLauncher
+
+launcher = LocalLauncher(
+    [agent_service],
+    control_plane,
+    message_queue,
+)
+
+# Run a single query through the system
+result = launcher.launch_single("What's the secret fact?")
+print(result)
+Deploying Your Multi-Agent System
+Once you've tested your system locally, you can deploy it as a set of services for real production use. Here's how you might set that up. This is similar to the previous example, but we’ve added a second agent service and we’re using a different launcher. Let’s bring in our dependencies and set up our control plane again:
+
+import dotenv
+dotenv.load_dotenv()
+from llama_agents import (
+    AgentService,
+    AgentOrchestrator,
+    ControlPlaneServer,
+    SimpleMessageQueue,
+)
+
+from llama_index.core.agent import FunctionCallingAgentWorker
+from llama_index.core.tools import FunctionTool
+from llama_index.llms.openai import OpenAI
+import logging
+
+# change logging level to enable or disable more verbose logging
+logging.getLogger("llama_agents").setLevel(logging.INFO)
+
+# create our multi-agent framework components
+message_queue = SimpleMessageQueue()
+control_plane = ControlPlaneServer(
+    message_queue=message_queue,
+    orchestrator=AgentOrchestrator(llm=OpenAI()),
+)
+Then as before we create a tool and an agent, though this time we’ll add a second agent:
+
+# create a tool
+def get_the_secret_fact() -> str:
+    """Returns the secret fact."""
+    return "The secret fact is: A baby llama is called a 'Cria'."
+
+tool = FunctionTool.from_defaults(fn=get_the_secret_fact)
+
+# create our agents
+worker1 = FunctionCallingAgentWorker.from_tools([tool], llm=OpenAI())
+worker2 = FunctionCallingAgentWorker.from_tools([], llm=OpenAI())
+agent1 = worker1.as_agent()
+agent2 = worker2.as_agent()
+We turn those agents into services:
+
+agent_server_1 = AgentService(
+    agent=agent1,
+    message_queue=message_queue,
+    description="Useful for getting the secret fact.",
+    service_name="secret_fact_agent",
+    host="localhost",
+    port=8003
+)
+agent_server_2 = AgentService(
+    agent=agent2,
+    message_queue=message_queue,
+    description="Useful for getting random dumb facts.",
+    service_name="dumb_fact_agent",
+    host="localhost",
+    port=8004
+)
+And finally we launch each service as an independent agent. Here we’re doing them all from a single script, but each of these could be a totally separate service, launched and scaled independently:
+
+from llama_agents import ServerLauncher, CallableMessageConsumer
+
+# Additional human consumer
+def handle_result(message) -> None:
+    print(f"Got result:", message.data)
+
+
+# the final result is published to a "human" consumer
+# so we define one to handle it!
+human_consumer = CallableMessageConsumer(
+    handler=handle_result, message_type="human"
+)
+
+# Define Launcher
+launcher = ServerLauncher(
+    [agent_server_1, agent_server_2],
+    control_plane,
+    message_queue,
+    additional_consumers=[human_consumer]
+)
+
+launcher.launch_servers()
+Real-time monitoring
+One of the coolest debugging features of our multi-agent system is our agent monitor, which is built right in. You launch it like this:
+
+llama-agents monitor --control-plane-url http://127.0.0.1:8000
+Once launched, you get an intuitive, point-and-click terminal application. You can see both of the agents running, and at the bottom you can inject a task like the query “What is the secret fact?” You’ll get a job ID which you can then click on to see your results:
+
+
+Building a Query Rewriting RAG System
+Let's look at a more complex example: a Query Rewriting RAG system. This system will rewrite user queries to improve retrieval, then use the rewritten query to perform RAG over a document.
+
+This example demonstrates how to create a more sophisticated system that combines query rewriting with RAG to improve question-answering capabilities. See this notebook for a fuller explanation of what’s going on.
+
+import dotenv
+dotenv.load_dotenv() # our .env defines OPENAI_API_KEY
+from llama_index.core import VectorStoreIndex, Document
+from llama_index.core.agent import FnAgentWorker
+from llama_index.core import PromptTemplate
+from llama_index.core.query_pipeline import QueryPipeline
+from llama_index.core.query_engine import RetrieverQueryEngine
+from llama_agents import (
+    AgentService,
+    ControlPlaneServer,
+    SimpleMessageQueue,
+    PipelineOrchestrator,
+    ServiceComponent,
+)
+from llama_agents.launchers import LocalLauncher
+from llama_index.llms.openai import OpenAI
+import logging
+
+# change logging level to enable or disable more verbose logging
+logging.getLogger("llama_agents").setLevel(logging.INFO)
+
+# Load and index your document
+docs = [Document(text="The rabbit is a small mammal with long ears and a fluffy tail. His name is Peter.")]
+index = VectorStoreIndex.from_documents(docs)
+
+# Define a query rewrite agent
+HYDE_PROMPT_STR = (
+    "Please rewrite the following query to include more detail:\n{query_str}\n"
+)
+HYDE_PROMPT_TMPL = PromptTemplate(HYDE_PROMPT_STR)
+
+def run_hyde_fn(state):
+    prompt_tmpl, llm, input_str = (
+        state["prompt_tmpl"],
+        state["llm"],
+        state["__task__"].input,
+    )
+    qp = QueryPipeline(chain=[prompt_tmpl, llm])
+    output = qp.run(query_str=input_str)
+    state["__output__"] = str(output)
+    return state, True
+
+hyde_agent = FnAgentWorker(
+    fn=run_hyde_fn,
+    initial_state={"prompt_tmpl": HYDE_PROMPT_TMPL, "llm": OpenAI()}
+).as_agent()
+
+# Define a RAG agent
+def run_rag_fn(state):
+    retriever, llm, input_str = (
+        state["retriever"],
+        state["llm"],
+        state["__task__"].input,
+    )
+    query_engine = RetrieverQueryEngine.from_args(retriever, llm=llm)
+    response = query_engine.query(input_str)
+    state["__output__"] = str(response)
+    return state, True
+
+rag_agent = FnAgentWorker(
+    fn=run_rag_fn,
+    initial_state={"retriever": index.as_retriever(), "llm": OpenAI()}
+).as_agent()
+
+# Set up the multi-agent system
+message_queue = SimpleMessageQueue()
+
+query_rewrite_service = AgentService(
+    agent=hyde_agent,
+    message_queue=message_queue,
+    description="Query rewriting service",
+    service_name="query_rewrite",
+)
+
+rag_service = AgentService(
+    agent=rag_agent,
+    message_queue=message_queue,
+    description="RAG service",
+    service_name="rag",
+)
+
+# Create the pipeline
+pipeline = QueryPipeline(chain=[
+    ServiceComponent.from_service_definition(query_rewrite_service),
+    ServiceComponent.from_service_definition(rag_service),
+])
+orchestrator = PipelineOrchestrator(pipeline)
+
+control_plane = ControlPlaneServer(
+    message_queue=message_queue,
+    orchestrator=orchestrator,
+)
+
+# Set up the launcher
+launcher = LocalLauncher(
+    [query_rewrite_service, rag_service],
+    control_plane,
+    message_queue,
+)
+
+# Run a query
+result = launcher.launch_single("Tell me about rabbits")
+print(result)
+Public roadmap
+This is an alpha release, meaning that we’d love your feedback on features to better help you build multi-agent systems in production! We’ve created a public roadmap showing where we plan to go from here. We’re actively seeking public feedback on what works for you and what doesn’t.
+
+Dive in!
+llama-agents provides a powerful, flexible framework for building complex multi-agent AI systems. Whether you're prototyping a new idea or scaling to production, llama-agents offers the tools you need to bring your AI vision to life. Check out the repo to learn more, especially our library of examples.
+
+We're excited to see what the community builds with llama-agents. Happy coding!
+

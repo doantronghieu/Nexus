@@ -1,0 +1,558 @@
+# Function to JSON Schema Converter Documentation
+
+## Overview
+
+The Function to JSON Schema Converter is a tool that transforms Python functions into JSON Schema descriptions, capturing input/output parameters and their validation rules. It supports Python type hints, Pydantic models, and comprehensive validation rules, following JSON Schema Draft-07 specifications.
+
+## Schema Format
+
+```json
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "function_name": "my_function",
+    "function_description": "Function docstring",
+    "inputs": {
+        "parameter_name": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+        }
+    },
+    "outputs": {
+        "type": "object",
+        "properties": {
+            "result": {"type": "integer"}
+        }
+    }
+}
+```
+
+## Type System
+
+### Basic Types
+
+| Python Type | JSON Schema |
+|------------|-------------|
+| `str` | `{"type": "string"}` |
+| `int` | `{"type": "integer", "format": "int64"}` |
+| `float` | `{"type": "number", "format": "float"}` |
+| `bool` | `{"type": "boolean"}` |
+| `datetime` | `{"type": "string", "format": "date-time"}` |
+| `date` | `{"type": "string", "format": "date"}` |
+| `UUID` | `{"type": "string", "format": "uuid"}` |
+| `Any` | `{"type": "any"}` |
+| `None` | `{"type": "null"}` |
+| `bytes` | `{"type": "string", "format": "binary"}` |
+
+### Container Types
+
+#### Lists
+```python
+List[int] → {
+    "type": "array",
+    "items": {"type": "integer", "format": "int64"}
+}
+
+# With default factory
+List[str] = Field(default_factory=list) → {
+    "type": "array",
+    "items": {"type": "string"},
+    "default": []
+}
+
+# With validation
+List[int] = Field(..., min_items=1, max_items=10) → {
+    "type": "array",
+    "items": {"type": "integer", "format": "int64"},
+    "minItems": 1,
+    "maxItems": 10
+}
+```
+
+#### Tuples
+```python
+# Fixed length
+Tuple[float, float] → {
+    "type": "array",
+    "items": [
+        {"type": "number", "format": "float"},
+        {"type": "number", "format": "float"}
+    ],
+    "minItems": 2,
+    "maxItems": 2
+}
+
+# Variable length
+Tuple[str, ...] → {
+    "type": "array",
+    "items": {"type": "string"}
+}
+
+# Empty tuple
+Tuple[()] → {
+    "type": "array",
+    "maxItems": 0
+}
+```
+
+#### Dictionaries
+```python
+# Simple dictionary
+Dict[str, int] → {
+    "type": "object",
+    "additionalProperties": {"type": "integer", "format": "int64"}
+}
+
+# Union value types
+Dict[str, Union[str, int]] → {
+    "type": "object",
+    "additionalProperties": {
+        "anyOf": [
+            {"type": "string"},
+            {"type": "integer", "format": "int64"}
+        ]
+    }
+}
+
+# With validation
+Dict[str, Any] = Field(..., min_properties=1) → {
+    "type": "object",
+    "additionalProperties": true,
+    "minProperties": 1
+}
+```
+
+#### Sets
+```python
+Set[str] → {
+    "type": "array",
+    "items": {"type": "string"},
+    "uniqueItems": true
+}
+```
+
+### Special Types
+
+#### Optional Types
+```python
+# Simple optional
+Optional[int] → {
+    "type": "integer",
+    "format": "int64",
+    "nullable": true,
+    "default": null
+}
+
+# Optional with default
+Optional[str] = "default" → {
+    "type": "string",
+    "nullable": true,
+    "default": "default"
+}
+
+# Optional container
+Optional[List[int]] → {
+    "type": "array",
+    "items": {"type": "integer", "format": "int64"},
+    "nullable": true,
+    "default": null
+}
+```
+
+#### Union Types
+```python
+# Simple union
+Union[str, int] → {
+    "anyOf": [
+        {"type": "string"},
+        {"type": "integer", "format": "int64"}
+    ]
+}
+
+# Union with None (alternative to Optional)
+Union[str, None] → {
+    "type": "string",
+    "nullable": true
+}
+
+# Complex union
+Union[str, List[int], Dict[str, float]] → {
+    "anyOf": [
+        {"type": "string"},
+        {
+            "type": "array",
+            "items": {"type": "integer", "format": "int64"}
+        },
+        {
+            "type": "object",
+            "additionalProperties": {"type": "number", "format": "float"}
+        }
+    ]
+}
+```
+
+#### Enums
+```python
+# String enum
+class Status(Enum):
+    ACTIVE = "active"
+    INACTIVE = "inactive"
+
+→ {
+    "type": "string",
+    "enum": ["active", "inactive"]
+}
+
+# Integer enum
+class Priority(IntEnum):
+    LOW = 1
+    MEDIUM = 2
+    HIGH = 3
+
+→ {
+    "type": "integer",
+    "enum": [1, 2, 3]
+}
+```
+
+## Validation Rules
+
+### String Validation
+```python
+# Length constraints
+str = Field(..., min_length=3, max_length=50) → {
+    "type": "string",
+    "minLength": 3,
+    "maxLength": 50
+}
+
+# Pattern matching
+str = Field(..., pattern="^[a-z]+$") → {
+    "type": "string",
+    "pattern": "^[a-z]+$"
+}
+
+# Multiple constraints
+str = Field(..., min_length=3, max_length=50, pattern="^[a-z]+$") → {
+    "type": "string",
+    "minLength": 3,
+    "maxLength": 50,
+    "pattern": "^[a-z]+$"
+}
+```
+
+### Numeric Validation
+```python
+# Integer bounds
+int = Field(..., ge=0, lt=100) → {
+    "type": "integer",
+    "format": "int64",
+    "minimum": 0,
+    "exclusiveMaximum": 100
+}
+
+# Float bounds
+float = Field(..., gt=0, le=1.0) → {
+    "type": "number",
+    "format": "float",
+    "exclusiveMinimum": 0,
+    "maximum": 1.0
+}
+
+# Multiple constraints
+float = Field(..., ge=0, le=1.0, multiple_of=0.1) → {
+    "type": "number",
+    "format": "float",
+    "minimum": 0,
+    "maximum": 1.0,
+    "multipleOf": 0.1
+}
+```
+
+### Array Validation
+```python
+# Length constraints
+List[str] = Field(..., min_items=1, max_items=10) → {
+    "type": "array",
+    "items": {"type": "string"},
+    "minItems": 1,
+    "maxItems": 10
+}
+
+# Unique items
+List[int] = Field(..., unique_items=True) → {
+    "type": "array",
+    "items": {"type": "integer", "format": "int64"},
+    "uniqueItems": true
+}
+```
+
+### Object Validation
+```python
+# Property constraints
+Dict[str, Any] = Field(..., min_properties=1, max_properties=10) → {
+    "type": "object",
+    "additionalProperties": true,
+    "minProperties": 1,
+    "maxProperties": 10
+}
+```
+
+## Advanced Features
+
+### Pydantic Model Integration
+
+```python
+# Simple model
+class User(BaseModel):
+    name: str
+    age: int = Field(ge=0, lt=150)
+    tags: List[str] = Field(default_factory=list)
+
+→ {
+    "type": "object",
+    "properties": {
+        "name": {"type": "string"},
+        "age": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 0,
+            "exclusiveMaximum": 150
+        },
+        "tags": {
+            "type": "array",
+            "items": {"type": "string"},
+            "default": []
+        }
+    },
+    "required": ["name", "age"]
+}
+
+# Nested models
+class Address(BaseModel):
+    street: str
+    city: str
+    country: str = "US"
+
+class User(BaseModel):
+    name: str
+    address: Address
+
+→ {
+    "type": "object",
+    "properties": {
+        "name": {"type": "string"},
+        "address": {
+            "type": "object",
+            "properties": {
+                "street": {"type": "string"},
+                "city": {"type": "string"},
+                "country": {"type": "string", "default": "US"}
+            },
+            "required": ["street", "city"]
+        }
+    },
+    "required": ["name", "address"]
+}
+```
+
+### Default Value Handling
+
+```python
+# Simple defaults
+def process(
+    name: str,
+    age: int = 18,
+    active: bool = True
+) → {
+    "type": "object",
+    "properties": {
+        "name": {"type": "string"},
+        "age": {
+            "type": "integer",
+            "format": "int64",
+            "default": 18
+        },
+        "active": {
+            "type": "boolean",
+            "default": true
+        }
+    },
+    "required": ["name"]
+}
+
+# Container defaults
+def process(
+    items: List[str] = Field(default_factory=list),
+    metadata: Dict[str, Any] = Field(default_factory=dict)
+) → {
+    "type": "object",
+    "properties": {
+        "items": {
+            "type": "array",
+            "items": {"type": "string"},
+            "default": []
+        },
+        "metadata": {
+            "type": "object",
+            "additionalProperties": true,
+            "default": {}
+        }
+    }
+}
+```
+
+## Best Practices
+
+1. **Type Resolution**
+   - Always use `get_origin` and `get_args` for proper type analysis
+   - Handle Union types before container types
+   - Use special handling for generic types
+   - Cache frequently used type resolutions using `@lru_cache`
+
+2. **Schema Organization**
+   - Keep definitions at the top level
+   - Use consistent reference paths
+   - Remove redundant validation rules
+   - Clean up empty defaults
+   - Normalize schema structure
+
+3. **Validation Rules**
+   - Apply rules based on type context
+   - Validate rule compatibility
+   - Use correct validation keys for each type
+   - Handle interdependent validations properly
+
+4. **Reference Management**
+   - Normalize all references to use `/definitions/`
+   - Handle circular references
+   - Merge nested definitions to top level
+   - Maintain consistent reference paths
+
+5. **Performance Optimization**
+   - Cache type resolutions
+   - Reuse common schemas
+   - Minimize schema size
+   - Use efficient validation rules
+
+## Testing Strategies
+
+1. **Basic Function Tests**
+```python
+def add(a: float, b: float = 0.0) -> float:
+    """Test basic types and defaults"""
+```
+
+2. **Complex Model Tests**
+```python
+def process_user(
+    user: User,
+    status: Optional[Status] = None
+) -> Dict[str, Any]:
+    """Test model handling and optional types"""
+```
+
+3. **Validation Tests**
+```python
+def search(
+    query: str = Field(..., min_length=3),
+    page: int = Field(1, ge=1, le=100)
+) -> List[Dict]:
+    """Test validation rules and constraints"""
+```
+
+4. **Container Tests**
+```python
+def process_data(
+    items: List[int],
+    metadata: Dict[str, Any],
+    coordinates: Tuple[float, float]
+) -> Dict[str, Any]:
+    """Test container type handling"""
+```
+
+5. **Edge Cases**
+```python
+def edge_cases(
+    empty_tuple: Tuple[()],
+    complex_union: Union[str, List[int], None],
+    nested_optional: Optional[List[Optional[int]]]
+) -> Any:
+    """Test edge cases and complex types"""
+```
+
+## Common Issues and Solutions
+
+### Reference Handling
+```python
+# Problem: Mixed reference styles
+{"$ref": "#/$defs/Model"}
+{"$ref": "#/definitions/Model"}
+
+# Solution: Normalize references
+def normalize_refs(schema: dict) → dict:
+    """Convert all references to use /definitions/"""
+    if '$defs' in schema:
+        schema['definitions'] = schema.pop('$defs')
+    return schema
+```
+
+### Required Fields
+```python
+# Problem: Required flags in wrong location
+{"type": "array", "items": {"required": true}}
+
+# Solution: Use object-level required array
+{
+    "type": "object",
+    "properties": {...},
+    "required": ["field1", "field2"]
+}
+```
+
+### Validation Context
+```python
+# Problem: Wrong validation keys
+{"type": "array", "minLength": 1}
+
+# Solution: Context-aware validation
+{"type": "array", "minItems": 1}
+```
+
+### Circular References
+```python
+# Problem: Infinite recursion in nested models
+class Node(BaseModel):
+    value: str
+    next: Optional['Node'] = None
+
+# Solution: Use reference instead of inline schema
+{
+    "definitions": {
+        "Node": {
+            "type": "object",
+            "properties": {
+                "value": {"type": "string"},
+                "next": {"$ref": "#/definitions/Node", "nullable": true}
+            },
+            "required": ["value"]
+        }
+    }
+}
+```
+
+### Default Value Conflicts
+```python
+# Problem: Default on required field
+{
+    "type": "string",
+    "required": true,
+    "default": ""
+}
+
+# Solution: Remove default if required
+def clean_schema(schema: dict) → dict:
+    if schema.get('required', False):
+        schema.pop('default', None)
+    return schema
+```

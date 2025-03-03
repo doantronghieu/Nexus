@@ -1,0 +1,5 @@
+rag: 
+  extract_headers: |
+    abc
+  assign_headers_to_snippet: |
+    abc

@@ -1,0 +1,20 @@
+services:
+  service:
+    build:
+      context: .
+      dockerfile: test.Dockerfile
+    container_name: test-container
+    # No volume mounts to local filesystem
+    
+    # By default, it will run the JFK sample
+    # Override the command to run different samples or models
+    # Example: command: ["-m", "./models/ggml-small.en.bin", "-f", "./samples/jfk.wav"]
+    
+    # Enable if you want to use the GPU with CUDA (requires NVIDIA Container Toolkit installed)
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: 1
+    #           capabilities: [gpu]

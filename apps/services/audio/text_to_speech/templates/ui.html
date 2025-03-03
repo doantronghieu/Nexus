@@ -1,0 +1,958 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text-to-Speech Interface</title>
+    <style>
+        /* Modern CSS Reset */
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Variables */
+        :root {
+            /* Colors */
+            --color-primary: #2563eb;
+            --color-primary-dark: #1d4ed8;
+            --color-primary-light: #3b82f6;
+            --color-success: #10b981;
+            --color-success-dark: #059669;
+            --color-error: #ef4444;
+            --color-warning: #f59e0b;
+            --color-bg: #f1f5f9;
+            --color-surface: #ffffff;
+            --color-text: #1e293b;
+            --color-text-light: #64748b;
+            --color-border: #e2e8f0;
+
+            /* Elevation */
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -2px rgba(0,0,0,0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.1);
+
+            /* Border Radius */
+            --radius-sm: 0.375rem;
+            --radius-md: 0.5rem;
+            --radius-lg: 0.75rem;
+            --radius-full: 9999px;
+
+            /* Spacing */
+            --space-1: 0.25rem;
+            --space-2: 0.5rem;
+            --space-3: 0.75rem;
+            --space-4: 1rem;
+            --space-6: 1.5rem;
+            --space-8: 2rem;
+        }
+
+        /* Base Styles */
+        html, body {
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--color-bg);
+            color: var(--color-text);
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Layout */
+        .app-container {
+            height: 100vh;
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) 350px;
+            grid-template-rows: 100vh;
+            gap: var(--space-4);
+            padding: var(--space-4);
+            max-width: 2000px;
+            margin: 0 auto;
+        }
+
+        /* Main Panel */
+        .main-panel {
+            display: grid;
+            grid-template-rows: auto 1fr auto;
+            gap: var(--space-4);
+            min-width: 0;
+            height: 100%;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--space-4) var(--space-6);
+            background: var(--color-surface);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-md);
+        }
+
+        .header h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            background: linear-gradient(135deg, var(--color-primary), var(--color-primary-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Status Badge */
+        .status-badge {
+            padding: var(--space-2) var(--space-4);
+            border-radius: var(--radius-full);
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .status-badge.connected {
+            background: #ecfdf5;
+            color: var(--color-success-dark);
+            box-shadow: 0 0 0 1px #34d399;
+        }
+
+        .status-badge.disconnected {
+            background: #fef2f2;
+            color: var(--color-error);
+            box-shadow: 0 0 0 1px #f87171;
+        }
+
+        /* Input Panel */
+        .input-panel {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-4);
+            background: var(--color-surface);
+            border-radius: var(--radius-lg);
+            padding: var(--space-6);
+            box-shadow: var(--shadow-md);
+            overflow: hidden;
+        }
+
+        .text-input {
+            width: 100%;
+            height: 120px;
+            padding: var(--space-4);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            font-size: 1rem;
+            font-family: inherit;
+            resize: none;
+            transition: border-color 0.2s ease;
+        }
+
+        .text-input:focus {
+            outline: none;
+            border-color: var(--color-primary-light);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        /* Controls */
+        .controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: var(--space-4);
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-2);
+        }
+
+        .control-group label {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--color-text);
+        }
+
+        select, input[type="number"] {
+            padding: var(--space-2) var(--space-3);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            font-size: 0.875rem;
+            background: white;
+            transition: all 0.2s ease;
+        }
+
+        select:focus, input[type="number"]:focus {
+            outline: none;
+            border-color: var(--color-primary-light);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        /* Buttons */
+        .btn {
+            padding: var(--space-3) var(--space-6);
+            border: none;
+            border-radius: var(--radius-md);
+            font-weight: 500;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            min-width: 120px;
+        }
+
+        .btn-primary {
+            background: var(--color-primary);
+            color: white;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: var(--color-primary-dark);
+            box-shadow: var(--shadow-md);
+            transform: translateY(-1px);
+        }
+
+        .btn-primary:active:not(:disabled) {
+            transform: translateY(0);
+        }
+
+        .btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        /* Audio Player */
+        .audio-player {
+            padding: var(--space-4);
+            background: var(--color-bg);
+            border-radius: var(--radius-md);
+            margin-top: auto;
+        }
+
+        .audio-container audio {
+            width: 100%;
+            height: 40px;
+            border-radius: var(--radius-sm);
+        }
+
+        /* Log Panel */
+        .log-panel {
+            background: var(--color-surface);
+            border-radius: var(--radius-lg);
+            padding: var(--space-4);
+            box-shadow: var(--shadow-md);
+            display: flex;
+            flex-direction: column;
+            max-height: 30vh;
+        }
+
+        .log-panel h2 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: var(--space-3);
+            color: var(--color-text);
+        }
+
+        .log-container {
+            flex: 1;
+            overflow-y: auto;
+            font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+            font-size: 0.8125rem;
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            background: var(--color-bg);
+        }
+
+        .log-entry {
+            padding: var(--space-2) var(--space-3);
+            display: flex;
+            gap: var(--space-3);
+            border-bottom: 1px solid var(--color-border);
+            animation: fadeIn 0.2s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .log-entry:last-child {
+            border-bottom: none;
+        }
+
+        .log-entry .timestamp {
+            color: var(--color-text-light);
+            font-size: 0.75rem;
+            white-space: nowrap;
+        }
+
+        .log-entry.info {
+            border-left: 3px solid var(--color-primary);
+        }
+
+        .log-entry.error {
+            border-left: 3px solid var(--color-error);
+            background: #fef2f2;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            background: var(--color-surface);
+            border-radius: var(--radius-lg);
+            padding: var(--space-6);
+            box-shadow: var(--shadow-md);
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-6);
+            height: 100%;
+            overflow-y: auto;
+        }
+
+        .engine-info h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: var(--space-4);
+            color: var(--color-text);
+        }
+
+        .engine-info pre {
+            font-size: 0.75rem;
+            background: var(--color-bg);
+            padding: var(--space-3);
+            border-radius: var(--radius-md);
+            overflow-x: auto;
+            white-space: pre-wrap;
+        }
+
+        /* Loading Animation */
+        .btn-loading {
+            position: relative;
+            pointer-events: none;
+        }
+
+        .btn-loading:after {
+            content: '';
+            position: absolute;
+            width: 1rem;
+            height: 1rem;
+            border: 2px solid white;
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Responsive Design */
+            @media (max-width: 1024px) {
+                .app-container {
+                    grid-template-columns: 1fr;
+                    grid-template-rows: auto 1fr;
+                    height: auto;
+                    min-height: 100vh;
+                    overflow-y: auto;
+                }
+
+                .main-panel {
+                    grid-template-rows: auto auto 1fr auto;
+                }
+
+                .sidebar {
+                    height: auto;
+                }
+
+                .log-panel {
+                    max-height: none;
+                }
+
+                .controls {
+                    grid-template-columns: 1fr;
+                }
+            }
+
+            @media (max-width: 640px) {
+                .header {
+                    padding: var(--space-3);
+                    flex-direction: column;
+                    gap: var(--space-3);
+                    text-align: center;
+                }
+
+                .input-panel {
+                    padding: var(--space-3);
+                }
+
+                .text-input {
+                    height: 100px;
+                }
+
+                .btn {
+                    width: 100%;
+                }
+
+                .sidebar {
+                    padding: var(--space-3);
+                }
+            }
+
+            /* Custom Audio Player Styling */
+            audio {
+                --player-bg: var(--color-bg);
+                --player-text: var(--color-text);
+                --player-highlight: var(--color-primary);
+                --player-radius: var(--radius-md);
+                
+                width: 100%;
+                height: 40px;
+                background: var(--player-bg);
+                border-radius: var(--player-radius);
+                outline: none;
+            }
+
+            audio::-webkit-media-controls-panel {
+                background: var(--player-bg);
+                border-radius: var(--player-radius);
+            }
+
+            audio::-webkit-media-controls-play-button {
+                background: var(--player-highlight);
+                border-radius: 50%;
+                transition: all 0.2s ease;
+            }
+
+            audio::-webkit-media-controls-play-button:hover {
+                transform: scale(1.1);
+            }
+
+            audio::-webkit-media-controls-current-time-display,
+            audio::-webkit-media-controls-time-remaining-display {
+                color: var(--player-text);
+                font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                font-size: 0.875rem;
+            }
+
+            audio::-webkit-media-controls-timeline {
+                background: var(--color-border);
+                border-radius: var(--radius-full);
+                margin: 0 var(--space-2);
+            }
+
+            audio::-webkit-media-controls-volume-slider {
+                background: var(--color-border);
+                border-radius: var(--radius-full);
+            }
+
+            /* Loading and Progress States */
+            .synthesis-progress {
+                height: 2px;
+                background: var(--color-border);
+                border-radius: var(--radius-full);
+                overflow: hidden;
+                margin-top: var(--space-2);
+                opacity: 0;
+                transition: opacity 0.2s ease;
+            }
+
+            .synthesis-progress.active {
+                opacity: 1;
+            }
+
+            .synthesis-progress-bar {
+                height: 100%;
+                background: var(--color-primary);
+                width: 0%;
+                transition: width 0.3s ease;
+            }
+
+            /* Status Indicators */
+            .synthesis-status {
+                font-size: 0.875rem;
+                color: var(--color-text-light);
+                margin-top: var(--space-2);
+                display: flex;
+                align-items: center;
+                gap: var(--space-2);
+                opacity: 0;
+                transition: opacity 0.2s ease;
+            }
+
+            .synthesis-status.active {
+                opacity: 1;
+            }
+
+            .synthesis-status-dot {
+                width: 8px;
+                height: 8px;
+                border-radius: 50%;
+                background: currentColor;
+            }
+
+            .synthesis-status.generating {
+                color: var(--color-primary);
+            }
+
+            .synthesis-status.success {
+                color: var(--color-success);
+            }
+
+            .synthesis-status.error {
+                color: var(--color-error);
+            }
+
+            /* Tooltips */
+            [data-tooltip] {
+                position: relative;
+            }
+
+            [data-tooltip]:before {
+                content: attr(data-tooltip);
+                position: absolute;
+                bottom: 100%;
+                left: 50%;
+                transform: translateX(-50%) translateY(-4px);
+                padding: var(--space-2) var(--space-3);
+                background: var(--color-text);
+                color: white;
+                font-size: 0.75rem;
+                border-radius: var(--radius-sm);
+                white-space: nowrap;
+                opacity: 0;
+                pointer-events: none;
+                transition: all 0.2s ease;
+            }
+
+            [data-tooltip]:hover:before {
+                opacity: 1;
+                transform: translateX(-50%) translateY(-8px);
+            }
+
+            /* Animations */
+            @keyframes slideIn {
+                from {
+                    opacity: 0;
+                    transform: translateY(8px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            .slide-in {
+                animation: slideIn 0.3s ease forwards;
+            }
+
+            /* Focus Styles */
+            :focus-visible {
+                outline: 2px solid var(--color-primary);
+                outline-offset: 2px;
+            }
+
+            /* Scrollbar Styling */
+            ::-webkit-scrollbar {
+                width: 8px;
+                height: 8px;
+            }
+
+            ::-webkit-scrollbar-track {
+                background: var(--color-bg);
+                border-radius: var(--radius-full);
+            }
+
+            ::-webkit-scrollbar-thumb {
+                background: var(--color-border);
+                border-radius: var(--radius-full);
+                border: 2px solid var(--color-bg);
+            }
+
+            ::-webkit-scrollbar-thumb:hover {
+                background: var(--color-text-light);
+            }
+        </style>
+    </head>
+    <body>
+    <div class="app-container">
+        <main class="main-panel">
+            <header class="header">
+                <h1>Text-to-Speech Interface</h1>
+                <div id="wsStatus" class="status-badge disconnected">Disconnected</div>
+            </header>
+
+            <section class="input-panel">
+                <textarea 
+                    id="textInput" 
+                    class="text-input" 
+                    placeholder="Enter text to synthesize..."
+                    rows="5"
+                ></textarea>
+
+                <div class="controls">
+                    <div class="control-group">
+                        <label for="engineSelect">TTS Engine</label>
+                        <select id="engineSelect">
+                            <option value="piper">Piper</option>
+                            <option value="openai">OpenAI</option>
+                            <option value="kokoro">Kokoro</option>
+                        </select>
+                    </div>
+
+                    <div class="control-group">
+                        <label for="voiceSelect">Voice</label>
+                        <select id="voiceSelect"></select>
+                    </div>
+
+                    <div class="control-group">
+                        <label for="speedInput">Speed</label>
+                        <input 
+                            type="number" 
+                            id="speedInput" 
+                            min="0.5" 
+                            max="2.0" 
+                            step="0.1" 
+                            value="1.0"
+                        >
+                    </div>
+
+                    <div class="control-group">
+                        <label for="formatSelect">Format</label>
+                        <select id="formatSelect">
+                            <option value="mp3">MP3</option>
+                            <option value="wav">WAV</option>
+                            <option value="opus">Opus</option>
+                            <option value="flac">FLAC</option>
+                            <option value="aac">AAC</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="controls">
+                    <button id="synthesizeBtn" class="btn btn-primary" disabled>
+                        Synthesize Speech
+                    </button>
+                </div>
+
+                <div class="audio-player">
+                    <div id="audioContainer">
+                        <!-- Audio element will be created/recreated here -->
+                    </div>
+                </div>
+            </section>
+
+            <section class="log-panel">
+                <h2>Log</h2>
+                <div id="logContainer" class="log-container"></div>
+            </section>
+        </main>
+
+        <aside class="sidebar">
+            <div class="engine-info">
+                <h3>Engine Information</h3>
+                <div id="engineInfo"></div>
+            </div>
+        </aside>
+    </div>
+
+    <script>
+        class TTSInterface {
+            constructor() {
+                this.engineInfo = {};
+                this.currentRequestId = null;
+                this.audioChunks = [];
+                this.wsUrl = 'ws://localhost:{{ server_config.port }}/ws';
+                
+                
+                this.elements = {
+                    wsStatus: document.getElementById('wsStatus'),
+                    textInput: document.getElementById('textInput'),
+                    engineSelect: document.getElementById('engineSelect'),
+                    voiceSelect: document.getElementById('voiceSelect'),
+                    speedInput: document.getElementById('speedInput'),
+                    formatSelect: document.getElementById('formatSelect'),
+                    synthesizeBtn: document.getElementById('synthesizeBtn'),
+                    audioContainer: document.getElementById('audioContainer'),
+                    logContainer: document.getElementById('logContainer'),
+                    engineInfo: document.getElementById('engineInfo')
+                };
+
+                this.setupEventListeners();
+                this.setupWebSocket();
+                this.createAudioElement();
+            }
+
+            setupEventListeners() {
+                this.elements.engineSelect.addEventListener('change', async () => {
+                    await this.loadEngineInfo(this.elements.engineSelect.value);
+                    this.audioChunks = [];
+                    this.createAudioElement();
+                });
+
+                this.elements.voiceSelect.addEventListener('change', () => {
+                    this.audioChunks = [];
+                    this.createAudioElement();
+                });
+
+                this.elements.synthesizeBtn.addEventListener('click', () => 
+                    this.synthesizeSpeech()
+                );
+            }
+
+            setupWebSocket() {
+                this.log('info', 'Connecting to WebSocket...');
+                
+                this.ws = new WebSocket(this.wsUrl);
+
+                this.ws.onopen = () => {
+                    this.log('info', 'WebSocket connected');
+                    this.elements.wsStatus.textContent = 'Connected';
+                    this.elements.wsStatus.className = 'status-badge connected';
+                    this.elements.synthesizeBtn.disabled = false;
+                    
+                    // Load initial engine info
+                    this.loadEngineInfo(this.elements.engineSelect.value);
+                };
+
+                this.ws.onclose = () => {
+                    this.log('error', 'WebSocket disconnected');
+                    this.elements.wsStatus.textContent = 'Disconnected';
+                    this.elements.wsStatus.className = 'status-badge disconnected';
+                    this.elements.synthesizeBtn.disabled = true;
+                    
+                    // Attempt reconnection
+                    setTimeout(() => this.setupWebSocket(), 2000);
+                };
+
+                this.ws.onerror = (error) => {
+                    console.error('WebSocket error:', error);
+                    this.log('error', 'WebSocket error occurred');
+                };
+
+                this.ws.onmessage = (event) => {
+                    console.log('Received message type:', typeof event.data);
+                    
+                    if (event.data instanceof Blob) {
+                        console.log('Received blob:', event.data.size, 'bytes');
+                        this.handleAudioChunk(event.data);
+                    } else {
+                        try {
+                            const message = JSON.parse(event.data);
+                            console.log('Received message:', message);
+                            this.handleServerMessage(message);
+                        } catch (error) {
+                            console.error('Error parsing message:', error);
+                            this.log('error', 'Failed to parse server message');
+                        }
+                    }
+                };
+            }
+
+            createAudioElement() {
+                const oldAudio = this.elements.audioContainer.querySelector('audio');
+                if (oldAudio) {
+                    oldAudio.pause();
+                    oldAudio.src = '';
+                    oldAudio.load();
+                    oldAudio.remove();
+                }
+
+                const audio = document.createElement('audio');
+                audio.controls = true;
+                this.elements.audioContainer.appendChild(audio);
+                return audio;
+            }
+
+            async loadEngineInfo(engineId) {
+                try {
+                    const response = await fetch(`/engine/${engineId}/info`);
+                    if (!response.ok) throw new Error('Failed to fetch engine info');
+                    
+                    const info = await response.json();
+                    this.engineInfo[engineId] = info;
+                    
+                    // Update voices dropdown
+                    this.elements.voiceSelect.innerHTML = info.supported_voices
+                        .map(voice => `
+                            <option value="${voice.id}">
+                                ${voice.name} (${voice.language || 'Unknown'})
+                            </option>
+                        `).join('');
+
+                    // Update formats dropdown
+                    this.elements.formatSelect.innerHTML = info.supported_formats
+                        .map(format => `
+                            <option value="${format}">
+                                ${format.toUpperCase()}
+                            </option>
+                        `).join('');
+
+                    // Update engine info display
+                    this.elements.engineInfo.innerHTML = `
+                        <div>
+                            <p><strong>Name:</strong> ${info.name}</p>
+                            <p><strong>Voices:</strong> ${info.supported_voices.length}</p>
+                            <p><strong>Languages:</strong> ${info.supported_languages.join(', ')}</p>
+                            <p><strong>Formats:</strong> ${info.supported_formats.join(', ')}</p>
+                            ${info.config ? `<pre>${JSON.stringify(info.config, null, 2)}</pre>` : ''}
+                        </div>
+                    `;
+
+                    this.log('info', `Loaded ${engineId} engine information`);
+                    
+                } catch (error) {
+                    this.log('error', `Failed to load engine info: ${error.message}`);
+                }
+            }
+
+            async synthesizeSpeech() {
+                const text = this.elements.textInput.value.trim();
+                if (!text) {
+                    this.log('error', 'Please enter text to synthesize');
+                    return;
+                }
+
+                // Generate new request ID and reset state
+                this.currentRequestId = `${Date.now()}-${Math.random().toString(36).substring(2)}`;
+                this.audioChunks = [];
+                this.elements.synthesizeBtn.disabled = true;
+
+                // Create fresh audio element
+                this.createAudioElement();
+
+                try {
+                    const request = {
+                        type: 'synthesize',
+                        requestId: this.currentRequestId,
+                        data: {
+                            text: text,
+                            engine: this.elements.engineSelect.value,
+                            voice: this.elements.voiceSelect.value,
+                            speed: parseFloat(this.elements.speedInput.value),
+                            format: this.elements.formatSelect.value
+                        }
+                    };
+
+                    if (this.ws && this.ws.readyState === WebSocket.OPEN) {
+                        this.ws.send(JSON.stringify(request));
+                        this.log('info', 'Synthesis request sent');
+                    } else {
+                        throw new Error('WebSocket not connected');
+                    }
+
+                } catch (error) {
+                    this.log('error', `Synthesis failed: ${error.message}`);
+                    this.elements.synthesizeBtn.disabled = false;
+                }
+            }
+
+            handleServerMessage(message) {
+                // Ignore responses for old requests
+                if (message.requestId && message.requestId !== this.currentRequestId) {
+                    console.log(`Ignoring old request: ${message.requestId}`);
+                    return;
+                }
+
+                switch (message.type) {
+                    case 'status':
+                        if (message.status === 'completed') {
+                            this.finalizeAudio(message.size);
+                        } else if (message.status === 'cancelled') {
+                            this.log('info', 'Synthesis cancelled');
+                            this.elements.synthesizeBtn.disabled = false;
+                            this.audioChunks = [];
+                        }
+                        break;
+
+                    case 'error':
+                        this.log('error', message.error);
+                        this.elements.synthesizeBtn.disabled = false;
+                        this.audioChunks = [];
+                        break;
+
+                    default:
+                        this.log('info', `Server: ${JSON.stringify(message)}`);
+                }
+            }
+
+            handleAudioChunk(chunk) {
+                // Only store chunks for current request
+                if (this.currentRequestId) {
+                    this.audioChunks.push(chunk);
+                }
+            }
+
+            finalizeAudio(expectedSize) {
+                try {
+                    // Verify we have audio chunks and they match current request
+                    if (!this.audioChunks.length || !this.currentRequestId) {
+                        throw new Error('No audio data available');
+                    }
+
+                    const blob = new Blob(this.audioChunks, { 
+                        type: `audio/${this.elements.formatSelect.value}` 
+                    });
+
+                    // Verify size if provided
+                    if (expectedSize && blob.size !== expectedSize) {
+                        throw new Error(`Audio size mismatch: expected ${expectedSize}, got ${blob.size}`);
+                    }
+
+                    // Get current audio element
+                    const audio = this.elements.audioContainer.querySelector('audio');
+                    if (!audio) {
+                        throw new Error('Audio element not found');
+                    }
+
+                    // Set new source with timestamp to prevent caching
+                    const url = URL.createObjectURL(blob);
+                    audio.src = `${url}#t=${Date.now()}`;
+                    
+                    // Clean up URL when audio is loaded
+                    audio.onloadeddata = () => {
+                        URL.revokeObjectURL(url);
+                        this.log('info', `Audio loaded: ${blob.size} bytes`);
+                    };
+
+                    // Play automatically
+                    audio.play().catch(e => {
+                        this.log('error', `Autoplay failed: ${e.message}`);
+                    });
+
+                } catch (error) {
+                    this.log('error', `Failed to process audio: ${error.message}`);
+                } finally {
+                    this.elements.synthesizeBtn.disabled = false;
+                    this.audioChunks = [];
+                    this.currentRequestId = null;
+                }
+            }
+
+            log(type, message) {
+                const entry = document.createElement('div');
+                entry.className = `log-entry ${type}`;
+                
+                const timestamp = document.createElement('span');
+                timestamp.className = 'timestamp';
+                timestamp.textContent = new Date().toLocaleTimeString();
+                
+                const content = document.createElement('span');
+                content.textContent = message;
+                
+                entry.appendChild(timestamp);
+                entry.appendChild(content);
+                
+                this.elements.logContainer.insertBefore(entry, this.elements.logContainer.firstChild);
+
+                // Keep only last 100 entries
+                while (this.elements.logContainer.children.length > 100) {
+                    this.elements.logContainer.lastChild.remove();
+                }
+            }
+        }
+
+        // Initialize on page load
+        window.addEventListener('load', () => {
+            window.ttsInterface = new TTSInterface();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,271 @@
+# Vue.js/Nuxt Development Standards and Best Practices
+
+## Core Expertise
+
+Expert in modern web development specializing in:
+- Core: Vue.js, Nuxt, TypeScript, JavaScript
+- Build: Vite
+- State: Pinia, VueUse
+- UI: DaisyUI, Element Plus
+- Styling: Tailwind CSS, CSS
+
+## Project Architecture
+### File Organization
+- Strongly modular approach
+- Feature-based organization where applicable
+- Clear separation of concerns
+- Proper file naming conventions
+- Systematic type organization
+- Shared utility management
+- Environment-specific configurations
+### Directory Structure
+src/
+- assets/: Static resources (images, global styles)
+- components/: Vue components
+  - ui/: Base UI components
+  - common/: Shared components
+  - features/: Feature-specific components
+  - layouts/: Layout components
+- composables/: Shared composable functions
+- layouts/: Nuxt layouts
+- middleware/: Route middleware
+- modules/: Custom Nuxt modules
+- pages/: Route pages (Nuxt auto-routing)
+- plugins/: Vue/Nuxt plugins
+- public/: Static public assets
+- server/: Server middleware and API routes
+- stores/: Pinia store modules
+- types/: TypeScript type definitions
+- utils/: Utility functions
+- config/: Environment configurations
+
+### Naming Patterns
+Components:
+- Base/UI: Base[Component].vue
+- Feature: [Feature][Purpose].vue
+- Common: Common[Purpose].vue
+- Layout: [Purpose]Layout.vue
+
+Files:
+- Types: [purpose].types.ts
+- Utils: [purpose].utils.ts
+- Store: [feature].store.ts
+- API: [resource].api.ts
+
+## Development Standards
+
+### Vue/Nuxt Specifics
+- Composition API with script setup
+- TypeScript for all components
+- Proper Vue lifecycle management
+- Nuxt modules best practices
+- Server routes organization
+- Middleware implementation
+- Plugin architecture
+- SSR considerations
+- Auto-import usage
+- Hybrid rendering strategies
+
+### State Management
+Pinia Implementation:
+- Store modules per feature
+- Clear state typing
+- Computed state handling
+- Action patterns
+- Proper persistence
+- SSR considerations
+
+VueUse Integration:
+- Core functionality usage
+- Performance optimization
+- Browser API access
+- Utility function usage
+- State composition
+
+### Component Architecture
+Structure:
+- Clear responsibility scope
+- Proper prop validation
+- Event handling patterns
+- Slot implementation
+- Composition patterns
+- Error boundaries
+- Performance considerations
+
+Patterns:
+- Container/Presenter
+- Composition over inheritance
+- Renderless components
+- Higher-order components
+- Provide/Inject usage
+- Async components
+
+## UI Implementation
+
+### Styling Architecture
+Tailwind Implementation:
+- Utility-first approach
+- Custom configuration
+- Theme management
+- Core utilities only
+- No arbitrary values
+- Responsive patterns
+- Component patterns
+- Plugin usage
+
+CSS Guidelines:
+- Global styles management
+- CSS variables usage
+- Module scoping
+- Import organization
+- Preprocessor usage
+- Critical CSS handling
+
+### UI Libraries
+DaisyUI:
+- Component selection
+- Theme integration
+- Accessibility patterns
+- Customization approach
+- Responsive behavior
+- Form components
+- Interactive elements
+
+Element Plus:
+- Component integration
+- Theme customization
+- Form handling
+- Data presentation
+- Navigation patterns
+- Modal management
+- Table implementations
+
+### Responsive Design
+Implementation:
+- Mobile-first approach
+- Breakpoint system
+- Layout management
+- Component adaptation
+- Image optimization
+- Typography scaling
+- Touch interaction
+- Device testing
+
+## Performance Optimization
+
+### Build Optimization
+Vite Configuration:
+- Module preloading
+- Code splitting
+- Dynamic imports
+- Asset optimization
+- Cache management
+- Plugin optimization
+- Bundle analysis
+- Tree shaking
+- Dependency optimization
+
+### Runtime Performance
+Vue Optimization:
+- Component lazy loading
+- Keep-alive usage
+- Virtual scrolling
+- Event handling
+- Computed property usage
+- Watcher optimization
+- Memory management
+- DOM updates
+- List rendering
+
+### Resource Optimization
+Asset Management:
+- Image optimization
+- Font loading
+- Icon systems
+- Static asset handling
+- Dynamic resources
+- Cache strategies
+- Preload/prefetch
+- Resource prioritization
+
+## Quality Assurance
+
+### Testing Strategy
+Implementation:
+- Unit testing approach
+- Component testing
+- Integration testing
+- E2E testing setup
+- Performance testing
+- Accessibility testing
+
+Tools and Setup:
+- Test runner configuration
+- Mock data management
+- Test utilities
+- Coverage reporting
+- CI integration
+- Testing patterns
+
+### Code Review
+Standards:
+- Performance review
+- Security assessment
+- Accessibility check
+- Code style verification
+- Type safety
+- Documentation review
+- Test coverage
+- Bundle analysis
+
+Process:
+- PR templates
+- Review checklist
+- Automated checks
+- Manual review steps
+- Feedback process
+- Merge criteria
+
+## Development Workflow
+
+### Version Control
+Git Strategy:
+- Branch naming
+- Commit messages
+- PR process
+- Review workflow
+- Merge strategy
+- Version tagging
+- Release process
+
+### Build and Deploy
+Pipeline:
+- Environment setup
+- Build process
+- Test automation
+- Deploy strategy
+- Monitoring setup
+- Error tracking
+- Performance monitoring
+- Security scanning
+
+## Documentation
+Requirements:
+- Component documentation
+- API documentation
+- Type documentation
+- Setup guides
+- Architecture overview
+- Security guidelines
+- Testing documentation
+- Deployment guides
+- Maintenance guides
+
+## References
+- Vue.js: https://vuejs.org
+- Nuxt: https://nuxt.com
+- Pinia: https://pinia.vuejs.org
+- VueUse: https://vueuse.org
+- Tailwind: https://tailwindcss.com
+- DaisyUI: https://daisyui.com
+- Element Plus: https://element-plus.org

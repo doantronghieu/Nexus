@@ -1,0 +1,54 @@
+# Web/API Framework & Communication
+fastapi>=0.115.4                # Modern, fast web framework for building APIs
+python-multipart                # Multipart form data parsing
+sse-starlette>=2.1.3           # Server-Sent Events for FastAPI/Starlette
+fastapi-utils>=0.7.0           # Utilities for FastAPI framework
+uvicorn>=0.32.0                # Lightning-fast ASGI server
+websockets>=13.1               # WebSocket client and server library
+httpcore>=1.0.6                # HTTP client core
+httpx                          # Modern HTTP client with sync/async support
+aiohttp                        # Async HTTP client/server framework
+grpcio>=1.67.1                 # gRPC framework
+grpcio-tools>=1.67.1           # Tools for compiling gRPC protocol buffers
+
+# Data Processing & Scientific Computing 
+numpy                          # Numerical computing library
+statistic                      # Statistics calculations
+plotly>=5.24.1                # Interactive plotting library
+joblib                        # Pipeline parallelization and caching
+onnxruntime                   # Machine learning model inference engine
+
+# Database & Caching
+motor>=3.6.0                  # Async MongoDB driver
+redis>=5.2.0                  # Redis database client
+minio                         # S3-compatible object storage
+qdrant-client                 # Vector database for similarity search
+
+# Configuration & Settings
+python-dotenv>=1.0.1          # Environment variables management
+pyaml                         # YAML parser and emitter
+pydantic-settings            # Settings management using Pydantic
+
+# Development & Testing
+ipython>=8.29.0              # Enhanced interactive Python shell
+Faker                        # Fake data generator
+regex                        # Enhanced regular expressions
+
+# Templating
+jinja2                       # Template engine
+
+# Logging & Output
+loguru>=0.7.2                # Better logging library
+colorlog                     # Colored formatter for Python logging
+termcolor>=2.5.0             # ANSI color formatting for terminal
+rich>=13.9.4                 # Rich text and styling for terminal
+tqdm                         # Progress bar for loops and iterations
+
+# System & Performance
+psutil                       # System and process utilities
+aiofiles>=24.1.0            # Async file operations
+lazy-loader                  # Deferred module loading
+cffi                        # C Foreign Function Interface
+
+# Message Queue
+pika                        # RabbitMQ client

@@ -1,0 +1,51 @@
+Sheet Name,Column Name,First Row Example,Has Formula or Data Validation,Formula
+DailyWork,Date,=TODAY(),True,=TODAY()
+DailyWork,Date Hours,"=DailyWorkTable[[#This Row],[Regular Hours]]+DailyWorkTable[[#This Row],[OT Hours]]",True,"=DailyWorkTable[[#This Row],[Regular Hours]]+DailyWorkTable[[#This Row],[OT Hours]]"
+DailyWork,Empty,Empty,False,
+DailyWork,Entry ID,=ROW()-1,True,=ROW()-1
+DailyWork,OT Hours,2,False,
+DailyWork,Project,"=IF(DailyWorkTable[[#This Row],[Task ID]]="""","""",VLOOKUP(DailyWorkTable[[#This Row],[Task ID]],TasksTable[[Task ID]:[Project]],COLUMNS(TasksTable[[Task ID]:[Project]]),FALSE))",True,"=IF(DailyWorkTable[[#This Row],[Task ID]]="""","""",VLOOKUP(DailyWorkTable[[#This Row],[Task ID]],TasksTable[[Task ID]:[Project]],COLUMNS(TasksTable[[Task ID]:[Project]]),FALSE))"
+DailyWork,Regular Hours,8,False,
+DailyWork,Task Details,"=IF(DailyWorkTable[[#This Row],[Task ID]]="""","""",CONCATENATE(""["",VLOOKUP(DailyWorkTable[[#This Row],[Task ID]],TasksTable[[Task ID]:[Labels]],COLUMNS(TasksTable[[Task ID]:[Labels]]),FALSE),""] "",VLOOKUP(DailyWorkTable[[#This Row],[Task ID]],TasksTable[[Task ID]:[Task Name]],COLUMNS(TasksTable[[Task ID]:[Task Name]]),FALSE)))",True,"=IF(DailyWorkTable[[#This Row],[Task ID]]="""","""",CONCATENATE(""["",VLOOKUP(DailyWorkTable[[#This Row],[Task ID]],TasksTable[[Task ID]:[Labels]],COLUMNS(TasksTable[[Task ID]:[Labels]]),FALSE),""] "",VLOOKUP(DailyWorkTable[[#This Row],[Task ID]],TasksTable[[Task ID]:[Task Name]],COLUMNS(TasksTable[[Task ID]:[Task Name]]),FALSE)))"
+DailyWork,Task ID,IVY-RAG-001,False,
+DailyWork,Team Member,"=IF(DailyWorkTable[[#This Row],[Task ID]]="""","""",VLOOKUP(DailyWorkTable[[#This Row],[Task ID]],TasksTable[[Task ID]:[Assignee]],COLUMNS(TasksTable[[Task ID]:[Assignee]]),FALSE))",True,"=IF(DailyWorkTable[[#This Row],[Task ID]]="""","""",VLOOKUP(DailyWorkTable[[#This Row],[Task ID]],TasksTable[[Task ID]:[Assignee]],COLUMNS(TasksTable[[Task ID]:[Assignee]]),FALSE))"
+DailyWork,Work Description,Empty,False,
+Dashboard,=COUNTA(TasksTable[Task Name]),"=COUNTIF(TasksTable[Status], ""In Progress"")",True,"=COUNTIF(TasksTable[Due Date], ""<"" & TODAY()), =COUNTIF(TasksTable[Status], ""Done""), =COUNTA(TasksTable[Task Name]), =COUNTIF(TasksTable[Status], ""In Progress"")"
+Dashboard,Empty,Backlog,False,
+Dashboard,Empty,Done,False,
+Dashboard,Empty,Empty,False,
+Dashboard,Empty,Grand Total,False,
+Dashboard,Member,HieuDT71,False,
+Dashboard,Project,GHC,False,
+Dashboard,Status,In Progress,False,
+Dashboard,Tasks/Project,Project,False,
+Dashboard,Total OT Hours,2,False,
+Dashboard,Total OT Hours,4,False,
+Dashboard,Total Regular Hours,16,False,
+Dashboard,Total Regular Hours,8,False,
+Dashboard,Total Tasks,In Progress,False,
+Note,2020-01-01 00:00:00,2999-01-01 00:00:00,False,
+Note,Empty,=TODAY(),True,=TODAY()
+Note,Empty,Empty,False,
+Note,"For columns highlighted in grey, you do not need to fill in values.",Date Format,False,
+Note,Start Date,End Date,False,
+Tasks,Assignee,Empty,False,
+Tasks,Comments,Empty,False,
+Tasks,Dependencies,Empty,False,
+Tasks,Description,Empty,False,
+Tasks,Due Date,2026-01-01 00:00:00,False,
+Tasks,Empty,Empty,False,
+Tasks,Labels,RAG,False,
+Tasks,Priority,Medium,False,
+Tasks,Project,IvyEdge,False,
+Tasks,Reference,Empty,False,
+Tasks,Sprint,Empty,False,
+Tasks,Status,In Progress,False,
+Tasks,Task ID,"=SUBSTITUTE(SUBSTITUTE(SUBSTITUTE(UPPER(LEFT(TasksTable[[#This Row],[Project]],3) & ""-"" & LEFT(TasksTable[[#This Row],[Labels]],3) & ""-"" & TEXT(SUMPRODUCT((TasksTable[Project]=TasksTable[[#This Row],[Project]])*(TasksTable[Labels]=TasksTable[[#This Row],[Labels]])*(ROW(TasksTable[])<=ROW(TasksTable[[#This Row],[Project]]))),""000"")),"" "",""""),""/"",""""),"";"","""")",False,"=SUBSTITUTE(SUBSTITUTE(SUBSTITUTE(UPPER(LEFT(TasksTable[[#This Row],[Project]],3) & ""-"" & LEFT(TasksTable[[#This Row],[Labels]],3) & ""-"" & TEXT(SUMPRODUCT((TasksTable[Project]=TasksTable[[#This Row],[Project]])*(TasksTable[Labels]=TasksTable[[#This Row],[Labels]])*(ROW(TasksTable[])<=ROW(TasksTable[[#This Row],[Project]]))),""000"")),"" "",""""),""/"",""""),"";"","""")"
+Tasks,Task Name,Improve algorithm,False,
+Team,Current Capacity,"=SUMPRODUCT((TasksTable[Assignee]=TeamTable[[#This Row],[Name]])*(TasksTable[Status]=""In Progress""))",False,"=SUMPRODUCT((TasksTable[Assignee]=TeamTable[[#This Row],[Name]])*(TasksTable[Status]=""In Progress""))"
+Team,Empty,Empty,False,
+Team,Name,AnhPT95,False,
+Team,Projects,"=_xlfn.TEXTJOIN(""; "", TRUE, _xlfn.UNIQUE(_xlfn._xlws.FILTER(TasksTable[Project], TasksTable[Assignee]=TeamTable[[#This Row],[Name]], """")))",False,"=_xlfn.TEXTJOIN(""; "", TRUE, _xlfn.UNIQUE(_xlfn._xlws.FILTER(TasksTable[Project], TasksTable[Assignee]=TeamTable[[#This Row],[Name]], """")))"
+Team,Role,AIE,False,
+Team,Skills,Empty,False,

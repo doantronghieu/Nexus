@@ -1,0 +1,32 @@
+{
+  "app_name": "CPO Support Toolkit",
+  "version": "0.9.2",
+  "supported_languages": [
+    {"code": "en", "name": "English"},
+    {"code": "de", "name": "German"},
+    {"code": "fr", "name": "French"},
+    {"code": "es", "name": "Spanish"},
+    {"code": "it", "name": "Italian"}
+  ],
+  "backend_systems": [
+    "ChargePulse",
+    "EVConnect",
+    "PowerGrid+",
+    "ElectroCharge"
+  ],
+  "issue_categories": [
+    "payment_failed",
+    "charging_interrupted",
+    "cannot_start_session",
+    "connector_damaged",
+    "authentication_failed",
+    "slow_charging",
+    "other"
+  ],
+  "error_codes": {
+    "ERR-4302": "Communication timeout",
+    "ERR-2105": "Payment processing error",
+    "ERR-3201": "Authentication failed",
+    "ERR-5001": "Hardware malfunction"
+  }
+}

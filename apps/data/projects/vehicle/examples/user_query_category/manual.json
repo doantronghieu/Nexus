@@ -1,0 +1,406 @@
+[
+  {
+    "input": "What are the main safety procedures to follow before driving the vehicle?",
+    "output": "car_manual"
+  },
+  {
+    "input": "What is the correct driving posture recommended in the manual?",
+    "output": "car_manual"
+  },
+  {
+    "input": "What are all the safety systems included in the vehicle?",
+    "output": "car_manual"
+  },
+  {
+    "input": "What are the complete specifications for fuel and fluid requirements?",
+    "output": "car_manual"
+  },
+  {
+    "input": "What is the complete procedure for securing child restraint systems?",
+    "output": "car_manual"
+  },
+  {
+    "input": "What are all the methods for operating and adjusting the power back door?",
+    "output": "car_manual"
+  },
+  {
+    "input": "What is the complete list of instrument panel warning and indicator lights?",
+    "output": "car_manual"
+  },
+  {
+    "input": "What are the specific maintenance intervals and requirements?",
+    "output": "car_manual"
+  },
+  {
+    "input": "What are the complete towing specifications and procedures?",
+    "output": "car_manual"
+  },
+  {
+    "input": "What are all the available driving modes and their functions?",
+    "output": "car_manual"
+  },
+  {
+    "input": "What are the complete tire specifications and maintenance requirements?",
+    "output": "car_manual"
+  },
+  {
+    "input": "What are all the steps for jump-starting the vehicle correctly?",
+    "output": "car_manual"
+  },
+  {
+    "input": "What are the complete driving safety precautions?",
+    "output": "car_manual"
+  },
+  {
+    "input": "What are all the buttons and controls on the instrument panel?",
+    "output": "car_manual"
+  },
+  {
+    "input": "What is the complete procedure for setting up driver preferences?",
+    "output": "car_manual"
+  },
+  {
+    "input": "What are all emergency procedures covered in the manual?",
+    "output": "car_manual"
+  },
+  {
+    "input": "What are all the vehicle's security features?",
+    "output": "car_manual"
+  },
+  {
+    "input": "What are all the automatic climate control functions and settings?",
+    "output": "car_manual"
+  },
+  {
+    "input": "What is the complete list of audio and connectivity features?",
+    "output": "car_manual"
+  },
+  {
+    "input": "What are all the specifications for vehicle dimensions and capacities?",
+    "output": "car_manual"
+  },
+  {
+    "input": "What are all the airbag deployment conditions and precautions?",
+    "output": "car_manual"
+  },
+  {
+    "input": "What are the complete steps to take in case of various warning lights?",
+    "output": "car_manual"
+  },
+  {
+    "input": "What are all the specific operating conditions that affect vehicle systems?",
+    "output": "car_manual"
+  },
+  {
+    "input": "What are the detailed procedures for various driving conditions?",
+    "output": "car_manual"
+  },
+  {
+    "input": "What maintenance procedures require special attention or precautions?",
+    "output": "car_manual"
+  },
+  {
+    "input": "What are all the functions and settings of the multi-information display?",
+    "output": "car_manual"
+  },
+  {
+    "input": "What are all the seat belt systems and requirements?",
+    "output": "car_manual"
+  },
+  {
+    "input": "What are all the fuel and fluids specifications and precautions?",
+    "output": "car_manual"
+  },
+  {
+    "input": "What are the complete specifications for the vehicle's electrical system?",
+    "output": "car_manual"
+  },
+  {
+    "input": "What are the main safety precautions when using the roof luggage carrier?",
+    "output": "car_manual"
+  },
+  {
+    "input": "What is the PKSB (Parking Support Brake) system and what functions does it include?",
+    "output": "car_manual"
+  },
+  {
+    "input": "How does the Stop & Start system work and what are its operating conditions?",
+    "output": "car_manual"
+  },
+  {
+    "input": "What are the key features and limitations of the Dynamic Radar Cruise Control system?",
+    "output": "car_manual"
+  },
+  {
+    "input": "What driving assist systems are included in the vehicle and what are their functions?",
+    "output": "car_manual"
+  },
+  {
+    "input": "What are the essential winter driving preparations and precautions?",
+    "output": "car_manual"
+  },
+  {
+    "input": "What are the specific characteristics and precautions for driving a utility vehicle?",
+    "output": "car_manual"
+  },
+  {
+    "input": "What are the emergency procedures for vehicle system failures and warning indicators?",
+    "output": "car_manual"
+  },
+  {
+    "input": "What are the specific maintenance requirements for the vehicle's sensor systems?",
+    "output": "car_manual"
+  },
+  {
+    "input": "What are the specific off-road driving guidelines and precautions?",
+    "output": "car_manual"
+  },
+  {
+    "input": "How do the vehicle's various driving assist systems interact with each other?",
+    "output": "car_manual"
+  },
+  {
+    "input": "What are the specific requirements and limitations for the RSA (Road Sign Assist) system?",
+    "output": "car_manual"
+  },
+  {
+    "input": "What are the complete details about the continuously variable transmission operation and functions?",
+    "output": "car_manual"
+  },
+  {
+    "input": "What are the specific details of the trailer sway control system and response procedures?",
+    "output": "car_manual"
+  },
+  {
+    "input": "What are the comprehensive functions and limitations of the rear view monitor system?",
+    "output": "car_manual"
+  },
+  {
+    "input": "What are the specific operating conditions and limitations of the brake hold system?",
+    "output": "car_manual"
+  },
+  {
+    "input": "What are the comprehensive details about the vehicle's lighting system operations?",
+    "output": "car_manual"
+  },
+  {
+    "input": "What are the specific operating conditions and features of the vehicle's climate control system when using Stop & Start?",
+    "output": "car_manual"
+  },
+  {
+    "input": "What are the complete maintenance and care requirements for the vehicle's safety systems?",
+    "output": "car_manual"
+  },
+  {
+    "input": "What are the complete safety warnings and system limitations for the Toyota Safety Sense 2.0 system?",
+    "output": "car_manual"
+  },
+  {
+    "input": "What are the complete warning indicators and required driver responses for critical system failures?",
+    "output": "car_manual"
+  },
+  {
+    "input": "What are the specific conditions and limitations for all parking assist features?",
+    "output": "car_manual"
+  },
+  {
+    "input": "What are the complete AWD system operation parameters and warnings?",
+    "output": "car_manual"
+  },
+  {
+    "input": "What are the specific safety requirements and procedures for emergency situations?",
+    "output": "car_manual"
+  },
+  {
+    "input": "What are the complete maintenance intervals and requirements for safety-critical systems?",
+    "output": "car_manual"
+  },
+  {
+    "input": "What are the specific weight limits and loading instructions for all vehicle configurations?",
+    "output": "car_manual"
+  },
+  {
+    "input": "How to turn the audio system on and off?",
+    "output": "car_manual"
+  },
+  {
+    "input": "What are the available methods to access the audio control screen?",
+    "output": "car_manual"
+  },
+  {
+    "input": "How does the automatic climate control system function?",
+    "output": "car_manual"
+  },
+  {
+    "input": "What is the complete procedure for defogging the windshield?",
+    "output": "car_manual"
+  },
+  {
+    "input": "What is the complete process for registering a new Bluetooth phone with the system?",
+    "output": "car_manual"
+  },
+  {
+    "input": "What are the USB charging port specifications and limitations?",
+    "output": "car_manual"
+  },
+  {
+    "input": "What are the safety precautions for using the wireless charger?",
+    "output": "car_manual"
+  },
+  {
+    "input": "What is the proper procedure for washing the vehicle exterior?",
+    "output": "car_manual"
+  },
+  {
+    "input": "What are all the available storage features in the vehicle and their usage guidelines?",
+    "output": "car_manual"
+  },
+  {
+    "input": "How should condensation and window fogging be managed in the vehicle?",
+    "output": "car_manual"
+  },
+  {
+    "input": "What are common Bluetooth connectivity issues and their solutions?",
+    "output": "car_manual"
+  },
+  {
+    "input": "What are the required regular maintenance procedures and intervals for the vehicle?",
+    "output": "car_manual"
+  },
+  {
+    "input": "What are the step-by-step procedures for updating system software?",
+    "output": "car_manual"
+  },
+  {
+    "input": "How do you troubleshoot climate control system issues?",
+    "output": "car_manual"
+  },
+  {
+    "input": "What are the complete audio/visual system troubleshooting procedures?",
+    "output": "car_manual"
+  },
+  {
+    "input": "What safety system settings can be customized and how?",
+    "output": "car_manual"
+  },
+  {
+    "input": "What are the region-specific feature limitations and requirements?",
+    "output": "car_manual"
+  },
+  {
+    "input": "How do you perform a complete system reset and what settings are affected?",
+    "output": "car_manual"
+  },
+  {
+    "input": "What maintenance indicators and warnings should be monitored?",
+    "output": "car_manual"
+  },
+  {
+    "input": "What are the system's energy-saving features and how do they function?",
+    "output": "car_manual"
+  },
+  {
+    "input": "What do all the status icons in the system represent and when do they appear?",
+    "output": "car_manual"
+  },
+  {
+    "input": "How do you set up and use driver profiles, and what settings are stored?",
+    "output": "car_manual"
+  },
+  {
+    "input": "What are the differences between Apple CarPlay and Android Auto integration?",
+    "output": "car_manual"
+  },
+  {
+    "input": "What are the complete procedures for handling phone calls, including call waiting and transfers?",
+    "output": "car_manual"
+  },
+  {
+    "input": "How do capacitive touch controls work and what are their limitations?",
+    "output": "car_manual"
+  },
+  {
+    "input": "What are the recommended cold tire inflation pressures for the front and rear tires of this vehicle?",
+    "output": "car_manual"
+  },
+  {
+    "input": "What are the steps to initialize the tire pressure warning system after rotating tires or changing tire pressure?",
+    "output": "car_manual"
+  },
+  {
+    "input": "What are the key specifications of the engine in this vehicle?",
+    "output": "car_manual"
+  },
+  {
+    "input": "What should you do if your vehicle becomes submerged in water?",
+    "output": "car_manual"
+  },
+  {
+    "input": "What are the proper steps to perform an emergency towing of the vehicle?",
+    "output": "car_manual"
+  },
+  {
+    "input": "What are the vehicle's key dimensions and weight specifications?",
+    "output": "car_manual"
+  },
+  {
+    "input": "What are all the required maintenance fluids and their specifications?",
+    "output": "car_manual"
+  },
+  {
+    "input": "What are the detailed steps for checking and maintaining proper engine oil level?",
+    "output": "car_manual"
+  },
+  {
+    "input": "What are the safety precautions and procedures when jump starting the vehicle?",
+    "output": "car_manual"
+  },
+  {
+    "input": "What is the complete maintenance schedule for the tire pressure warning system, including all initialization conditions?",
+    "output": "car_manual"
+  },
+  {
+    "input": "What are the complete airbag system components and their operation conditions?",
+    "output": "car_manual"
+  },
+  {
+    "input": "What are all the tools and equipment provided with the vehicle and their storage locations?",
+    "output": "car_manual"
+  },
+  {
+    "input": "What are the complete climate control system specifications and operating instructions?",
+    "output": "car_manual"
+  },
+  {
+    "input": "What are all the warning messages that can appear on the multi-information display and required responses?",
+    "output": "car_manual"
+  },
+  {
+    "input": "What are the complete audio system specifications, limitations, and operating instructions?",
+    "output": "car_manual"
+  },
+  {
+    "input": "What are the exact cargo area dimensions and maximum load specifications for all storage areas?",
+    "output": "car_manual"
+  },
+  {
+    "input": "What are all the smart key system specifications, operating ranges, and limitations?",
+    "output": "car_manual"
+  },
+  {
+    "input": "What are all the TPMS (Tire Pressure Warning System) functions, diagnostic features, and initialization requirements?",
+    "output": "car_manual"
+  },
+  {
+    "input": "What are all the CVT transmission operating modes, specifications, and maintenance requirements?",
+    "output": "car_manual"
+  },
+  {
+    "input": "What are all the advanced driver assistance systems' exact operating parameters and limitations?",
+    "output": "car_manual"
+  },
+  {
+    "input": "What are all the specific procedures for every type of emergency situation, including complete step-by-step instructions?",
+    "output": "car_manual"
+  }
+]

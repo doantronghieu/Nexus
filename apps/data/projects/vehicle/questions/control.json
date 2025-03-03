@@ -1,0 +1,432 @@
+{
+	"questions": [
+		{
+			"category": "Basic Vehicle Information",
+			"questions": [
+				"What kind of car is this?",
+				"What's my car's VIN number?",
+				"What's my license plate number?",
+				"What year is my car?"
+			]
+		},
+		{
+			"category": "Status/Information Questions",
+			"questions": [
+				"What's my current battery level?",
+				"How much range do I have left?",
+				"Is the car locked?",
+				"What's the current indoor temperature?",
+				"How much gas is left in the tank?",
+				"What's playing right now?",
+				"Is my trunk open?",
+				"What's the tire pressure in the front right tire?",
+				"When is my next service due?",
+				"How's my brake wear looking?",
+				"What's the current odometer reading?",
+				"Is the AC running?",
+				"Who was my last phone call with?"
+			]
+		},
+		{
+			"category": "Powertrain Status",
+			"questions": [
+				"What's my hybrid mode set to?",
+				"What's the battery temperature?",
+				"Is the engine running?",
+				"Is the car charging right now?",
+				"What's the engine temperature?"
+			]
+		},
+		{
+			"category": "Driving Status",
+			"questions": [
+				"What gear am I in?",
+				"Is the parking brake engaged?",
+				"Is traction control on?",
+				"What's the current incline?",
+				"How far have I driven on this trip?",
+				"Is stability control enabled?",
+				"Enable hill descent control",
+				"How's the car handling this slope?"
+			]
+		},
+		{
+			"category": "Control Commands",
+			"questions": [
+				"Turn on the AC",
+				"Set the temperature to 22 degrees",
+				"Lock the car",
+				"Open the sunroof",
+				"Turn off the rear defroster",
+				"Increase the fan speed",
+				"Switch to radio",
+				"Turn on the windshield wipers",
+				"Enable autopilot",
+				"Turn on the seat heater",
+				"Set the charge limit to 85%",
+				"Fold the mirrors",
+				"Turn on ambient lighting"
+			]
+		},
+
+		{
+			"category": "Drivetrain Controls",
+			"questions": [
+				"Change steering mode to sport",
+				"Enable regenerative braking",
+				"Adjust suspension height",
+				"Turn off start-stop system",
+				"Change to sport mode",
+				"What's my current steering mode set to?",
+				"Is the start-stop system active?",
+				"Show my current suspension height",
+				"What's my regenerative braking level?"
+			]
+		},
+		{
+			"category": "Climate System",
+			"questions": [
+				"What's the temperature in the back right seat?",
+				"Turn on the steering wheel heater",
+				"Enable dual-zone climate control",
+				"What's the air quality like inside?",
+				"Set humidity to 50%",
+				"Turn on seat ventilation",
+				"Direct air to feet only",
+				"What's the humidity level in the car?",
+				"Is humidity control turned on?",
+				"What's the current particulate matter reading?",
+				"What's my air filtration level set to?",
+				"When was the air filter last changed?",
+				"Direct air to face and feet",
+				"Is air flowing to the windshield?",
+				"Turn off floor vents only",
+				"Set all vents to auto",
+				"Why isn't air coming from the face vents?"
+			]
+		},
+		{
+			"category": "Exterior Systems",
+			"questions": [
+				"Are the child locks enabled?",
+				"Enable walk-away door lock",
+				"Open the frunk",
+				"Set the mirror tilt for reverse",
+				"How much washer fluid is left?",
+				"Turn on auto-wipers",
+				"Set wiper sensitivity to maximum",
+				"Is auto-tilt in reverse enabled?",
+				"Turn on automatic mirror dimming",
+				"When do the mirrors auto-tilt?",
+				"Save current mirror positions",
+				"Reset mirror memory",
+				"What's the anti-pinch sensitivity?",
+				"Enable window child locks",
+				"Set window auto-close timer",
+				"Why did the sunroof auto-close?",
+				"Enable window rain-closing"
+			]
+		},
+
+		{
+			"category": "Interior Controls",
+			"questions": [
+				"Adjust the steering wheel position",
+				"Move my seat forward",
+				"Enable driver massage function",
+				"Save my seat position",
+				"Is the glovebox closed?",
+				"Save current seat position as preset 1",
+				"What's my lumbar support level?",
+				"Restore my preferred seat position",
+				"Enable easy entry mode",
+				"Adjust passenger seat position"
+			]
+		},
+		{
+			"category": "Lighting",
+			"questions": [
+				"Turn on ambient lighting",
+				"Enable auto high beams",
+				"Turn on the reading light",
+				"How long are the leave-home lights set for?",
+				"Turn on the fog lights",
+				"Are my welcome lights enabled?",
+				"How long do leave-home lights stay on?",
+				"Set welcome light duration",
+				"Enable theater mode lighting",
+				"Dim the ambient lights"
+			]
+		},
+		{
+			"category": "Driver Assistance",
+			"questions": [
+				"What's my autopilot follow distance set to?",
+				"Enable traffic sign recognition",
+				"Turn on cross traffic alert",
+				"Is driver attention monitoring active?",
+				"Enable traffic jam assist",
+				"What's my current driver profile?",
+				"Is parallel park assist available here?",
+				"Enable perpendicular parking assist",
+				"What's my lane keeping strength set to?",
+				"List all available driver profiles",
+				"What are my current driver profile settings?"
+			]
+		},
+		{
+			"category": "Navigation & Infotainment",
+			"questions": [
+				"Take me to my saved work location",
+				"Avoid toll roads in navigation",
+				"Show alternate routes",
+				"What's my current audio balance setting?",
+				"Enable surround sound",
+				"Connect to Mary's Android phone",
+				"Turn on do not disturb",
+				"What's my audiobook playback speed set to?",
+				"Resume my last podcast episode",
+				"What's my current equalizer preset?",
+				"Increase the bass level",
+				"Show my recent navigation destinations",
+				"Adjust the midrange frequency",
+				"What's my current fader setting?",
+				"Balance the audio more to the right",
+				"Load rock equalizer preset",
+				"Save current equalizer settings",
+				"Reset audio to default settings"
+			]
+		},
+		{
+			"category": "Display Settings",
+			"questions": [
+				"Enable night mode",
+				"Show tire pressure in the driver display",
+				"Adjust heads-up display brightness",
+				"Change units to imperial",
+				"Switch to dark theme",
+				"What widgets are currently showing?",
+				"Move the media widget to the center",
+				"What's in my top-left widget position?",
+				"Customize my widget layout"
+			]
+		},
+		{
+			"category": "Security & Safety",
+			"questions": [
+				"Enable sentry mode",
+				"Show recent security events",
+				"Turn on valet mode",
+				"How much dashcam storage is left?",
+				"Add a new fingerprint",
+				"Set up geofencing",
+				"What's my alarm sensitivity level?",
+				"Set alarm sensitivity to high",
+				"Show today's security events",
+				"When was the car last unlocked?",
+				"List all recent security activities",
+				"Disable sentry mode at home",
+				"Enable sentry mode at work",
+				"Save current dashcam footage",
+				"Show recent sentry mode events",
+				"Clear old dashcam footage"
+			]
+		},
+
+		{
+			"category": "Maintenance & Diagnostics",
+			"questions": [
+				"When was my last oil change?",
+				"Check brake fluid level",
+				"How's my battery health?",
+				"Is my suspension system okay?",
+				"When is my next service?",
+				"Check front left suspension status",
+				"Are all suspension components healthy?",
+				"Show suspension diagnostic report",
+				"When was the last suspension check?",
+				"What's the brake fluid temperature?",
+				"Show coolant level history",
+				"When was the last battery check?",
+				"Is the suspension system calibrated?",
+				"Schedule a brake inspection",
+				"Run full system diagnostic",
+				"Check software update status",
+				"Show power consumption report",
+				"Generate driving efficiency report",
+				"Display system health summary",
+				"Schedule next service appointment",
+				"Show maintenance history",
+				"Request mobile service",
+				"Check warranty status",
+				"View service bulletins"
+			]
+		},
+		{
+			"category": "Charging & Energy",
+			"questions": [
+				"Set up scheduled charging",
+				"Add this location to preferred charging spots",
+				"Enable smart grid charging",
+				"Turn on battery preconditioning",
+				"What's my maximum charging speed?",
+				"Show my preferred charging times",
+				"Set charging to start at 1 AM",
+				"What are peak charging hours?",
+				"Optimize charging schedule for cost",
+				"Why didn't the car charge last night?"
+			]
+		},
+		{
+			"category": "Voice Recognition",
+			"questions": [
+				"What are my wake word options?",
+				"Change navigation voice volume",
+				"Is voice guidance enabled?",
+				"Set custom wake phrase",
+				"Hey Car, I'm cold",
+				"OK Car, take me home",
+				"Hey Car, play some jazz",
+				"OK Car, call John's mobile",
+				"Hey Car, enable dog mode"
+			]
+		},
+		{
+			"category": "Complex Multi-System Scenarios",
+			"questions": [
+				"Prepare the car for a track day",
+				"Set up for camping mode",
+				"Get ready for winter driving",
+				"Optimize for maximum range",
+				"Set up for valet parking",
+				"Prepare car for car wash mode",
+				"Set up for trailer towing",
+				"Configure for track day mode",
+				"Enable pet climate control",
+				"Set up for off-road driving",
+				"Set up morning commute routine",
+				"Configure evening park mode",
+				"Enable vacation mode",
+				"Prepare for car sharing",
+				"Set up family profile"
+			]
+		},
+		{
+			"category": "Location-Based Automation",
+			"questions": [
+				"Save current location as home",
+				"Create new location profile",
+				"Enable work location automations",
+				"Set up geofence alerts",
+				"When do location-based settings activate?"
+			]
+		},
+		{
+			"category": "Time-Based Settings",
+			"questions": [
+				"Schedule climate preconditioning",
+				"Set up weekend mode",
+				"Configure quiet hours",
+				"Enable time-based security modes",
+				"Schedule automatic updates"
+			]
+		},
+		{
+			"category": "Multi-User Scenarios",
+			"questions": [
+				"Switch to guest profile",
+				"Reset to default user settings",
+				"Share location with family",
+				"Enable passenger override",
+				"Restrict passenger controls"
+			]
+		},
+		{
+			"category": "Weather-Related",
+			"questions": [
+				"Enable weather-based route planning",
+				"Adjust wipers for light rain",
+				"Configure storm mode settings",
+				"Enable winter driving mode",
+				"Prepare for extreme heat"
+			]
+		},
+		{
+			"category": "Emergency Situations",
+			"questions": [
+				"Call roadside assistance",
+				"Enable emergency power reserve",
+				"Activate hazard lights",
+				"Share current location with emergency services",
+				"What's the closest emergency facility?"
+			]
+		},
+		{
+			"category": "Comfort & Environmental Expressions",
+			"questions": [
+				"It's too hot in here",
+				"The music is too loud",
+				"I'm feeling sleepy while driving",
+				"The sun is too bright",
+				"These seats are uncomfortable",
+				"I can barely see through the windshield",
+				"The car feels sluggish today",
+				"The steering feels too stiff",
+				"It's too hot in the back",
+				"The air quality isn't good",
+				"The windows are too foggy",
+				"There's a lot of glare from other cars",
+				"The seat massage is too intense",
+				"The steering wheel is too hot",
+				"The AC is making strange noises",
+				"The treble sounds too harsh",
+				"The car feels unstable on this incline",
+				"The mirror tilt seems miscalibrated",
+				"Audio balance changes with speed",
+				"Seat position feels different from my preset",
+				"Climate control isn't reaching set temperature"
+			]
+		},
+		{
+			"category": "Error Conditions",
+			"questions": [
+				"The mirrors aren't auto-tilting in reverse",
+				"Mirror auto-tilt isn't working",
+				"Stability control warning light is on",
+				"Audio system isn't responding",
+				"Seat memory buttons aren't working",
+				"Climate control is stuck on defrost",
+				"Why did smart charging fail?",
+				"Troubleshoot voice recognition",
+				"Fix navigation system errors",
+				"Reset climate control system",
+				"Calibrate security sensors"
+			]
+		},
+		{
+			"category": "General Questions/Statements",
+			"questions": [
+				"Is everything okay with the car?",
+				"Can I make it to San Francisco with this charge?",
+				"Do I need an oil change soon?",
+				"Is it safe to drive in these conditions?",
+				"Should I charge my car now?",
+				"What driving mode am I in?",
+				"Is sentry mode on?",
+				"How long until the car is fully charged?",
+				"What's the weather like outside?",
+				"I'm going on a long trip tomorrow, what should I check?",
+				"There's a warning light on the dashboard",
+				"I hear a strange noise from the front",
+				"The car isn't charging as fast as usual",
+				"I'm stuck in traffic and running low on battery",
+				"Someone just hit my car while it was parked",
+				"I forgot where I parked",
+				"The key fob isn't working",
+				"I need to pick someone up at the airport",
+				"Can you help me find the nearest charging station?"
+			]
+		}
+	]
+
+}

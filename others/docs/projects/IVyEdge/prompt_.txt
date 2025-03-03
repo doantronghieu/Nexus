@@ -1,0 +1,12 @@
+Design a NoSQL database schema to model the essential attributes and states of a vehicle, focusing on parameters relevant to everyday drivers. The schema should support core vehicle monitoring and control operations, prioritizing data commonly accessed through dashboard and control systems in most cars.
+
+Analyze the problem step by step through the systematic and careful use of sequential thinking.
+
+Provide the result as an artifact.
+---
+I want to build a car control dashboard that includes all core functionalities of a car. 
+
+The dashboard will export all car data to a JSON file, simulating interactions with car parameters through the JSON file. 
+
+No information related to ADAS is needed. No schema metadata, tenant configuration, validation rules, real-time configuration, lifecycle management, performance configuration, or update frequency are required.
+

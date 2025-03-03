@@ -1,0 +1,91 @@
+services:
+  kong-database:
+    image: postgres:13
+    container_name: kong-database
+    environment:
+      POSTGRES_USER: kong
+      POSTGRES_DB: kong
+      POSTGRES_PASSWORD: kongpass
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "kong"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - kong-net
+    volumes:
+      - kong-data:/var/lib/postgresql/data
+
+  kong-migrations-bootstrap:
+    image: kong:3.5
+    container_name: kong-migrations-bootstrap
+    command: kong migrations bootstrap
+    depends_on:
+      kong-database:
+        condition: service_healthy
+    environment:
+      KONG_DATABASE: postgres
+      KONG_PG_HOST: kong-database
+      KONG_PG_USER: kong
+      KONG_PG_PASSWORD: kongpass
+    networks:
+      - kong-net
+
+  kong-migrations-up:
+    image: kong:3.5
+    container_name: kong-migrations-up
+    command: kong migrations up && kong migrations finish
+    depends_on:
+      - kong-migrations-bootstrap
+    environment:
+      KONG_DATABASE: postgres
+      KONG_PG_HOST: kong-database
+      KONG_PG_USER: kong
+      KONG_PG_PASSWORD: kongpass
+    networks:
+      - kong-net
+
+  kong:
+    image: kong:3.5
+    container_name: kong
+    user: root
+    environment:
+      KONG_DATABASE: postgres
+      KONG_PG_HOST: kong-database
+      KONG_PG_USER: kong
+      KONG_PG_PASSWORD: kongpass
+      KONG_PROXY_ACCESS_LOG: /dev/stdout
+      KONG_ADMIN_ACCESS_LOG: /dev/stdout
+      KONG_PROXY_ERROR_LOG: /dev/stderr
+      KONG_ADMIN_ERROR_LOG: /dev/stderr
+      KONG_ADMIN_LISTEN: 0.0.0.0:8001
+    depends_on:
+      - kong-migrations-up
+    ports:
+      - "8000:8000"
+      - "8443:8443"
+      - "8001:8001"
+      - "8444:8444"
+    healthcheck:
+      test: ["CMD", "kong", "health"]
+      interval: 10s
+      timeout: 10s
+      retries: 10
+    networks:
+      - kong-net
+    volumes:
+      - kong-prefix:/var/run/kong
+
+networks:
+  kong-net:
+    name: kong-net
+
+volumes:
+  kong-data:
+  kong-prefix:
+
+# docker compose -f devops/docker/infra/kong.docker-compose.yaml up --build --detach
+# docker compose -f devops/docker/infra/kong.docker-compose.yaml up -d
+# docker compose -f devops/docker/infra/kong.docker-compose.yaml down SERVICE

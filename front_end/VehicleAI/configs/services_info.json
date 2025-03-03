@@ -1,0 +1,56 @@
+{
+  "svc-map": {
+    "host": "localhost",
+    "port": "8443",
+    "protocol": "https",
+    "url": "https://localhost:8443"
+  },
+  "svc-mapbox": {
+    "host": "localhost",
+    "port": "6000",
+    "protocol": "http",
+    "url": "http://localhost:6000"
+  },
+  "svc-music": {
+    "host": "localhost",
+    "port": "6001",
+    "protocol": "http",
+    "url": "http://localhost:6001"
+  },
+  "svc-news": {
+    "host": "localhost",
+    "port": "6002",
+    "protocol": "http",
+    "url": "http://localhost:6002"
+  },
+  "svc-search": {
+    "host": "localhost",
+    "port": "6003",
+    "protocol": "http",
+    "url": "http://localhost:6003"
+  },
+  "svc-weather": {
+    "host": "localhost",
+    "port": "6004",
+    "protocol": "http",
+    "url": "http://localhost:6004"
+  },
+  "svc-tts": {
+    "host": "localhost",
+    "port": "6501",
+    "protocol": "http",
+    "url": "http://localhost:6501"
+  },
+  "svc-stt": {
+    "host": "localhost",
+    "port": "6502",
+    "protocol": "http",
+    "url": "http://localhost:6502"
+  },
+  "app-llm": {
+    "host": "localhost",
+    "port": "7500",
+    "protocol": "http",
+    "url": "http://localhost:7500"
+  }
+}

@@ -1,0 +1,10 @@
+pydub
+pyaudio
+soundfile
+sounddevice
+librosa # Python module for audio and music processing
+phonemizer # Simple text to phones converter for multiple languages
+dlinfo # Python wrapper for libc's dlinfo and dyld_find on Mac
+
+segments
+csvw

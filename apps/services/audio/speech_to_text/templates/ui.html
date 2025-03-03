@@ -1,0 +1,605 @@
+<!-- File: /Users/thung/Documents/Me/Coding/Embedded-AI/apps/services/audio/speech_to_text/templates/ui.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Speech Recognition</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <style>
+        [v-cloak] { display: none; }
+        
+        /* Smooth transitions */
+        .fade-enter-active, .fade-leave-active {
+            transition: opacity 0.3s ease;
+        }
+        .fade-enter-from, .fade-leave-to {
+            opacity: 0;
+        }
+        
+        /* Recording animation */
+        @keyframes pulse-red {
+            0%, 100% { background-color: rgb(254, 226, 226); }
+            50% { background-color: rgb(254, 202, 202); }
+        }
+        .recording-pulse {
+            animation: pulse-red 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        
+        /* Custom scrollbar */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 3px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 3px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+        
+        /* File drop zone */
+        .file-drop {
+            border: 2px dashed #e2e8f0;
+            transition: all 0.3s ease;
+        }
+        .file-drop:hover, .file-drop.dragging {
+            border-color: #60a5fa;
+            background-color: #f0f9ff;
+        }
+        
+        /* Audio player styling */
+        audio {
+            width: 100%;
+            height: 36px;
+            border-radius: 6px;
+        }
+        
+        /* Typography */
+        body {
+            font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900">
+    <div id="app" v-cloak class="min-h-screen p-4 lg:p-6">
+        <div class="max-w-7xl mx-auto">
+            <!-- Header -->
+            <header class="flex justify-between items-center mb-6">
+                <div>
+                    <h1 class="text-2xl font-bold text-slate-900">AI Speech Recognition</h1>
+                    <p class="text-slate-500 text-sm">Convert speech to text with high accuracy</p>
+                </div>
+                <div :class="['px-3 py-1 rounded-full text-sm font-medium transition-colors', 
+                            wsStatus === 'Connected' 
+                            ? 'bg-emerald-100 text-emerald-700' 
+                            : 'bg-red-100 text-red-700']">
+                    [[ wsStatus ]]
+                </div>
+            </header>
+
+            <!-- Main Content -->
+            <div class="grid lg:grid-cols-[1fr,350px] gap-6">
+                <!-- Main Panel -->
+                <div class="space-y-6">
+                    <!-- Input Controls -->
+                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 space-y-6">
+                        <!-- Model Selection -->
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-1">Model</label>
+                                <select 
+                                    v-model="selectedModel"
+                                    @change="updateModelConfig"
+                                    class="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                                >
+                                    <option value="">Select a model</option>
+                                    <option v-for="model in models" :key="model.name" :value="model.name">
+                                        [[ model.type ]] - [[ model.name ]]
+                                    </option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-1">Language</label>
+                                <select 
+                                    v-model="language"
+                                    class="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                                >
+                                    <option value="">Auto Detect</option>
+                                    <option v-for="lang in supportedLanguages" :key="lang" :value="lang">
+                                        [[ lang ]]
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Audio Input Methods -->
+                        <div class="border-t border-slate-200 pt-6">
+                            <div class="flex space-x-4 mb-4">
+                                <button 
+                                    @click="inputMethod = 'record'"
+                                    :class="['px-4 py-2 text-sm font-medium rounded-lg transition-colors',
+                                            inputMethod === 'record'
+                                            ? 'bg-blue-100 text-blue-700'
+                                            : 'text-slate-600 hover:bg-slate-100']"
+                                >
+                                    Record Audio
+                                </button>
+                                <button 
+                                    @click="inputMethod = 'upload'"
+                                    :class="['px-4 py-2 text-sm font-medium rounded-lg transition-colors',
+                                            inputMethod === 'upload'
+                                            ? 'bg-blue-100 text-blue-700'
+                                            : 'text-slate-600 hover:bg-slate-100']"
+                                >
+                                    Upload File
+                                </button>
+                            </div>
+
+                            <!-- Record Audio -->
+                            <div v-if="inputMethod === 'record'" class="space-y-4">
+                                <div class="flex justify-center">
+                                    <button
+                                        v-if="!isRecording"
+                                        @click="startRecording"
+                                        class="px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+                                        :disabled="!wsConnected"
+                                    >
+                                        Start Recording
+                                    </button>
+                                    <button
+                                        v-else
+                                        @click="stopRecording"
+                                        class="px-6 py-3 bg-slate-600 text-white rounded-lg hover:bg-slate-700 transition-colors"
+                                    >
+                                        Stop Recording
+                                    </button>
+                                </div>
+                                
+                                <div v-if="isRecording" class="flex justify-center">
+                                    <span class="px-4 py-2 rounded-full recording-pulse text-red-700 text-sm">
+                                        Recording...
+                                    </span>
+                                </div>
+                            </div>
+
+                            <!-- File Upload -->
+                            <div v-if="inputMethod === 'upload'" class="space-y-2">
+                                <div 
+                                    class="file-drop rounded-lg p-8 text-center"
+                                    @dragover.prevent
+                                    @drop.prevent="handleFileDrop"
+                                >
+                                    <input 
+                                        type="file" 
+                                        ref="fileInput"
+                                        @change="handleFileUpload" 
+                                        accept="audio/*"
+                                        class="hidden"
+                                    >
+                                    <div class="space-y-2">
+                                        <button 
+                                            @click="$refs.fileInput.click()"
+                                            class="px-4 py-2 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition-colors"
+                                        >
+                                            Choose File
+                                        </button>
+                                        <p class="text-sm text-slate-500">
+                                            or drag and drop audio file here
+                                        </p>
+                                    </div>
+                                </div>
+                                <p class="text-xs text-slate-500 text-center">
+                                    Supported formats: WAV, MP3, M4A, OGG, FLAC
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Audio Preview -->
+                        <div v-if="audioURL" class="border-t border-slate-200 pt-6">
+                            <audio :src="audioURL" controls class="w-full"></audio>
+                        </div>
+                    </div>
+
+                    <!-- Transcribe Button -->
+                    <button
+                        @click="transcribe"
+                        :disabled="!canTranscribe || isProcessing"
+                        :class="['w-full px-6 py-3 text-white rounded-lg transition-all transform hover:-translate-y-0.5',
+                                canTranscribe && !isProcessing
+                                ? 'bg-blue-600 hover:bg-blue-700 shadow-lg hover:shadow-xl'
+                                : 'bg-slate-400 cursor-not-allowed']"
+                    >
+                        <span v-if="isProcessing">
+                            Processing...
+                        </span>
+                        <span v-else>
+                            [[ transcribeButtonText ]]
+                        </span>
+                    </button>
+
+                    <!-- Results -->
+                    <div v-if="result" class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 space-y-4">
+                        <div class="flex justify-between items-start">
+                            <h3 class="text-lg font-semibold text-slate-900">Transcription Result</h3>
+                            <span class="text-sm text-slate-500">
+                                [[ result.execution_time.toFixed(2) ]]s
+                            </span>
+                        </div>
+                        <p class="text-slate-700 whitespace-pre-wrap">[[ result.text ]]</p>
+                        <div class="text-sm text-slate-500 space-y-1">
+                            <p>Model: [[ result.model ]]</p>
+                            <p>Language: [[ result.language ]]</p>
+                            <p v-if="result.audio_duration">Duration: [[ result.audio_duration.toFixed(1) ]]s</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sidebar -->
+                <div class="space-y-6">
+                    <!-- Model Info -->
+                    <div v-if="selectedModel" class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+                        <h3 class="text-lg font-semibold text-slate-900 mb-4">Model Information</h3>
+                        <div class="space-y-4 text-sm">
+                            <div>
+                                <p class="font-medium text-slate-700">Type</p>
+                                <p class="text-slate-600">[[ currentModelInfo.type ]]</p>
+                            </div>
+                            <div>
+                                <p class="font-medium text-slate-700">Supported Languages</p>
+                                <p class="text-slate-600">[[ currentModelInfo.supported_languages.join(', ') ]]</p>
+                            </div>
+                            <div v-if="currentModelInfo.config">
+                                <p class="font-medium text-slate-700 mb-2">Configuration</p>
+                                <pre class="text-xs bg-slate-50 p-3 rounded-lg overflow-x-auto custom-scrollbar">
+[[ JSON.stringify(currentModelInfo.config, null, 2) ]]</pre>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Log Panel -->
+                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+                        <h3 class="text-lg font-semibold text-slate-900 mb-4">Activity Log</h3>
+                        <div id="logContainer" class="h-[300px] overflow-y-auto custom-scrollbar space-y-2">
+                            <div v-for="entry in logEntries" :key="entry.id" 
+                                 :class="['p-2 rounded text-sm', 
+                                         entry.type === 'error' 
+                                         ? 'bg-red-50 text-red-700' 
+                                         : entry.type === 'system'
+                                         ? 'bg-blue-50 text-blue-700'
+                                         : 'bg-slate-50 text-slate-700']">
+                                <div class="flex items-center justify-between">
+                                    <span class="truncate">[[ entry.message ]]</span>
+                                    <span class="text-xs text-slate-500 ml-2">[[ entry.time ]]</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const { createApp } = Vue
+
+        createApp({
+            delimiters: ['[[', ']]'],
+            data() {
+                return {
+                    models: {{ models | tojson }},
+                    wsUrl: "{{ ws_url }}",  // Get WebSocket URL from server
+                    selectedModel: '',
+                    language: '',
+                    inputMethod: 'record',
+                    isRecording: false,
+                    audioURL: null,
+                    audioBlob: null,
+                    uploadedFile: null,
+                    mediaRecorder: null,
+                    chunks: [],
+                    result: null,
+                    error: null,
+                    isProcessing: false,
+                    supportedLanguages: [],
+                    wsStatus: 'Disconnected',
+                    wsConnected: false,
+                    logEntries: []
+                }
+            },
+            computed: {
+                canTranscribe() {
+                    return this.selectedModel && ((this.inputMethod === 'record' && this.audioBlob) || 
+                                               (this.inputMethod === 'upload' && this.uploadedFile));
+                },
+                transcribeButtonText() {
+                    if (!this.selectedModel) return 'Select a Model';
+                    if (this.inputMethod === 'record' && !this.audioBlob) return 'Record Audio First';
+                    if (this.inputMethod === 'upload' && !this.uploadedFile) return 'Upload Audio File';
+                    if (this.isProcessing) return 'Processing...';
+                    return 'Transcribe Audio';
+                },
+                currentModelInfo() {
+                    return this.models.find(m => m.name === this.selectedModel) || {};
+                }
+            },
+            methods: {
+                updateModelConfig() {
+                    if (this.selectedModel) {
+                        const model = this.models.find(m => m.name === this.selectedModel);
+                        if (model) {
+                            this.supportedLanguages = model.supported_languages;
+                            this.log('system', `Selected model: ${model.name}`);
+                        }
+                    }
+                },
+                async startRecording() {
+                    try {
+                        // Request audio with specific constraints
+                        const stream = await navigator.mediaDevices.getUserMedia({
+                            audio: {
+                                channelCount: 1,         // Mono
+                                sampleRate: 16000,       // 16 kHz
+                                sampleSize: 16,          // 16-bit
+                                echoCancellation: true,
+                                noiseSuppression: true,
+                                autoGainControl: true
+                            }
+                        });
+
+                        // Find supported mime type
+                        const mimeType = MediaRecorder.isTypeSupported('audio/webm;codecs=pcm')
+                            ? 'audio/webm;codecs=pcm'
+                            : 'audio/webm';
+
+                        this.log('system', `Using audio format: ${mimeType}`);
+                            
+                        // Create recorder with options
+                        this.mediaRecorder = new MediaRecorder(stream, {
+                            mimeType: mimeType,
+                            audioBitsPerSecond: 256000
+                        });
+
+                        this.chunks = [];
+                        
+                        this.mediaRecorder.ondataavailable = async (e) => {
+                            this.chunks.push(e.data);
+                        };
+                        
+                        this.mediaRecorder.onstop = async () => {
+                            try {
+                                // Create blob with proper type
+                                const blob = new Blob(this.chunks, { type: mimeType });
+                                
+                                // Convert to WAV if needed
+                                const finalBlob = mimeType !== 'audio/wav' 
+                                    ? await this.convertToWAV(blob)
+                                    : blob;
+                                
+                                this.audioBlob = finalBlob;
+                                this.audioURL = URL.createObjectURL(finalBlob);
+                                
+                                // Stop tracks
+                                stream.getTracks().forEach(track => track.stop());
+                                
+                                this.log('system', 'Recording completed');
+                                this.log('system', `Audio format: ${finalBlob.type}, Size: ${(finalBlob.size/1024).toFixed(1)}KB`);
+                            } catch (error) {
+                                this.log('error', `Error processing recording: ${error.message}`);
+                            }
+                        };
+                        
+                        // Start recording with small timeslices
+                        this.mediaRecorder.start(1000);  // 1 second chunks
+                        this.isRecording = true;
+                        this.log('system', 'Recording started');
+                        
+                    } catch (err) {
+                        this.log('error', 'Error accessing microphone: ' + err.message);
+                    }
+                },
+
+                // Add helper method for WAV conversion
+                async convertToWAV(blob) {
+                    // Create audio context
+                    const audioContext = new (window.AudioContext || window.webkitAudioContext)({
+                        sampleRate: 16000  // Force 16kHz
+                    });
+                    
+                    // Read blob as array buffer
+                    const arrayBuffer = await blob.arrayBuffer();
+                    
+                    // Decode audio
+                    const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+                    
+                    // Convert to WAV
+                    const wavBuffer = this.audioBufferToWAV(audioBuffer);
+                    
+                    // Create WAV blob
+                    return new Blob([wavBuffer], { type: 'audio/wav' });
+                },
+
+                // Helper to convert AudioBuffer to WAV format
+                audioBufferToWAV(buffer) {
+                    const numChannels = 1;  // Force mono
+                    const sampleRate = 16000;  // Force 16kHz
+                    const format = 1;  // PCM
+                    const bitDepth = 16;  // 16-bit
+                    
+                    const bytesPerSample = bitDepth / 8;
+                    const blockAlign = numChannels * bytesPerSample;
+                    
+                    const wav = new ArrayBuffer(44 + buffer.length * bytesPerSample);
+                    const view = new DataView(wav);
+                    
+                    // WAV header
+                    const writeString = (view, offset, string) => {
+                        for (let i = 0; i < string.length; i++) {
+                            view.setUint8(offset + i, string.charCodeAt(i));
+                        }
+                    };
+                    
+                    writeString(view, 0, 'RIFF');  // ChunkID
+                    view.setUint32(4, 36 + buffer.length * bytesPerSample, true);  // ChunkSize
+                    writeString(view, 8, 'WAVE');  // Format
+                    writeString(view, 12, 'fmt ');  // Subchunk1ID
+                    view.setUint32(16, 16, true);  // Subchunk1Size
+                    view.setUint16(20, format, true);  // AudioFormat
+                    view.setUint16(22, numChannels, true);  // NumChannels
+                    view.setUint32(24, sampleRate, true);  // SampleRate
+                    view.setUint32(28, sampleRate * blockAlign, true);  // ByteRate
+                    view.setUint16(32, blockAlign, true);  // BlockAlign
+                    view.setUint16(34, bitDepth, true);  // BitsPerSample
+                    writeString(view, 36, 'data');  // Subchunk2ID
+                    view.setUint32(40, buffer.length * bytesPerSample, true);  // Subchunk2Size
+                    
+                    // Write audio data
+                    const offset = 44;
+                    const data = new Int16Array(view.buffer, offset, buffer.length);
+                    const channelData = buffer.getChannelData(0);
+                    for (let i = 0; i < buffer.length; i++) {
+                        data[i] = channelData[i] * 0x7FFF;  // Convert Float32 to Int16
+                    }
+                    
+                    return wav;
+                },
+                stopRecording() {
+                    if (this.mediaRecorder && this.isRecording) {
+                        this.mediaRecorder.stop();
+                        this.isRecording = false;
+                    }
+                },
+                handleFileUpload(event) {
+                    const file = event.target.files[0];
+                    if (file) {
+                        if (file.type.startsWith('audio/')) {
+                            this.uploadedFile = file;
+                            this.audioURL = URL.createObjectURL(file);
+                            this.log('system', `File selected: ${file.name}`);
+                            this.error = null;
+                        } else {
+                            this.log('error', 'Please upload an audio file');
+                            event.target.value = '';
+                            this.uploadedFile = null;
+                        }
+                    }
+                },
+                handleFileDrop(event) {
+                    const file = event.dataTransfer.files[0];
+                    if (file && file.type.startsWith('audio/')) {
+                        this.uploadedFile = file;
+                        this.audioURL = URL.createObjectURL(file);
+                        this.log('system', `File dropped: ${file.name}`);
+                    } else {
+                        this.log('error', 'Please drop an audio file');
+                    }
+                },
+                async transcribe() {
+                    if (!this.canTranscribe) return;
+                    
+                    this.isProcessing = true;
+                    this.error = null;
+                    this.result = null;
+                    
+                    try {
+                        const formData = new FormData();
+                        formData.append('model', this.selectedModel);
+                        if (this.language) {
+                            formData.append('language', this.language);
+                        }
+                        
+                        if (this.inputMethod === 'record') {
+                            formData.append('file', this.audioBlob, 'recording.wav');
+                        } else {
+                            formData.append('file', this.uploadedFile);
+                        }
+                        
+                        this.log('system', 'Starting transcription...');
+                        const response = await fetch('/api/v1/transcribe', {
+                            method: 'POST',
+                            body: formData
+                        });
+                        
+                        if (!response.ok) {
+                            const errorData = await response.json();
+                            throw new Error(errorData.detail || 'Transcription failed');
+                        }
+                        
+                        this.result = await response.json();
+                        this.log('system', 'Transcription completed successfully');
+                    } catch (err) {
+                        this.error = err.message;
+                        this.log('error', 'Transcription failed: ' + err.message);
+                    } finally {
+                        this.isProcessing = false;
+                    }
+                },
+                setupWebSocket() {
+                    if (this.wsUrl) {
+                        if (this.ws) {
+                            this.ws.close();
+                        }
+
+                        this.log('system', 'Connecting to WebSocket...');
+                        this.ws = new WebSocket(this.wsUrl);
+
+                        this.ws.onopen = () => {
+                            this.wsStatus = 'Connected';
+                            this.wsConnected = true;
+                            this.log('system', 'WebSocket connected');
+                        };
+
+                        this.ws.onclose = () => {
+                            this.wsStatus = 'Disconnected';
+                            this.wsConnected = false;
+                            this.log('system', 'WebSocket disconnected');
+                            setTimeout(() => this.setupWebSocket(), 2000);
+                        };
+
+                        this.ws.onerror = () => {
+                            this.log('error', 'WebSocket error occurred');
+                        };
+
+                        this.ws.onmessage = (event) => {
+                            try {
+                                const message = JSON.parse(event.data);
+                                if (message.type === 'system') {
+                                    this.log('system', message.message);
+                                } else if (message.type === 'error') {
+                                    this.log('error', message.message);
+                                }
+                            } catch (error) {
+                                this.log('error', 'Failed to parse WebSocket message');
+                            }
+                        };
+                    }
+                },
+                log(type, message) {
+                    const entry = {
+                        id: Date.now(),
+                        type: type,
+                        message: message,
+                        time: new Date().toLocaleTimeString()
+                    };
+                    this.logEntries.unshift(entry);
+                    
+                    // Keep only last 100 entries
+                    if (this.logEntries.length > 100) {
+                        this.logEntries.pop();
+                    }
+                }
+            },
+            mounted() {
+                this.setupWebSocket();
+            }
+        }).mount('#app')
+    </script>
+</body>
+</html>

@@ -1,0 +1,28 @@
+[
+  {
+    "session_id": "SES-2024-58963",
+    "charger_id": "CH-2023-10045",
+    "customer_id": "CUST-78945",
+    "start_time": "2024-10-26T13:45:12Z",
+    "end_time": "2024-10-26T14:28:35Z",
+    "status": "interrupted",
+    "energy_delivered": 31.4,
+    "energy_unit": "kWh",
+    "start_percentage": 18,
+    "end_percentage": 62,
+    "payment": {
+      "method": "App Wallet",
+      "amount": 15.70,
+      "currency": "EUR",
+      "status": "completed"
+    },
+    "error_logs": [
+      {
+        "timestamp": "2024-10-26T14:28:30Z",
+        "code": "ERR-4302",
+        "message": "Communication timeout between charger and vehicle",
+        "severity": "medium"
+      }
+    ]
+  }
+]

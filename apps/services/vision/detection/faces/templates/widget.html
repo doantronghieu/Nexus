@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Face Detection Widget</title>
+    <style>
+        .widget-container {
+            --widget-primary: #2563eb;
+            --widget-primary-dark: #1d4ed8;
+            --widget-success: #22c55e;
+            --widget-danger: #ef4444;
+            --widget-background: #1a1a1a;
+            --widget-card: #242424;
+            --widget-text: #ffffff;
+            --widget-text-light: #a3a3a3;
+            --widget-border: #333333;
+            --widget-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+            --widget-radius: 0.75rem;
+            --widget-transition: all 0.2s ease-in-out;
+
+            background: var(--widget-background);
+            color: var(--widget-text);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, system-ui, sans-serif;
+            width: 100%;
+            max-width: 400px;
+            border-radius: var(--widget-radius);
+            overflow: hidden;
+            box-shadow: var(--widget-shadow);
+            position: relative;
+        }
+
+        .widget-header {
+            padding: 0.75rem;
+            background: var(--widget-card);
+            border-bottom: 1px solid var(--widget-border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .widget-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--widget-text);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .widget-content {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            padding: 0.75rem;
+        }
+
+        .camera-view {
+            position: relative;
+            aspect-ratio: 4/3;
+            background: #000;
+            border-radius: var(--widget-radius);
+            overflow: hidden;
+        }
+
+        #video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        #canvas {
+            display: none;
+        }
+
+        .status-section {
+            background: var(--widget-card);
+            border-radius: var(--widget-radius);
+            padding: 0.75rem;
+        }
+
+        .detection-status {
+            text-align: center;
+            font-size: 1.25rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            min-height: 1.875rem;
+        }
+
+        .register-section {
+            display: none;
+            background: var(--widget-card);
+            border-radius: var(--widget-radius);
+            padding: 0.75rem;
+        }
+
+        .register-section.show {
+            display: block;
+        }
+
+        .register-form {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .name-input {
+            flex: 1;
+            padding: 0.75rem;
+            border: 1px solid var(--widget-border);
+            border-radius: var(--widget-radius);
+            background: var(--widget-background);
+            color: var(--widget-text);
+            font-size: 1rem;
+        }
+
+        .name-input::placeholder {
+            color: var(--widget-text-light);
+        }
+
+        .widget-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.75rem 1.25rem;
+            border-radius: var(--widget-radius);
+            font-weight: 500;
+            cursor: pointer;
+            border: none;
+            background: var(--widget-primary);
+            color: var(--widget-text);
+            font-size: 1rem;
+        }
+
+        .widget-button:hover {
+            background: var(--widget-primary-dark);
+        }
+
+        .widget-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .widget-notification {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            padding: 0.75rem;
+            background: var(--widget-card);
+            color: var(--widget-text);
+            text-align: center;
+            transform: translateY(-100%);
+            transition: var(--widget-transition);
+            z-index: 100;
+            border-bottom: 1px solid var(--widget-border);
+        }
+
+        .widget-notification.show {
+            transform: translateY(0);
+        }
+
+        .widget-notification.error {
+            background: var(--widget-danger);
+        }
+
+        .widget-notification.success {
+            background: var(--widget-success);
+        }
+
+        .connection-status {
+            font-size: 0.875rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--widget-text-light);
+        }
+
+        .status-indicator.connected {
+            background: var(--widget-success);
+        }
+
+        .status-indicator.disconnected {
+            background: var(--widget-danger);
+        }
+
+        @media (max-width: 480px) {
+            .widget-container {
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="widget-container">
+        <div id="notification" class="widget-notification"></div>
+        
+        <header class="widget-header">
+            <div class="widget-title">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M18 8h1a4 4 0 0 1 4 4v6a4 4 0 0 1-4 4H5a4 4 0 0 1-4-4v-6a4 4 0 0 1 4-4h1"/>
+                    <circle cx="12" cy="12" r="3"/>
+                </svg>
+                Face Recognition
+            </div>
+            <div class="connection-status">
+                <div id="status-indicator" class="status-indicator"></div>
+                <span id="connection-status">Connecting...</span>
+            </div>
+        </header>
+
+        <div class="widget-content">
+            <div class="camera-view">
+                <video id="video" autoplay playsinline></video>
+                <canvas id="canvas"></canvas>
+            </div>
+
+            <div class="status-section">
+                <div class="detection-status" id="detection-status">
+                    Initializing camera...
+                </div>
+            </div>
+
+            <div class="register-section" id="register-section">
+                <div class="register-form">
+                    <input type="text" placeholder="Enter your name" class="name-input" id="name-input">
+                    <button class="widget-button" id="register-button">Register</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+        const notification = document.getElementById('notification');
+        const detectionStatus = document.getElementById('detection-status');
+        const registerSection = document.getElementById('register-section');
+        const nameInput = document.getElementById('name-input');
+        const registerButton = document.getElementById('register-button');
+        const connectionStatus = document.getElementById('connection-status');
+        const statusIndicator = document.getElementById('status-indicator');
+
+        let ws = null;
+        let isRegistering = false;
+        let lastCapturedImage = null;
+        let detectionInterval = null;
+
+        function showNotification(message, type = 'error') {
+            notification.textContent = message;
+            notification.className = `widget-notification show ${type}`;
+            setTimeout(() => {
+                notification.className = 'widget-notification';
+            }, 3000);
+        }
+
+        async function initCamera() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { 
+                        width: { ideal: 640 },
+                        height: { ideal: 480 }
+                    } 
+                });
+                video.srcObject = stream;
+                await video.play();
+                return true;
+            } catch (error) {
+                showNotification("Camera access denied: " + error.message);
+                return false;
+            }
+        }
+
+        function connectWebSocket() {
+            const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+            const hostname = window.location.hostname;
+            const port = '{{ port }}';  // Port passed from server
+            const wsUrl = `${protocol}//${hostname}:${port}/ws`;
+            
+            ws = new WebSocket(wsUrl);
+
+            ws.onopen = () => {
+                connectionStatus.textContent = 'Connected';
+                statusIndicator.className = 'status-indicator connected';
+                startDetection();
+            };
+
+            ws.onclose = () => {
+                connectionStatus.textContent = 'Disconnected';
+                statusIndicator.className = 'status-indicator disconnected';
+                clearInterval(detectionInterval);
+                setTimeout(connectWebSocket, 2000);
+            };
+
+            ws.onerror = (error) => {
+                console.error('WebSocket error:', error);
+                showNotification('Connection error');
+            };
+
+            ws.onmessage = (event) => {
+                const data = JSON.parse(event.data);
+                
+                if (data.error) {
+                    showNotification(data.error);
+                    return;
+                }
+
+                if (data.faces && data.faces.length > 0) {
+                    const recognizedFaces = data.faces.filter(face => face.name !== 'Unknown');
+                    
+                    if (recognizedFaces.length > 0) {
+                        const names = recognizedFaces.map(face => face.name).join(', ');
+                        detectionStatus.textContent = `Welcome, ${names}!`;
+                        detectionStatus.style.color = 'var(--widget-success)';
+                        registerSection.classList.remove('show');
+                    } else {
+                        detectionStatus.textContent = 'Face detected. Please register.';
+                        detectionStatus.style.color = 'var(--widget-text)';
+                        registerSection.classList.add('show');
+                    }
+                } else {
+                    detectionStatus.textContent = 'No face detected';
+                    detectionStatus.style.color = 'var(--widget-text-light)';
+                    registerSection.classList.remove('show');
+                }
+            };
+        }
+
+        function captureFrame() {
+            if (!video.videoWidth) return null;
+
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            const context = canvas.getContext('2d');
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+            
+            return canvas.toDataURL('image/jpeg', 0.8);
+        }
+
+        function startDetection() {
+            detectionInterval = setInterval(() => {
+                if (ws && ws.readyState === WebSocket.OPEN) {
+                    const frame = captureFrame();
+                    if (frame) {
+                        lastCapturedImage = frame;
+                        ws.send(frame);
+                    }
+                }
+            }, 2000);
+        }
+
+        async function registerFace() {
+            if (!lastCapturedImage) {
+                showNotification("No face captured");
+                return;
+            }
+
+            const name = nameInput.value.trim();
+            if (!name) {
+                showNotification("Please enter your name");
+                return;
+            }
+
+            registerButton.disabled = true;
+            
+            try {
+                const port = '{{ port }}';  // Port passed from server
+                const formData = new FormData();
+                formData.append('image_data', lastCapturedImage);
+                formData.append('name', name);
+
+                const response = await fetch(`${window.location.protocol}//${window.location.hostname}:${port}/register`, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+                if (data.error) {
+                    showNotification(data.error);
+                } else {
+                    showNotification(data.message, 'success');
+                    nameInput.value = '';
+                    registerSection.classList.remove('show');
+                }
+            } catch (error) {
+                showNotification('Registration error: ' + error.message);
+            } finally {
+                registerButton.disabled = false;
+            }
+        }
+        
+        // Initialize
+        async function init() {
+            const cameraReady = await initCamera();
+            if (cameraReady) {
+                connectWebSocket();
+            }
+        }
+
+        registerButton.addEventListener('click', registerFace);
+        nameInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                registerFace();
+            }
+        });
+
+        init();
+    </script>
+</body>
+</html>

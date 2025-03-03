@@ -1,0 +1,82 @@
+services:
+  fastapi:
+    # image: doantronghieu/llm-fastapi:latest
+    build:
+      context: ../..
+      dockerfile: devops/docker/FastAPI.Dockerfile
+    container_name: FastAPI.main
+    network_mode: host
+    # networks:
+    # - app-network
+    restart: always
+    env_file:
+    - ../../apps/ports.env
+    environment:
+    - IN_PROD=True
+    - PORT_FAST_API=${PORT_FAST_API:-8765}
+    ports:
+    - "${PORT_FAST_API:-8765}:${PORT_FAST_API:-8765}"
+    depends_on:
+    - fastapi-stt-whisper-cpp
+    # working_dir: /app # Set the working directory to /app
+
+  fastapi-stt-whisper-cpp:
+    build:
+      context: ../.. # Points to project root
+      dockerfile: devops/docker/whisper-cpp.Dockerfile
+    container_name: FastAPI.STT.WhisperCpp
+    network_mode: host
+    restart: always
+    env_file:
+    - ../../apps/ports.env
+    environment:
+    - IN_PROD=True
+    - PYTHONUNBUFFERED=1
+    - PORT_SVC_STT_WHISPER_CPP=${PORT_SVC_STT_WHISPER_CPP:-8769}
+    ports:
+    - "${PORT_SVC_STT_WHISPER_CPP:-8769}:${PORT_SVC_STT_WHISPER_CPP:-8769}"
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:${PORT_SVC_STT_WHISPER_CPP:-8769}/" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  fastapi-wake-word-detector:
+    build:
+      context: ../..
+      dockerfile: devops/docker/WakeWordDetector.Dockerfile
+    container_name: FastAPI.WakeWordDetector
+    network_mode: host
+    restart: always
+    env_file:
+    - ../../apps/ports.env
+    environment:
+    - IN_PROD=True
+    - PORT_SVC_WAKE_WORD_DETECTOR=${PORT_SVC_WAKE_WORD_DETECTOR:-8000}
+    ports:
+    - "${PORT_SVC_WAKE_WORD_DETECTOR:-8000}:${PORT_SVC_WAKE_WORD_DETECTOR:-8000}"
+
+  nuxtjs:
+    # image: doantronghieu/llm-nuxtjs:latest
+    container_name: NuxtJS
+    build:
+      context: ../..
+      dockerfile: devops/docker/NuxtJs.Dockerfile
+    ports:
+    - "3000:3000"
+    # networks:
+    # - app-network
+    restart: always
+    # environment:
+    # - NUXT_PUBLIC_SERVER_FASTAPI=http://fastapi:8000
+    depends_on:
+    - fastapi
+    - fastapi-stt-whisper-cpp
+    - fastapi-wake-word-detector
+
+networks:
+  default:
+    driver: bridge
+
+# docker compose -f devops/docker/servers.docker-compose.yaml up --build --detach

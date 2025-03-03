@@ -1,0 +1,251 @@
+# Comprehensive Software Development Standards
+
+## 1. Foundational Principles
+
+### 1.1 Core Engineering Principles
+- SOLID (Single Responsibility, Open-Closed, Liskov Substitution, Interface Segregation, Dependency Inversion)
+- DRY (Don't Repeat Yourself)
+- KISS (Keep It Simple, Stupid)
+- YAGNI (You Aren't Gonna Need It)
+- Separation of Concerns (SoC)
+- Law of Demeter (Principle of Least Knowledge)
+- GRASP (General Responsibility Assignment Software Patterns)
+- Composition Over Inheritance
+- Convention Over Configuration
+- Principle of Least Surprise
+- Zero One Infinity Rule
+- Fail Fast
+- Rule of Three
+- CUPID Properties
+- Single Point of Truth
+
+### 1.2 Programming Paradigms
+- Preference for functional programming patterns
+- Pure functions over stateful classes
+- Immutability as a default approach
+- Functional composition patterns
+- Proper use of design patterns when applicable
+
+## 2. Code Organization and Style
+
+### 2.1 Type System
+- Mandatory type declarations for variables, parameters, and return values
+- Interface preference over types for extensibility
+- Proper type guards and assertions
+- Custom type definitions and aliases for clarity
+- Generic type usage where appropriate
+- Runtime type checking implementation
+
+### 2.2 Function Guidelines
+- Single responsibility principle
+- Early returns to avoid nesting
+- Higher-order functions where appropriate
+- Default parameters instead of null checks
+- RO-RO pattern (Receive Object-Return Object)
+- Single level of abstraction
+- Proper error handling implementation
+
+### 2.3 Naming Conventions
+- Constants/Environment Variables: UPPERCASE
+- Boolean Variables: Use prefixes (is, has, should)
+- Event Handlers: Use 'handle' prefix (handleClick)
+- Clear, descriptive names for all identifiers
+- Consistent terminology throughout codebase
+
+## 3. Quality Assurance
+
+### 3.1 Testing Standards
+- Minimum 80% test coverage requirement
+- Follow Arrange-Act-Assert pattern
+- Clear naming convention (inputX, mockX, expectedX)
+- Unit tests for all public functions
+- Integration tests for component interactions
+- End-to-end tests for critical paths
+- Given-When-Then format for acceptance tests
+- Proper test doubles and mocking strategies
+- Snapshot testing where appropriate
+- Property-based testing for complex scenarios
+
+### 3.2 Performance Testing
+- Load testing implementation
+- Scalability testing
+- Memory usage monitoring
+- Response time benchmarking
+- Concurrent user testing
+- Stress testing procedures
+- System resource monitoring
+- Database performance optimization
+- Benchmark testing implementation
+- Performance profiling tools usage
+
+## 4. Security Implementation
+
+### 4.1 Authentication and Authorization
+- JWT implementation standards
+- OAuth2/OIDC integration
+- Role-based access control
+- Permission management
+- Secure session handling
+- Regular security audits
+
+### 4.2 Data Protection
+- Encryption at rest
+- Encryption in transit
+- Key management procedures
+- Secure configuration
+- Data masking implementation
+- Input validation and sanitization
+- Schema validation
+- Custom validators implementation
+
+### 4.3 Security Headers and Protection
+- CORS configuration
+- Content Security Policy (CSP)
+- HTTP Strict Transport Security (HSTS)
+- XSS protection headers
+- Frame protection
+- Rate limiting implementation
+- DOS protection measures
+- Brute force prevention
+- IP blocking mechanisms
+- Request validation
+
+## 5. API Design and Implementation
+
+### 5.1 RESTful API Standards
+- Proper versioning implementation
+- Appropriate HTTP method usage
+- Rate limiting strategies
+- Caching implementation
+- Correct status code usage
+- Comprehensive documentation
+- Consistent error responses
+- Request/response transformation
+- Proper middleware usage
+
+### 5.2 Performance Optimization
+- Response caching strategies
+- Request throttling implementation
+- Pagination standards
+- Asynchronous operations
+- Resource pooling
+- Bundle size optimization
+- Code splitting implementation
+- Lazy loading strategies
+- Asset optimization
+- Web Vitals monitoring
+
+## 6. Database Management
+
+### 6.1 Database Design and Operation
+- ORM pattern implementation
+- Database migration strategies
+- Transaction handling
+- Index optimization
+- Connection pooling
+- Backup procedures
+- Query performance optimization
+- Data validation
+- Database normalization
+- Version control integration
+- Database security implementation
+
+### 6.2 Performance Optimization
+- Query optimization techniques
+- Index management strategies
+- Connection pooling implementation
+- Cache strategy development
+- Batch operation handling
+- Memory usage optimization
+- Thread management
+- Process scaling procedures
+- Resource cleanup protocols
+
+## 7. Error Handling and Logging
+
+### 7.1 Error Management
+- Typed error classes
+- Error boundaries implementation
+- Async error handling
+- Contextual error logging
+- Meaningful error messages
+- Global error handlers
+- Retry mechanisms
+- Edge case handling
+
+### 7.2 Logging and Monitoring
+- Security logging implementation
+- Audit trails
+- Activity monitoring
+- Alert system configuration
+- Compliance reporting
+- Error context capture
+- Debug information management
+- User-facing message handling
+
+## 8. Development Workflow
+
+### 8.1 Code Organization
+- Feature-based directory structure
+- Co-located test files
+- Proper file organization
+- Related component grouping
+- Clear module boundaries
+- Consistent file naming conventions
+
+### 8.2 CI/CD Integration
+- Automated testing integration
+- Build optimization
+- Deployment automation
+- Environment management
+- Version control workflows
+- Code review processes
+- Documentation generation
+
+### 8.3 Maintenance and Troubleshooting
+- Type resolution procedures
+- Dependency conflict resolution
+- Build optimization techniques
+- Performance bottleneck identification
+- Memory leak detection
+- API integration troubleshooting
+- State management debugging
+- Testing challenge resolution
+
+## 9. Documentation Requirements
+
+### 9.1 Code Documentation
+- Clear function documentation
+- Interface documentation
+- API endpoint documentation
+- Error code documentation
+- Configuration documentation
+- Setup instructions
+- Troubleshooting guides
+
+### 9.2 Project Documentation
+- Architecture documentation
+- Design decisions
+- Security procedures
+- Deployment procedures
+- Maintenance procedures
+- Recovery procedures
+- Monitoring procedures
+
+### 2. Database Management
+- Use db_structure.md as the single source of truth for database schema
+- Parse and maintain schema information for:
+  - Tables, columns, and data types
+  - Relationships, constraints, and indexes
+- Generate context-aware queries, migrations, and ORM models
+- Validate database code against the schema
+- Update db_structure.md to reflect schema changes while preserving format
+
+## Security and Quality Assurance
+
+- Implement a security-first approach in all code modifications
+- Validate potentially irreversible actions before proceeding
+- Request clarification for ambiguous commands
+- Ensure comprehensive test coverage for new features
+- Monitor and maintain code performance optimization
+- Apply robust error handling practices

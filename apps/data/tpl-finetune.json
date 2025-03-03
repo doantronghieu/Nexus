@@ -1,0 +1,6 @@
+[
+  {    
+    "instruction": "Given the parameters of a triangle, find out its perimeter.",    
+    "input": "Side 1 = 4\nSide 2 = 6\nSide 3 = 8",    
+    "output": "The perimeter of a triangle is the sum of the lengths of its sides. In this case, the perimeter would be the sum of side 1, side 2, and side 3. So, \nPerimeter = Side 1 + Side 2 + Side 3\n= 4 + 6 + 8\n= 18\n\nTherefore, the perimeter of the triangle is 18 units."}
+]

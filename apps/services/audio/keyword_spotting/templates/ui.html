@@ -1,0 +1,1072 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Keyword Spotting Interface</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+    <style>
+        /* Modern CSS Reset */
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Variables */
+        :root {
+            --color-primary: #2563eb;
+            --color-primary-dark: #1d4ed8;
+            --color-primary-light: #dbeafe;
+            --color-success: #22c55e;
+            --color-success-dark: #16a34a;
+            --color-error: #ef4444;
+            --color-warning: #f97316;
+            --color-bg: #f8fafc;
+            --color-surface: #ffffff;
+            --color-text: #1e293b;
+            --color-text-light: #64748b;
+            --color-text-muted: #94a3b8;
+            --color-border: #e2e8f0;
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1);
+            --radius-sm: 0.375rem;
+            --radius-md: 0.5rem;
+            --radius-lg: 0.75rem;
+            --spacing-xs: 0.25rem;
+            --spacing-sm: 0.5rem;
+            --spacing-md: 1rem;
+            --spacing-lg: 1.5rem;
+            --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+            --transition: all 0.2s ease;
+            --header-height: 4rem;
+            --sidebar-width: 20rem;
+        }
+
+        /* Base Styles */
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--color-bg);
+            color: var(--color-text);
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Layout */
+        .app-container {
+            height: 100vh;
+            display: grid;
+            grid-template-columns: 1fr var(--sidebar-width);
+            grid-template-rows: var(--header-height) 1fr;
+        }
+
+        /* Header */
+        .header {
+            grid-column: 1 / -1;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 var(--spacing-lg);
+            background: var(--color-surface);
+            box-shadow: var(--shadow-sm);
+            z-index: 10;
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .header h1 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--color-text);
+        }
+
+        /* Main Content */
+        .main-content {
+            display: grid;
+            grid-template-rows: auto 1fr auto;
+            gap: var(--spacing-md);
+            padding: var(--spacing-md);
+            overflow: hidden;
+            height: calc(100vh - var(--header-height));
+        }
+
+        /* Controls Section */
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+            padding: var(--spacing-md);
+            background: var(--color-surface);
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-sm);
+        }
+
+        /* Keyword Progress Section */
+        .keyword-progress {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: var(--spacing-md);
+            padding: var(--spacing-md);
+            background: var(--color-surface);
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-sm);
+            overflow-y: auto;
+            align-content: start;
+            max-height: calc(100vh - var(--header-height) - 16rem);
+        }
+
+        /* Progress Card */
+        .progress-card {
+            display: grid;
+            grid-template-rows: auto auto 1fr;
+            gap: var(--spacing-md);
+            padding: var(--spacing-md);
+            background: var(--color-surface);
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--color-border);
+            transition: var(--transition);
+            position: relative;
+            height: 200px;
+        }
+
+        .progress-card:hover {
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+        }
+
+        .progress-card.cooldown::after {
+            content: "Cooldown";
+            position: absolute;
+            top: var(--spacing-sm);
+            right: var(--spacing-sm);
+            background: var(--color-warning);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            opacity: 0.9;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .keyword-info h3 {
+            font-size: 1.25rem;
+            margin-bottom: 4px;
+            color: var(--color-text);
+        }
+
+        .ipa-text {
+            font-family: var(--font-mono);
+            font-size: 0.875rem;
+            color: var(--color-text-muted);
+            background: var(--color-bg);
+            padding: 2px 6px;
+            border-radius: var(--radius-sm);
+            display: inline-block;
+        }
+
+        .confidence-value {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--color-primary);
+            font-feature-settings: "tnum";
+            font-variant-numeric: tabular-nums;
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            display: grid;
+            gap: var(--spacing-xs);
+        }
+
+        .progress-bar {
+            height: 6px;
+            background: var(--color-bg);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .progress-value {
+            height: 100%;
+            background: linear-gradient(90deg, var(--color-primary) 0%, var(--color-success) 100%);
+            transition: width 0.3s ease;
+        }
+
+        /* Statistics Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--spacing-sm);
+            padding: var(--spacing-sm);
+            background: var(--color-primary-light);
+            border-radius: var(--radius-sm);
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--color-primary-dark);
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: var(--color-text-muted);
+            margin-top: 2px;
+        }
+
+        /* Audio Monitor */
+        .audio-monitor {
+            padding: var(--spacing-md);
+            background: var(--color-surface);
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-sm);
+            display: grid;
+            gap: var(--spacing-md);
+            height: 8rem;
+        }
+
+        #audioLevel {
+            height: 4px;
+            background: var(--color-bg);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        #audioLevelBar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--color-primary) 0%, var(--color-success) 100%);
+            transition: width 0.1s ease;
+        }
+
+        .chart-container {
+            height: 80px;
+            border-radius: var(--radius-sm);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            background: var(--color-surface);
+            border-left: 1px solid var(--color-border);
+            display: grid;
+            grid-template-rows: auto auto 1fr;
+            gap: var(--spacing-md);
+            padding: var(--spacing-md);
+            height: calc(100vh - var(--header-height));
+            overflow-y: auto;
+        }
+
+        /* Settings Panel */
+        .settings-panel {
+            background: var(--color-bg);
+            border-radius: var(--radius-md);
+            padding: var(--spacing-md);
+        }
+
+        .settings-panel h2 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: var(--spacing-md);
+            color: var(--color-text);
+        }
+
+        /* Form Controls */
+        .settings-form {
+            display: grid;
+            gap: var(--spacing-md);
+        }
+
+        .settings-group {
+            display: grid;
+            gap: var(--spacing-xs);
+        }
+
+        .settings-group label {
+            font-size: 0.875rem;
+            color: var(--color-text-muted);
+        }
+
+        .settings-group input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-sm);
+            font-size: 0.875rem;
+            transition: var(--transition);
+        }
+
+        .settings-group input:focus {
+            outline: none;
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 2px var(--color-primary-light);
+        }
+
+        /* Log Container */
+        .log-container {
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            overflow-y: auto;
+            height: calc(100vh - var(--header-height) - 24rem);
+        }
+
+        .log-entry {
+            padding: var(--spacing-xs) var(--spacing-sm);
+            border-left: 3px solid transparent;
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            gap: var(--spacing-sm);
+            font-size: 0.875rem;
+            transition: var(--transition);
+        }
+
+        .log-entry:hover {
+            background: var(--color-bg);
+        }
+
+        .log-entry .timestamp {
+            color: var(--color-text-muted);
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+        }
+
+        .log-entry.detected {
+            border-left-color: var(--color-success);
+            background: #dcfce7;
+        }
+
+        .log-entry.error {
+            border-left-color: var(--color-error);
+            background: #fee2e2;
+        }
+
+        .log-entry.warning {
+            border-left-color: var(--color-warning);
+            background: #fff7ed;
+        }
+
+        .log-entry.system {
+            border-left-color: var(--color-primary);
+            background: var(--color-primary-light);
+        }
+
+        /* Status Badge */
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+        }
+
+        .status-badge::before {
+            content: "";
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: currentColor;
+        }
+
+        .status-badge.connected {
+            background: #dcfce7;
+            color: var(--color-success-dark);
+        }
+
+        .status-badge.disconnected {
+            background: #fee2e2;
+            color: var(--color-error);
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-weight: 500;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--spacing-xs);
+        }
+
+        .btn-primary {
+            background: var(--color-primary);
+            color: white;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: var(--color-primary-dark);
+        }
+
+        .btn-danger {
+            background: var(--color-error);
+            color: white;
+        }
+
+        .btn-danger:hover:not(:disabled) {
+            background: #dc2626;
+        }
+
+        .btn:disabled {
+            background: var(--color-text-muted);
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 1024px) {
+            .app-container {
+                grid-template-columns: 1fr;
+                grid-template-rows: var(--header-height) 1fr auto;
+                height: 100vh;
+                overflow-y: auto;
+            }
+
+            .main-content {
+                height: auto;
+                overflow: visible;
+            }
+
+            .sidebar {
+                border-left: none;
+                border-top: 1px solid var(--color-border);
+                height: auto;
+            }
+
+            .keyword-progress {
+                grid-template-columns: 1fr;
+                max-height: none;
+            }
+
+            .log-container {
+                height: 200px;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .header {
+                padding: var(--spacing-md);
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .btn {
+                width: 100%;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: var(--spacing-md);
+            }
+
+            .progress-card {
+              height: auto;
+                min-height: 200px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <header class="header">
+            <h1>Keyword Detection</h1>
+            <div id="wsStatus" class="status-badge disconnected">Disconnected</div>
+        </header>
+
+        <main class="main-content">
+            <div class="controls">
+                <button id="startButton" class="btn btn-primary" disabled>
+                    Start Recording
+                </button>
+                <button id="stopButton" class="btn btn-danger" disabled>
+                    Stop Recording
+                </button>
+            </div>
+
+            <section class="keyword-progress" id="keywordProgress">
+                <!-- Progress cards will be dynamically added here -->
+            </section>
+
+            <section class="audio-monitor">
+                <div id="audioLevel">
+                    <div id="audioLevelBar"></div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="audioChart"></canvas>
+                </div>
+            </section>
+        </main>
+
+        <aside class="sidebar">
+            <section class="settings-panel">
+                <h2>Add Keyword</h2>
+                <div class="settings-form">
+                    <div class="settings-group">
+                        <label for="keywordInput">Keyword</label>
+                        <input type="text" id="keywordInput" placeholder="Enter keyword">
+                    </div>
+                    <div class="settings-group">
+                        <label for="ipaInput">IPA Pronunciation</label>
+                        <input type="text" id="ipaInput" placeholder="Enter IPA">
+                    </div>
+                    <button id="addKeywordButton" class="btn btn-primary">Add Keyword</button>
+                </div>
+            </section>
+
+            <section class="settings-panel">
+                <h2>Detection Settings</h2>
+                <div class="settings-form">
+                    <div class="settings-group">
+                        <label for="threshold">Detection Threshold</label>
+                        <input type="number" id="threshold" min="0" max="1" step="0.05" value="0.7">
+                    </div>
+                    <div class="settings-group">
+                        <label for="cooldown">Detection Cooldown (s)</label>
+                        <input type="number" id="cooldown" min="0" step="0.1" value="2.0">
+                    </div>
+                    <div class="settings-group">
+                        <label for="minGap">Minimum Score Gap</label>
+                        <input type="number" id="minGap" min="0" max="1" step="0.05" value="0.2">
+                    </div>
+                    <button id="updateSettingsButton" class="btn btn-primary">Update Settings</button>
+                </div>
+            </section>
+
+            <section class="settings-panel">
+                <h2>Detection Log</h2>
+                <div id="detectionLog" class="log-container">
+                    <!-- Log entries will be dynamically added here -->
+                </div>
+            </section>
+        </aside>
+    </div>
+
+    <script>
+        class KeywordSpotter {
+            constructor() {
+                this.config = {
+                    sampleRate: 16000,
+                    bufferSize: 2048,
+                    chunkSize: 1280,
+                    wsUrl: 'ws://localhost:8000/ws',
+                    updateInterval: 2000
+                };
+
+                this.state = {
+                    isConnected: false,
+                    isRecording: false,
+                    isSpeaking: false,
+                    socket: null,
+                    audioContext: null,
+                    processor: null,
+                    audioAccumulator: [],
+                    keywords: new Map(),
+                    lastScoreUpdate: 0,
+                    globalCooldownEnd: 0,
+                    keywordStats: new Map()
+                };
+
+                this.chart = null;
+                this.setupUI();
+                this.setupWebSocket();
+                this.setupChart();
+                this.loadKeywords();
+            }
+
+            createProgressCard(keyword, data) {
+                const card = document.createElement('div');
+                card.className = 'progress-card';
+                card.id = `card-${keyword}`;
+                card.innerHTML = `
+                    <div class="card-header">
+                        <div class="keyword-info">
+                            <h3>${keyword}</h3>
+                            <div class="ipa-text">${Array.isArray(data.ipa) ? data.ipa.join(' · ') : data.ipa}</div>
+                        </div>
+                        <div class="confidence-value">0.000</div>
+                    </div>
+                    <div class="progress-container">
+                        <div class="progress-bar">
+                            <div class="progress-value" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <div class="stat-value" id="${keyword}-detections">0</div>
+                            <div class="stat-label">Total Detections</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="${keyword}-avg-time">0ms</div>
+                            <div class="stat-label">Avg Response</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="${keyword}-best-conf">0%</div>
+                            <div class="stat-label">Best Score</div>
+                        </div>
+                    </div>
+                `;
+                return card;
+            }
+
+            formatTimestamp(date = new Date()) {
+                return date.toLocaleTimeString('en-US', {
+                    hour12: false,
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit',
+                    fractionalSecondDigits: 3
+                });
+            }
+
+            setupUI() {
+                this.elements = {
+                    startButton: document.getElementById('startButton'),
+                    stopButton: document.getElementById('stopButton'),
+                    wsStatus: document.getElementById('wsStatus'),
+                    audioLevelBar: document.getElementById('audioLevelBar'),
+                    keywordInput: document.getElementById('keywordInput'),
+                    ipaInput: document.getElementById('ipaInput'),
+                    addKeywordButton: document.getElementById('addKeywordButton'),
+                    keywordProgress: document.getElementById('keywordProgress'),
+                    detectionLog: document.getElementById('detectionLog'),
+                    threshold: document.getElementById('threshold'),
+                    cooldown: document.getElementById('cooldown'),
+                    minGap: document.getElementById('minGap'),
+                    updateSettingsButton: document.getElementById('updateSettingsButton')
+                };
+
+                this.elements.startButton.addEventListener('click', () => this.startRecording());
+                this.elements.stopButton.addEventListener('click', () => this.stopRecording());
+                this.elements.addKeywordButton.addEventListener('click', () => this.addKeyword());
+                this.elements.updateSettingsButton.addEventListener('click', () => this.updateSettings());
+
+                setInterval(() => this.updateStats(), this.config.updateInterval);
+            }
+
+            async loadKeywords() {
+                try {
+                    const response = await fetch('/keywords');
+                    if (!response.ok) throw new Error('Failed to fetch keywords');
+                    
+                    const keywordData = await response.json();
+                    this.state.keywords.clear();
+                    this.elements.keywordProgress.innerHTML = '';
+                    
+                    Object.entries(keywordData).forEach(([keyword, ipa]) => {
+                        const data = {
+                            keyword,
+                            ipa: Array.isArray(ipa) ? ipa : [ipa]
+                        };
+                        this.state.keywords.set(keyword, data);
+                        this.state.keywordStats.set(keyword, {
+                            detections: 0,
+                            times: [],
+                            bestConfidence: 0
+                        });
+                        
+                        const card = this.createProgressCard(keyword, data);
+                        this.elements.keywordProgress.appendChild(card);
+                    });
+                } catch (error) {
+                    this.log('error', `Failed to load keywords: ${error.message}`);
+                }
+            }
+
+            updateStats() {
+                if (!this.state.isConnected) return;
+
+                this.state.keywords.forEach((data, keyword) => {
+                    const stats = this.state.keywordStats.get(keyword) || {
+                        detections: 0,
+                        times: [],
+                        bestConfidence: 0
+                    };
+
+                    const detectionsEl = document.getElementById(`${keyword}-detections`);
+                    const avgTimeEl = document.getElementById(`${keyword}-avg-time`);
+                    const bestConfEl = document.getElementById(`${keyword}-best-conf`);
+
+                    if (detectionsEl) detectionsEl.textContent = stats.detections;
+                    if (avgTimeEl) {
+                        const avgTime = stats.times.length > 0 
+                            ? Math.round(stats.times.reduce((a, b) => a + b) / stats.times.length)
+                            : 0;
+                        avgTimeEl.textContent = `${avgTime}ms`;
+                    }
+                    if (bestConfEl) bestConfEl.textContent = `${Math.round(stats.bestConfidence * 100)}%`;
+                });
+            }
+
+            updateVisualization(result) {
+                const now = Date.now();
+                const inCooldown = now < this.state.globalCooldownEnd;
+                
+                this.elements.keywordProgress.querySelectorAll('.progress-card').forEach(card => {
+                    const keyword = card.id.replace('card-', '');
+                    const score = result.scores[keyword] || 0;
+                    
+                    const progressBar = card.querySelector('.progress-value');
+                    const confidenceValue = card.querySelector('.confidence-value');
+                    
+                    progressBar.style.width = `${score * 100}%`;
+                    confidenceValue.textContent = score.toFixed(3);
+                    
+                    card.classList.toggle('cooldown', inCooldown);
+                    
+                    if (result.keyword_detected && keyword === result.keyword) {
+                        const stats = this.state.keywordStats.get(keyword) || {
+                            detections: 0,
+                            times: [],
+                            bestConfidence: 0
+                        };
+                        
+                        stats.detections++;
+                        if (result.end_time && result.start_time) {
+                            stats.times.push((result.end_time - result.start_time) * 1000);
+                        }
+                        stats.bestConfidence = Math.max(stats.bestConfidence, result.confidence);
+                        
+                        this.state.keywordStats.set(keyword, stats);
+                        this.updateStats();
+                    }
+                });
+            }
+
+            setupWebSocket() {
+                if (this.state.socket) {
+                    this.state.socket.close();
+                }
+                
+                this.log('system', 'Connecting to WebSocket...');
+                this.state.socket = new WebSocket(this.config.wsUrl);
+
+                this.state.socket.onopen = () => {
+                    this.state.isConnected = true;
+                    this.elements.wsStatus.textContent = 'Connected';
+                    this.elements.wsStatus.className = 'status-badge connected';
+                    this.elements.startButton.disabled = false;
+                    this.log('system', 'Connected successfully');
+                };
+
+                this.state.socket.onclose = () => {
+                    this.state.isConnected = false;
+                    this.elements.wsStatus.textContent = 'Disconnected';
+                    this.elements.wsStatus.className = 'status-badge disconnected';
+                    this.elements.startButton.disabled = true;
+                    
+                    if (this.state.isRecording) {
+                        this.stopRecording();
+                    }
+                    
+                    this.log('system', 'WebSocket disconnected');
+                    setTimeout(() => this.setupWebSocket(), 2000);
+                };
+
+                this.state.socket.onmessage = async (event) => {
+                    try {
+                        const data = JSON.parse(event.data);
+                        this.handleServerMessage(data);
+                    } catch (error) {
+                        this.log('error', `Error processing message: ${error.message}`);
+                    }
+                };
+            }
+
+            handleServerMessage(data) {
+                if (data.type === 'log') {
+                    this.log(data.log_type, data.message);
+                } else if (data.type === 'result') {
+                    const result = data.data;
+                    
+                    if (result.keyword_detected) {
+                        this.state.globalCooldownEnd = Date.now() + 
+                            (parseFloat(this.elements.cooldown.value) * 1000);
+                        
+                        this.log('detected', `Detected "${result.keyword}"`, {
+                            confidence: result.confidence,
+                            gap: result.gap
+                        });
+                    }
+                    
+                    this.updateVisualization(result);
+                }
+            }
+
+            setupChart() {
+                const ctx = document.getElementById('audioChart').getContext('2d');
+                this.chart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: Array(100).fill(''),
+                        datasets: [{
+                            data: Array(100).fill(0),
+                            borderColor: 'rgb(75, 192, 192)',
+                            tension: 0.1,
+                            fill: false
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                max: 255,
+                                display: false
+                            },
+                            x: { display: false }
+                        },
+                        animation: { duration: 0 }
+                    }
+                });
+            }
+
+            async startRecording() {
+                try {
+                    const stream = await navigator.mediaDevices.getUserMedia({
+                        audio: {
+                            channelCount: 1,
+                            sampleRate: this.config.sampleRate,
+                            echoCancellation: true,
+                            noiseSuppression: true,
+                            autoGainControl: true
+                        }
+                    });
+
+                    this.state.audioContext = new AudioContext({
+                        sampleRate: this.config.sampleRate
+                    });
+
+                    const source = this.state.audioContext.createMediaStreamSource(stream);
+                    this.state.processor = this.state.audioContext.createScriptProcessor(
+                        this.config.bufferSize,
+                        1,
+                        1
+                    );
+
+                    this.state.processor.onaudioprocess = (e) => this.handleAudioProcess(e);
+                    source.connect(this.state.processor);
+                    this.state.processor.connect(this.state.audioContext.destination);
+
+                    this.state.isRecording = true;
+                    this.elements.startButton.disabled = true;
+                    this.elements.stopButton.disabled = false;
+                    this.log('system', 'Started recording');
+                    
+                } catch (error) {
+                    this.log('error', `Recording error: ${error.message}`);
+                }
+            }
+
+            stopRecording() {
+                if (this.state.processor) {
+                    this.state.processor.disconnect();
+                    this.state.processor = null;
+                }
+                if (this.state.audioContext) {
+                    this.state.audioContext.close();
+                    this.state.audioContext = null;
+                }
+
+                this.state.audioAccumulator = [];
+                this.state.isRecording = false;
+                this.elements.startButton.disabled = false;
+                this.elements.stopButton.disabled = true;
+                this.elements.audioLevelBar.style.width = '0%';
+                
+                this.updateVisualization({ scores: {} });
+                this.log('system', 'Stopped recording');
+            }
+
+            handleAudioProcess(e) {
+                const inputData = e.inputBuffer.getChannelData(0);
+                const audioLevel = this.calculateAudioLevel(inputData);
+                this.updateAudioVisualization(audioLevel);
+
+                // Convert to 16-bit PCM
+                const int16Data = new Int16Array(inputData.length);
+                for (let i = 0; i < inputData.length; i++) {
+                    int16Data[i] = Math.max(-32768, Math.min(32767, Math.floor(inputData[i] * 32768)));
+                }
+
+                this.state.audioAccumulator.push(...int16Data);
+
+                // Send audio chunks when we have enough data
+                while (this.state.audioAccumulator.length >= this.config.chunkSize) {
+                    const chunk = new Int16Array(
+                        this.state.audioAccumulator.slice(0, this.config.chunkSize)
+                    );
+                    this.state.audioAccumulator = this.state.audioAccumulator.slice(
+                        this.config.chunkSize
+                    );
+                    this.sendAudioChunk(chunk);
+                }
+            }
+
+            calculateAudioLevel(audioData) {
+                const sum = audioData.reduce((acc, val) => acc + (val * val), 0);
+                const rms = Math.sqrt(sum / audioData.length);
+                return Math.min(1, Math.max(0, rms * 5));
+            }
+
+            updateAudioVisualization(level) {
+                this.elements.audioLevelBar.style.width = `${level * 100}%`;
+                
+                const data = this.chart.data.datasets[0].data;
+                data.push(level * 255);
+                data.shift();
+                this.chart.update();
+            }
+
+            async addKeyword() {
+                const keyword = this.elements.keywordInput.value.trim();
+                const ipa = this.elements.ipaInput.value.trim();
+
+                if (!keyword || !ipa) {
+                    this.log('warning', 'Both keyword and IPA pronunciation are required');
+                    return;
+                }
+
+                try {
+                    const response = await fetch('/keywords', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            keyword: keyword,
+                            ipa_string: ipa
+                        })
+                    });
+
+                    if (response.ok) {
+                        const result = await response.json();
+                        const data = {
+                            keyword,
+                            ipa: Array.isArray(result.ipa) ? result.ipa : [result.ipa]
+                        };
+                        
+                        this.state.keywords.set(keyword, data);
+                        this.state.keywordStats.set(keyword, {
+                            detections: 0,
+                            times: [],
+                            bestConfidence: 0
+                        });
+
+                        const card = this.createProgressCard(keyword, data);
+                        this.elements.keywordProgress.appendChild(card);
+                        
+                        this.elements.keywordInput.value = '';
+                        this.elements.ipaInput.value = '';
+                        this.log('system', `Added keyword: ${keyword} (${ipa})`);
+                    } else {
+                        const error = await response.json();
+                        this.log('error', `Failed to add keyword: ${error.detail}`);
+                    }
+                } catch (error) {
+                    this.log('error', `Error adding keyword: ${error.message}`);
+                }
+            }
+
+            async updateSettings() {
+                const threshold = parseFloat(this.elements.threshold.value);
+                const cooldown = parseFloat(this.elements.cooldown.value);
+                const minGap = parseFloat(this.elements.minGap.value);
+
+                try {
+                    const response = await fetch('/config', {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            threshold: threshold,
+                            cooldown: cooldown,
+                            min_gap: minGap
+                        })
+                    });
+
+                    if (response.ok) {
+                        this.log('system', 'Detection settings updated');
+                        this.updateVisualization({ scores: {} });
+                    } else {
+                        const error = await response.json();
+                        this.log('error', `Failed to update settings: ${error.detail}`);
+                    }
+                } catch (error) {
+                    this.log('error', `Error updating settings: ${error.message}`);
+                }
+            }
+
+            sendAudioChunk(chunk) {
+                if (this.state.socket?.readyState === WebSocket.OPEN) {
+                    try {
+                        this.state.socket.send(chunk.buffer);
+                    } catch (error) {
+                        this.log('error', `Error sending audio: ${error.message}`);
+                    }
+                }
+            }
+
+            log(type, message, data = null) {
+                const entry = document.createElement('div');
+                entry.className = `log-entry ${type}`;
+
+                const timestamp = document.createElement('span');
+                timestamp.className = 'timestamp';
+                timestamp.textContent = this.formatTimestamp();
+
+                const messageSpan = document.createElement('span');
+                messageSpan.className = 'message';
+                messageSpan.textContent = message;
+
+                let stats = null;
+                if (data) {
+                    stats = document.createElement('span');
+                    stats.className = 'stats';
+                    if (data.confidence !== undefined) {
+                        const confidence = (data.confidence * 100).toFixed(1);
+                        const gap = data.gap ? ` (+${(data.gap * 100).toFixed(1)}%)` : '';
+                        stats.textContent = `${confidence}%${gap}`;
+                    }
+                }
+
+                entry.appendChild(timestamp);
+                entry.appendChild(messageSpan);
+                if (stats) entry.appendChild(stats);
+
+                this.elements.detectionLog.insertBefore(entry, this.elements.detectionLog.firstChild);
+
+                // Keep only last 100 entries
+                while (this.elements.detectionLog.children.length > 100) {
+                    this.elements.detectionLog.removeChild(this.elements.detectionLog.lastChild);
+                }
+            }
+        }
+
+        // Initialize on page load
+        window.addEventListener('load', () => {
+            window.keywordSpotter = new KeywordSpotter();
+        });
+    </script>
+</body>
+</html>

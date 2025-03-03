@@ -1,0 +1,200 @@
+# Comprehensive Meta-Prompt for Advanced Prompt Engineering
+
+## Purpose
+Design and optimize prompts using state-of-the-art prompt engineering techniques, with comprehensive testing and evaluation frameworks.
+
+## Input Requirements
+Provide either:
+- Raw ideas/requirements for a new prompt
+- Existing prompt for improvement
+
+## Core Process
+
+### 1. INITIAL ANALYSIS [Think Step by Step]
+```
+a) Core Requirements Analysis
+   - Primary objectives
+   - Performance requirements
+   - Domain constraints
+   - Safety requirements
+   - Scale considerations
+
+b) Context Evaluation
+   - Use case specifics
+   - User expertise level
+   - Expected output complexity
+   - Resource constraints
+   - Integration requirements
+```
+
+### 2. TECHNIQUE SELECTION AND IMPLEMENTATION
+Choose and implement appropriate advanced techniques:
+
+```
+a) Basic Techniques
+   - Chain of Thought (CoT)
+   - Format specification
+   - Example-based learning
+
+b) Advanced Techniques
+   - Auto-CoT for complex reasoning
+   - Tree of Thought (ToT) for parallel exploration
+   - ReWOO for efficient tool usage
+   - FLARE for dynamic information retrieval
+   - DERA for multi-agent scenarios
+   - Expert Prompting for specialized domains
+
+c) Safety and Control
+   - Rails implementation
+   - Constrained prompting
+   - Format tricks for precise outputs
+   - Self-consistency checks
+```
+
+### 3. ARCHITECTURE AND INTEGRATION
+```
+a) Framework Selection
+   - LangChain for complex chains
+   - Semantic Kernel for skills/planning
+   - Guidance for constrained prompting
+   - Custom framework requirements
+
+b) Tool Integration
+   - External API connections
+   - Data retrieval mechanisms
+   - Computation handlers
+   - Response validators
+
+c) Component Design
+   - Prompt templates
+   - Chain definitions
+   - Agent specifications
+   - Tool connectors
+```
+
+### 4. TESTING AND EVALUATION FRAMEWORK
+```
+a) Automated Testing Setup
+   - Unit test framework
+   - Integration test suite
+   - Performance benchmarks
+   - Safety compliance checks
+
+b) Evaluation Metrics
+   - Response accuracy (%)
+   - Completion rate (%)
+   - Token efficiency
+   - Latency measurements
+   - Cost metrics
+   - Safety compliance score
+
+c) Test Cases
+   - Standard scenarios
+   - Edge cases
+   - Error conditions
+   - Load testing
+   - Security testing
+
+d) Quality Benchmarks
+   - Minimum accuracy threshold: 95%
+   - Maximum latency: 2000ms
+   - Cost efficiency target: <$0.01/request
+   - Safety compliance: 100%
+```
+
+### 5. PROMPT STRUCTURE
+Implement using this format:
+
+```
+[SYSTEM CONTEXT]
+<role>Define system role and capabilities</role>
+<tools>Specify available tools and APIs</tools>
+<constraints>Define operating boundaries</constraints>
+
+[INSTRUCTION FRAMEWORK]
+<process>
+1. Input validation
+2. Context processing
+3. Tool selection
+4. Execution steps
+5. Output validation
+</process>
+
+[SAFETY CONTROLS]
+<rails>
+- Topic constraints
+- Response limitations
+- Ethical boundaries
+</rails>
+
+[FORMAT SPECIFICATIONS]
+<input>
+- Required fields
+- Data types
+- Validation rules
+</input>
+<output>
+- Structure
+- Format
+- Validation criteria
+</output>
+
+[EXAMPLES]
+<examples>
+- Standard case
+- Edge case
+- Error case
+</examples>
+```
+
+### 6. IMPLEMENTATION GUIDELINES
+```
+a) Scaling Considerations
+   - Batch processing
+   - Caching strategy
+   - Resource optimization
+   - Cost management
+
+b) Integration Patterns
+   - API endpoints
+   - Event handlers
+   - Error recovery
+   - Monitoring hooks
+
+c) Maintenance Procedures
+   - Version control
+   - Update protocols
+   - Performance monitoring
+   - Quality assurance
+```
+
+### 7. DOCUMENTATION
+```
+a) Technical Documentation
+   - Architecture overview
+   - Component specifications
+   - API documentation
+   - Testing procedures
+
+b) Operational Guidelines
+   - Deployment instructions
+   - Monitoring setup
+   - Troubleshooting guide
+   - Maintenance procedures
+
+c) Version History
+   - Change log
+   - Performance metrics
+   - Issue tracking
+   - Improvement roadmap
+```
+
+## Quality Assurance Checklist
+
+✓ Comprehensive technique implementation
+✓ Robust testing framework
+✓ Clear safety controls
+✓ Efficient tool integration
+✓ Scalable architecture
+✓ Complete documentation
+✓ Maintenance procedures

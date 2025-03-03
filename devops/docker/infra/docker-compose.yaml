@@ -1,0 +1,179 @@
+services:
+  qdrant:
+    image: qdrant/qdrant:latest
+    container_name: qdrant
+    pull_policy: always
+    ports:
+    - "6335:6333"
+    - "6336:6334"
+    volumes:
+    - qdrant_data:/qdrant/storage
+    environment:
+    - QDRANT_ALLOW_RECOVERY=true
+    restart: unless-stopped
+    networks:
+    - my_network
+
+  # ollama:
+  #   image: ollama/ollama:latest
+  #   container_name: ollama
+  #   restart: always
+  #   pull_policy: always
+  #   volumes:
+  #   - ollama_data:/root/.ollama
+  #   ports:
+  #   - "11434:11434"
+  #   environment:
+  #     OLLAMA_HOST: 0.0.0.0
+  #     OLLAMA_ORIGINS: '*'
+  #   networks:
+  #   - mynetwork
+
+  # postgres:
+  #   image: postgres:16
+  #   container_name: postgres
+  #   restart: always
+  #   pull_policy: always
+  #   volumes:
+  #   - postgres_data:/var/lib/postgresql/data
+  #   environment:
+  #     POSTGRES_USER: myuser
+  #     POSTGRES_PASSWORD: mysecretpassword
+  #     POSTGRES_DB: mydatabase
+  #   ports:
+  #   - "5432:5432"
+  #   networks:
+  #   - my_network
+
+  mongo:
+    image: mongo:latest
+    container_name: mongodb
+    restart: always
+    pull_policy: always
+    volumes:
+    - mongodb_data:/data/db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+    ports:
+    - "27017:27017"
+    networks:
+    - my_network
+
+  mongo-express:
+    image: mongo-express:latest
+    container_name: mongo-express
+    restart: always
+    pull_policy: always
+    ports:
+    - "8081:8081"
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: root
+      ME_CONFIG_MONGODB_ADMINPASSWORD: example
+      ME_CONFIG_MONGODB_URL: mongodb://root:example@mongodb:27017/
+    depends_on:
+    - mongo
+    networks:
+    - my_network
+
+  redis:
+    image: redis:latest
+    container_name: redis
+    command: redis-server --requirepass mypassword --save 60 1 --loglevel warning
+    ports:
+    - "6379:6379"
+    volumes:
+    - redis_data:/data
+    networks:
+    - my_network
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "redis-cli", "-a", "mypassword", "ping" ]
+      interval: 5s
+      timeout: 3s
+      retries: 3
+
+  redisinsight:
+    image: redis/redisinsight:latest
+    container_name: redisinsight
+    user: root
+    ports:
+    - "5540:5540"
+    volumes:
+    - redisinsight_data:/data
+    networks:
+    - my_network
+    depends_on:
+    - redis
+    environment:
+    - REDIS_URI=redis://default:mypassword@redis:6379
+    - RI_LOG_LEVEL=info
+    - RI_FILES_LOGGER=false
+    - RI_STDOUT_LOGGER=true
+    restart: unless-stopped
+
+  rabbitmq:
+    image: rabbitmq:management
+    container_name: rabbitmq
+    environment:
+    - RABBITMQ_DEFAULT_USER=user
+    - RABBITMQ_DEFAULT_PASS=password
+    ports:
+    - "5672:5672" # AMQP protocol
+    - "15672:15672" # Management UI
+    volumes:
+    - rabbitmq_data:/var/lib/rabbitmq
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:15672/api/healthchecks/node" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+  # nginx:
+  #   image: 'docker.io/jc21/nginx-proxy-manager:latest'
+  #   restart: unless-stopped
+  #   ports:
+  #   - '80:80'
+  #   - '81:81'
+  #   - '443:443'
+  #   volumes:
+  #   - ./data:/data
+  #   - ./letsencrypt:/etc/letsencrypt
+
+networks:
+  my_network:
+    driver: bridge
+
+volumes:
+  qdrant_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ../../../data/docker/qdrant
+  # ollama_data:
+  #   driver: local
+  #   driver_opts:
+  #     type: none
+  #     o: bind
+  #     device: ../../../data/docker/ollama
+  postgres_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ../../../data/docker/postgres
+  mongodb_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ../../../data/docker/mongodb
+  redis_data:
+    driver: local
+  redisinsight_data:
+    driver: local
+  rabbitmq_data:
+
+# docker compose -f devops/docker/infra/docker-compose.yaml up --build --detach
+# docker compose -f devops/docker/infra/docker-compose.yaml up -d
+# docker compose -f devops/docker/infra/docker-compose.yaml down SERVICE

@@ -1,0 +1,69 @@
+# **/data
+# **/*.extension
+**/__pycache__
+**/cache
+**/.pid
+**/.vscode
+**/.DS_Store
+**/newplot.png
+**/.pytest_cache
+**/.pkl_memoize_py3
+**/.cache.sqlite
+**/*.log
+**/logs
+**/*.pth
+**/*.onnx
+**/**/*.jpg
+**/*.tflite
+**/*.onnx.json
+**/*.gguf
+**/downloads/*.mp3
+**/downloads/*.json
+!/data/assets/repos/openWakeWord/models/Hi_I_Vee.onnx
+**/tmp/
+tmp_cusparselt/
+install_cusparselt.sh
+**/lib/**
+**/workflow_all_flows.html
+
+**/.env
+directory_structure.txt
+!devops/docker/jetson/.env
+
+# apps/data
+apps/__pycache__
+apps/cache
+apps/.env
+apps/.vscode
+
+.aider*
+
+# Ignore everything in the docker folder
+# But don't ignore the tmp file in the docker folder
+/data/docker/*/*
+!/data/docker/*/tmp
+!/data/docker/tmp
+
+# /data/assets/repos/*/*
+# !/data/assets/repos/*/tmp
+# !/data/assets/repos/*/*/tmp
+# !/data/assets/repos/*/*/tmp
+
+data/assets/repos/kokoro/
+!data/assets/repos/kokoro/KOKORO
+
+others/repos/*/*
+!others/repos/*/tmp
+# !others/repos/piper/*
+
+apps/data/org/Manual_ToyotaCorollaCross.pdf
+
+# Un-ignore all files ending with .Modelfile in any directory
+!**/*.Modelfile
+
+**/audio_chunks/
+**/clone
+**/prompt.txt
+
+# React Component Preview
+previewConfig.json

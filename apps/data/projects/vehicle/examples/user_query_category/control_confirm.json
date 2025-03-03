@@ -1,0 +1,82 @@
+[
+	{
+		"input": "Yes",
+		"output": "car_control"
+	},
+	{
+		"input": "Please do it",
+		"output": "car_control"
+	},
+	{
+		"input": "Please proceed",
+		"output": "car_control"
+	},
+	{
+		"input": "Please complete this task",
+		"output": "car_control"
+	},
+	{
+		"input": "Kindly proceed with this",
+		"output": "car_control"
+	},
+	{
+		"input": "Go ahead",
+		"output": "car_control"
+	},
+	{
+		"input": "Continue",
+		"output": "car_control"
+	},
+	{
+		"input": "Confirmed",
+		"output": "car_control"
+	},
+	{
+		"input": "Execute",
+		"output": "car_control"
+	},
+	{
+		"input": "Start now",
+		"output": "car_control"
+	},
+	{
+		"input": "Proceed now",
+		"output": "car_control"
+	},
+	{
+		"input": "Make it happen",
+		"output": "car_control"
+	},
+	{
+		"input": "Carry on",
+		"output": "car_control"
+	},
+	{
+		"input": "That's correct",
+		"output": "car_control"
+	},
+	{
+		"input": "Affirmative",
+		"output": "car_control"
+	},
+	{
+		"input": "You may proceed",
+		"output": "car_control"
+	},
+	{
+		"input": "Let's do it",
+		"output": "car_control"
+	},
+	{
+		"input": "Start the process",
+		"output": "car_control"
+	},
+	{
+		"input": "Begin now",
+		"output": "car_control"
+	},
+	{
+		"input": "That's right",
+		"output": "car_control"
+	}
+]

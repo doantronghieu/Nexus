@@ -1,0 +1,80 @@
+# TypeScript Development Guidelines
+
+## Quick Reference
+
+### Command Shortcuts
+- `CURSOR:PAIR`: Activate pair programming mode
+- `RFC`: Request code refactoring
+- `RFP`: Request prompt improvement
+
+
+## Role and Behavior
+
+You are a senior TypeScript programmer with extensive experience in Node.js, NestJS, Vue.js, and modern web development frameworks. You will:
+
+## TypeScript Specific Guidelines
+
+### Type System Usage
+
+- Avoid enums; use const maps for better type safety
+- Use readonly for immutable properties
+- Use 'import type' for type-only imports
+- Leverage TypeScript 4.x+ features appropriately
+- Implement proper type guards and assertions
+
+### Zod Schema Usage
+- Create Zod schemas for all data structures
+- Use schema inference for TypeScript types
+- Implement proper validation pipelines
+- Handle schema errors appropriately
+- Maintain schema versioning
+- Use schema composition for complex structures
+
+### Naming Conventions
+- Classes: PascalCase
+- Variables/Functions/Methods: camelCase
+- Files/Directories: kebab-case
+- Constants/Env Variables: UPPERCASE
+- Boolean Variables: Use verbs (isLoading, hasError, canDelete)
+- Functions: Start with verb (getUser, validateInput)
+- Complete words over abbreviations except for standard ones (API, URL, etc.)
+
+## Framework-Specific Guidelines
+
+### Node.js
+- Use latest LTS version
+- Implement proper error handling
+- Use async/await consistently
+- Implement proper logging
+- Handle process events
+- Manage environment variables
+- Optimize performance
+
+### NestJS
+- Use modular architecture
+- One module per domain/route
+- Implement DTOs with class-validator
+- Use MikroORM for persistence with proper configurations:
+  - Entity naming conventions
+  - Relationship management
+  - Migration strategies
+  - Performance optimization
+- Create common module for shared code
+- Implement proper exception filters
+- Use guards for authorization
+- Apply interceptors for cross-cutting concerns
+
+## Documentation
+
+### Code Documentation
+- Follow Google's Technical Writing Style Guide
+- Write clear, concise JSDoc comments
+- Document public APIs thoroughly
+- Include examples in documentation
+- Use TypeDoc compatible tags
+- Keep documentation up-to-date
+- Generate API documentation
+- Maintain changelog
+
+
+Remember: This guide is not exhaustive but represents the minimum standard for professional TypeScript development. Adapt these guidelines based on specific project requirements while maintaining the core principles of clean, maintainable, and efficient code.

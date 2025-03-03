@@ -1,0 +1,451 @@
+
+# IVyEdge: Your Intelligent Vehicle Companion
+
+## Transform Your Driving Experience with Advanced AI Technology
+
+IVyEdge is a revolutionary in-car AI assistant that brings intelligence, safety, and convenience to your driving experience. Powered by cutting-edge local AI technology, IVyEdge offers seamless voice interaction and comprehensive support for all your driving needs.
+
+### Key Features
+
+**Hands-Free Voice Control**
+- Natural speech-to-speech interaction with wake word activation
+- Effortless control of vehicle functions while keeping your focus on the road
+
+**Comprehensive Assistance**
+- Intelligent vehicle control and monitoring
+- Entertainment system management
+- Real-time navigation assistance
+- Detailed vehicle information retrieval
+- Internet-connected information access when available
+
+**Advanced AI Integration**
+- Multi-agent system combining language and vision AI
+- Real-time environmental awareness
+- Contextual understanding of driver needs
+- Proactive assistance for enhanced safety
+
+**Privacy & Reliability**
+- Fully local deployment of all AI models
+- Complete offline functionality
+- No cloud dependence for core features
+- Enhanced data privacy and security
+
+### Technical Excellence
+
+IVyEdge integrates multiple sophisticated AI technologies:
+- Local speech recognition and synthesis
+- Large Language Model for natural interaction
+- Computer Vision and Large Vision Model for environmental awareness
+- Real-time processing for instantaneous response
+
+### Safety First
+
+IVyEdge enhances driving safety through:
+- Distraction-free voice controls
+- Real-time situational awareness
+- Intelligent assistance during critical moments
+- Proactive safety recommendations
+
+---
+
+*IVyEdge: Your Intelligent, Secure, Always-Available Driving Companion*
+
+# Ivy Assistant: Intelligent Vehicle Assistant
+## An AI-Powered Natural Language Interface for Vehicle Control and Information
+
+### Executive Summary
+In today's automotive landscape, the gap between advanced vehicle capabilities and intuitive user control continues to widen. Ivy Assistant bridges this divide with a groundbreaking approach to vehicle interaction. By combining state-of-the-art AI technologies - advanced speech processing, large language models, and intelligent multi-agent systems - Ivy Assistant transforms complex vehicle operations into natural conversations.
+
+Our solution empowers drivers to control and interact with their vehicles through simple voice commands or text inputs, significantly reducing cognitive load and enhancing safety. Whether adjusting climate controls, querying vehicle status, or seeking driving assistance, users can accomplish tasks through natural dialogue, as if speaking to a knowledgeable assistant who understands both their needs and their vehicle's capabilities.
+
+What sets Ivy Assistant apart is its ability to seamlessly integrate vehicle control, information retrieval, and external data sources into a unified, context-aware interface that adapts to each user's preferences and behavior patterns. This revolutionary approach not only simplifies vehicle interaction but also paves the way for the future of human-vehicle communication.
+
+### Problem Statement
+The modern automotive industry faces a critical challenge: as vehicles become increasingly sophisticated, the complexity of user interfaces threatens to overwhelm drivers and compromise safety. Current vehicle interfaces present several critical issues:
+
+- **Safety Concerns**: Traditional controls require drivers to divert attention from the road, increasing accident risks
+- **Cognitive Overload**: Complex menu systems and multiple control interfaces create mental burden during driving
+- **Accessibility Barriers**: Current interfaces can be particularly challenging for elderly drivers or those with physical limitations
+- **Feature Underutilization**: Advanced vehicle capabilities often go unused due to complicated access mechanisms
+- **Learning Curve**: New vehicle owners face significant time investment to master their vehicle's features
+- **Inconsistent Experience**: Different control schemes across vehicle functions create a fragmented user experience
+
+These challenges not only affect driver satisfaction but also impact vehicle safety and feature adoption, creating a pressing need for a more intuitive solution.
+
+### Solution Overview
+Ivy Assistant revolutionizes vehicle interaction through a sophisticated yet intuitive interface that puts the driver's needs first. Our solution delivers:
+
+**Intelligent Interaction**
+- Natural language understanding that interprets driver intent across multiple contexts
+- Seamless switching between voice and text inputs to suit any situation
+- Proactive assistance based on user patterns and preferences
+- Context-aware responses that consider vehicle state and environmental conditions
+
+**Enhanced Safety**
+- Hands-free control of vehicle systems while maintaining focus on driving
+- Simplified access to critical features without menu navigation
+- Reduced cognitive load through conversational interaction
+- Immediate access to vehicle information and assistance
+
+**Personalized Experience**
+- Adaptive interface that learns user preferences over time
+- Customized responses based on individual usage patterns
+- Intelligent automation of routine tasks
+- Contextual suggestions for optimal vehicle operation
+
+**Comprehensive Integration**
+- Unified access to vehicle controls, information, and external data
+- Real-time vehicle status monitoring and feedback
+- Seamless integration with navigation, weather, and traffic information
+- Intelligent coordination between vehicle subsystems
+
+### Key Features
+
+#### 1. Natural Language Understanding
+- Query classification system powered by semantic search technology
+- Context-aware interpretation through AI workflow orchestration
+- Wake word detection with "Hey Ivy" activation phrase
+- Automatic query categorization for car manual inquiries, vehicle control, and general assistance
+- Enhanced structured predictive mode for improved understanding
+- Support for conversational follow-ups and clarifications
+- Personalized response generation based on user preferences
+
+#### 2. Multi-Modal Interaction
+- Speech recognition engine with preprocessing
+- Multi-format input support (text, voice)
+- GPU-accelerated text-to-speech conversion
+- Real-time streaming audio responses
+- Performance monitoring with comprehensive timing metrics
+- Automatic resource management and cleanup
+- Adaptive input processing based on user patterns
+
+#### 3. Intelligent Multi-Agent System
+- Information Retrieval Agent for manual queries with streaming responses
+- Vehicle Control and Monitoring Agent for system management and telemetry
+- Query Classification Agent for request routing
+- Information Agent for external data access (weather, traffic, navigation)
+- Coordinated agent interactions through workflow orchestration
+- Real-time feedback and status updates
+
+#### 4. Vehicle Control Framework
+- Comprehensive vehicle information database
+- Real-time status monitoring and control
+- Parameterized control system
+- Personalized control preferences and settings management
+
+### Technical Architecture
+
+#### Core Components
+
+1. **API Server Infrastructure**
+   - Audio Processing Pipeline:
+     - Speech-to-text conversion
+     - Real-time streaming capabilities
+   - Text Processing System:
+     - Manual query handling and interpretation
+     - Command processing and validation
+     - Response generation and formatting
+     - Context management
+   - System Integration Layer:
+     - Streaming response implementation
+     - Comprehensive performance tracking
+     - Efficient resource management
+     - Robust error handling and recovery
+   - Performance Optimization:
+     - Response time minimization
+     - Resource usage efficiency
+     - System reliability enhancement
+     - Service coordination improvement
+
+2. **AI Model Infrastructure**
+   - Local Processing Environment:
+     - Large Language Model deployment
+     - Embedding Model integration
+     - Optimized inference system with hardware acceleration
+     - Advanced resource allocation management
+   - Cloud Integration Framework:
+     - Commercial API compatibility
+     - Hybrid processing architecture
+     - Scalable resource management
+     - Service reliability assurance
+   - Performance Monitoring System:
+     - Real-time resource tracking
+     - Response latency analysis
+     - Model efficiency evaluation
+     - System benchmarking tools
+   - Optimization Priorities:
+     - Model performance tuning
+     - Resource utilization improvement
+     - Response quality enhancement
+     - Personalization engine for user preferences
+
+3. **Data Management**
+   - Storage Infrastructure:
+     - Vector database implementation
+     - Vehicle information system
+     - Command and control repository
+     - Performance metrics storage
+   - Processing Pipeline:
+     - Document analysis system
+     - Embedding generation optimization
+     - Query processing enhancement
+     - Cache management strategy
+   - Integration Framework:
+     - Real-time data access system
+     - Efficient retrieval mechanisms
+     - Synchronized data management
+     - Backup and recovery protocols
+   - System Optimization:
+     - Query performance enhancement
+     - Data access optimization
+     - Storage efficiency improvement
+     - System reliability assurance
+
+4. **Workflow Orchestration**
+   - Request Processing System:
+     - Intelligent query categorization
+     - Dynamic agent routing
+     - Coordinated response generation
+     - Performance optimization
+   - System Management Framework:
+     - Automated resource allocation
+     - Real-time performance monitoring
+     - Comprehensive error handling
+     - System health tracking
+   - User Interaction Layer:
+     - Context-aware processing
+     - Session management
+     - User feedback integration
+     - Response quality assurance
+   - Integration Priorities:
+     - Component coordination
+     - Service reliability
+     - Data synchronization
+     - Security implementation
+
+### Success Metrics
+
+#### Performance Indicators
+- Query Response:
+  - Accuracy rate in query interpretation
+  - Command execution speed
+  - Response generation time
+  - Context retention accuracy
+
+#### System Efficiency
+- Resource Utilization:
+  - CPU/GPU usage optimization
+  - Memory management efficiency
+  - Network bandwidth utilization
+  - Storage system performance
+
+#### User Experience
+- Interaction Quality:
+  - Voice recognition accuracy
+  - Response coherence
+  - Command success rate
+  - User satisfaction scores
+
+#### System Reliability
+- Operational Stability:
+  - System uptime
+  - Error recovery rate
+  - Service availability
+  - Data consistency
+
+### Future Enhancements
+- Predictive maintenance capabilities
+- Extended analytics capabilities
+- Advanced health monitoring systems
+- Integration with smart city infrastructure
+- Multi-vehicle fleet management
+- Enhanced diagnostic capabilities
+
+### Conclusion
+Ivy Assistant represents a significant advancement in vehicle-user interaction, making sophisticated vehicle systems more accessible and safer to use while driving. By leveraging cutting-edge AI technologies and maintaining a user-centric design philosophy, Ivy Assistant transforms the driving experience into a more natural and intuitive interaction.
+
+---
+
+**Tasks and Estimates:**
+
+| Task | AIE MM | Duration (days) |
+|------|---------|----------------|
+| Multilingual Support Implementation (Japanese/German) | 4 | 5 |
+| Improve RAG feature | 3 | 5 |
+| Navigation System Implementation | 2 | 5 |
+| Car Control Pipeline Optimization | 3 | 5 |
+| Music Player Integration | 2 | 5 |
+| Generate JSON output representing CAN bus communication data | 4 | 10 |
+
+**Project Phases and Details:**
+
+| Phase | Duration | Activities | Resources | AIEMM |
+|-------|----------|------------|-----------|--------|
+| Foundation Setup | 2 weeks | • Evaluate and select open-source STT/LLM/TTS models for multilingual support<br>• Set up development environment for Japanese/German language integration<br>• Research open-source navigation and music player solutions<br>• Initial RAG architecture planning | • AI Engineer (3)<br>• Technical Leader (1) | 4 |
+| Core Development | 3 weeks | • Implement multilingual model integration<br>• Develop navigation system prototype<br>• Create custom LLM multi-agent system<br>• Begin music player integration<br>• Enhance RAG feature implementation | • AI Engineer (3)<br>• Technical Leader (1) | 4 |
+| Application Optimization | 2 weeks | • Optimize car control pipeline<br>• Fine-tune model performance<br>• Test hardware compatibility<br>• Implement GPU acceleration optimizations<br>• Generate and validate CAN bus communication data | • AI Engineer (3)<br>• Technical Leader (1) | 4 |
+| Integration & Testing | 2 weeks | • Complete system integration<br>• Perform comprehensive testing<br>• Validate multilingual functionality<br>• Test navigation and music player features<br>• Evaluate LLM agent performance | • AI Engineer (3)<br>• Technical Leader (1) | 4 |
+| Deployment | 2 weeks | • Final system optimization<br>• Performance profiling<br>• Documentation completion | • AI Engineer (3)<br>• Technical Leader (1)<br>• Project Manager (1) | 5 |
+
+---
+
+# 1. Project Background
+
+## Project Overview
+- Introduction to IVyEdge: An intelligent in-car AI assistant
+- Mission: Transform driving experience through advanced AI technology
+- Core value proposition: Bridging the gap between complex vehicle capabilities and intuitive user control
+
+## Market Context
+- Current challenges in vehicle interaction
+- Increasing complexity of modern vehicles
+- Safety concerns with traditional interfaces
+- High cognitive load on drivers
+- Steep learning curve for new vehicle owners
+
+## Solution Highlights
+- AI-powered natural language interface
+  - Voice and text interaction capabilities
+  - Local processing for enhanced privacy
+  - Real-time environmental awareness
+- Comprehensive vehicle assistance
+  - Intelligent vehicle control and monitoring
+  - Entertainment system management
+  - Navigation assistance
+  - Vehicle information retrieval
+
+## Key Differentiators
+- Advanced AI Integration
+  - Multi-agent system architecture
+  - Local deployment of all AI models
+  - No cloud dependence for core features
+- Safety-First Approach
+  - Distraction-free voice controls
+  - Real-time situational awareness
+  - Proactive safety recommendations
+
+## Target Impact
+- Enhanced driving safety
+- Reduced cognitive load
+- Improved vehicle feature utilization
+- Personalized driving experience
+
+# 3. Expected Outcomes
+
+## Technical Outcomes
+- Fully functional multilingual voice interface supporting English, Japanese, and German
+  - High-accuracy speech recognition across all supported languages
+  - Natural-sounding text-to-speech output
+  - Context-aware language processing
+- Enhanced Vehicle Control System
+  - Optimized car control pipeline with multi-agent architecture
+  - Reliable CAN bus communication system
+  - Real-time vehicle status monitoring and control
+  - Reduced latency in command execution
+- Integrated Features
+  - Robust navigation system with natural language queries
+  - Seamless music player control
+  - Advanced RAG-based information retrieval
+  - Comprehensive vehicle information access
+
+## Performance Metrics
+### System Performance
+- Response time under 5s for voice commands
+- 95%+ accuracy in speech recognition
+- 90%+ success rate in command execution
+- Stable performance under varying conditions
+
+### Resource Utilization
+- Optimized GPU/CPU usage
+- Efficient memory management
+- Minimal power consumption
+- Effective thermal management
+
+## User Experience
+- Intuitive Interaction
+  - Natural conversation flow
+  - Contextual understanding of commands
+  - Reduced cognitive load while driving
+  - Personalized responses based on user preferences
+- Enhanced Safety
+  - Hands-free operation of vehicle functions
+  - Reduced driver distraction
+  - Proactive safety notifications
+  - Real-time situational awareness
+
+## Business Impact
+### Market Readiness
+- Production-ready system for deployment
+- Comprehensive documentation for maintenance
+- Scalable architecture for future expansion
+- Clear pathway for feature updates
+
+### Competitive Advantage
+- Unique multilingual capabilities
+- Advanced AI integration
+- Superior user experience
+- Enhanced safety features
+
+## Documentation Deliverables
+### Technical Documentation
+- System architecture documentation
+- API documentation
+- Integration guides
+- Performance optimization guidelines
+
+### User Documentation
+- User manuals in all supported languages
+- Feature guides
+- Troubleshooting documentation
+- Best practices guide
+
+---
+
+# 1. Project Background
+
+## 1. Overview
+**IvyEdge: An intelligent in-car AI voice assistant**
+- Mission: Transform driving experience through advanced AI technology
+- Core value proposition: Bridging the gap between complex vehicle capabilities and intuitive user control
+
+## 2. Highlight features (Multiple agents)
+- AI-powered natural language interface
+  - Voice and text interaction capabilities
+  - Local processing for enhanced privacy and one-time purchasing
+  - Real-time environment awareness
+- Comprehensive vehicle assistance
+  - Intelligent vehicle control and monitoring
+  - Navigation assistance
+  - Entertainment system management
+  - Multilingual support
+  - Vehicle information retrieval
+
+# 2. FPT's Proposal
+## Objectives
+
+### Navigation Agent
+- Research navigation solutions
+- Develop prototype
+- Integrate navigation system with LLM agent
+
+### Multilingual support development
+- Survey and evaluate STT/LLM/TTS multilingual models
+- Select and deploy models
+- Integrate models with IvyEdge framework
+- Test multilingual functionality
+
+### Car Manual Agent
+- Improve the correctness of response
+- Consider and check the feasibility to output text with images in response
+
+### UI/UX development and integration
+
+### Car Control Agent
+- Revise the current logic to find out the improvement in processing time and latency
+- Apply with difference LLM engines to increase the robustness
+- Generating JSON output representing CAN bus communication data
+
+### Infotainment Agent
+- Research music player solutions
+- Develop prototype
+- Integrate music player system with LLM agent1

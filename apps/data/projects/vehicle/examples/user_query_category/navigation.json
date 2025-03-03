@@ -1,0 +1,218 @@
+[
+	{
+		"input": "Tìm quán cháo vịt quanh đây",
+		"output": "navigation"
+	},
+	{
+		"input": "Find duck porridge restaurants nearby",
+		"output": "navigation"
+	},
+	{
+		"input": "Tìm quán trà sữa quanh đây",
+		"output": "navigation"
+	},
+	{
+		"input": "Find bubble tea shops nearby",
+		"output": "navigation"
+	},
+	{
+		"input": "Chỉ đường đến Quán Trà Sữa Apa",
+		"output": "navigation"
+	},
+	{
+		"input": "Directions to Apa Bubble Tea Shop",
+		"output": "navigation"
+	},
+	{
+		"input": "Chỉ đường đến Quán cháo vịt Thanh đa",
+		"output": "navigation"
+	},
+	{
+		"input": "Directions to Thanh Da duck porridge restaurant",
+		"output": "navigation"
+	},
+	{
+		"input": "Chỉ đường đến Quán cháo vịt Lái thiêu",
+		"output": "navigation"
+	},
+	{
+		"input": "Directions to Lai Thieu duck porridge restaurant",
+		"output": "navigation"
+	},
+	{
+		"input": "Đường đến bệnh viện Chợ Rẫy",
+		"output": "navigation"
+	},
+	{
+		"input": "Directions to Cho Ray Hospital",
+		"output": "navigation"
+	},
+	{
+		"input": "Tìm trường học gần nhất",
+		"output": "navigation"
+	},
+	{
+		"input": "Find nearest school",
+		"output": "navigation"
+	},
+	{
+		"input": "Chỉ đường đến siêu thị Vinmart",
+		"output": "navigation"
+	},
+	{
+		"input": "Directions to Vinmart supermarket",
+		"output": "navigation"
+	},
+	{
+		"input": "Tìm ATM gần đây",
+		"output": "navigation"
+	},
+	{
+		"input": "Find nearby ATM",
+		"output": "navigation"
+	},
+	{
+		"input": "Đường tới nhà hàng Phở 24",
+		"output": "navigation"
+	},
+	{
+		"input": "Directions to Pho 24 restaurant",
+		"output": "navigation"
+	},
+	{
+		"input": "Tìm trạm xăng gần nhất",
+		"output": "navigation"
+	},
+	{
+		"input": "Find nearest gas station",
+		"output": "navigation"
+	},
+	{
+		"input": "Chỉ đường đến công viên Tao Đàn",
+		"output": "navigation"
+	},
+	{
+		"input": "Directions to Tao Dan Park",
+		"output": "navigation"
+	},
+	{
+		"input": "Tìm nhà thuốc đang mở cửa",
+		"output": "navigation"
+	},
+	{
+		"input": "Find open pharmacy",
+		"output": "navigation"
+	},
+	{
+		"input": "Đường đến chợ Bến Thành",
+		"output": "navigation"
+	},
+	{
+		"input": "Directions to Ben Thanh Market",
+		"output": "navigation"
+	},
+	{
+		"input": "Tìm bãi đậu xe trong khu vực",
+		"output": "navigation"
+	},
+	{
+		"input": "Find parking lots in the area",
+		"output": "navigation"
+	},
+	{
+		"input": "Tìm đường đến sân bay Tân Sơn Nhất",
+		"output": "navigation"
+	},
+	{
+		"input": "Directions to Tan Son Nhat Airport",
+		"output": "navigation"
+	},
+	{
+		"input": "Tìm quán cafe 24/7 gần đây",
+		"output": "navigation"
+	},
+	{
+		"input": "Find 24/7 coffee shops nearby",
+		"output": "navigation"
+	},
+	{
+		"input": "Chỉ đường đến bến xe Miền Đông",
+		"output": "navigation"
+	},
+	{
+		"input": "Directions to Mien Dong Bus Station",
+		"output": "navigation"
+	},
+	{
+		"input": "Tìm rạp chiếu phim trong bán kính 2km",
+		"output": "navigation"
+	},
+	{
+		"input": "Find movie theaters within 2km",
+		"output": "navigation"
+	},
+	{
+		"input": "Đường đến khách sạn Rex",
+		"output": "navigation"
+	},
+	{
+		"input": "Directions to Rex Hotel",
+		"output": "navigation"
+	},
+	{
+		"input": "Tìm tiệm giặt ủi gần nhất",
+		"output": "navigation"
+	},
+	{
+		"input": "Find nearest laundry service",
+		"output": "navigation"
+	},
+	{
+		"input": "Chỉ đường đến nhà thờ Đức Bà",
+		"output": "navigation"
+	},
+	{
+		"input": "Directions to Notre-Dame Cathedral",
+		"output": "navigation"
+	},
+	{
+		"input": "Tìm phòng gym 24 giờ",
+		"output": "navigation"
+	},
+	{
+		"input": "Find 24-hour gym",
+		"output": "navigation"
+	},
+	{
+		"input": "Đường đến bưu điện trung tâm",
+		"output": "navigation"
+	},
+	{
+		"input": "Directions to central post office",
+		"output": "navigation"
+	},
+	{
+		"input": "Tìm quán ăn đêm gần đây",
+		"output": "navigation"
+	},
+	{
+		"input": "Find late-night restaurants nearby",
+		"output": "navigation"
+	},
+	{
+		"input": "Chỉ đường đến bệnh viện FV",
+		"output": "navigation"
+	},
+	{
+		"input": "Directions to FV Hospital",
+		"output": "navigation"
+	},
+	{
+		"input": "Tìm tiệm bánh mì gần nhất",
+		"output": "navigation"
+	},
+	{
+		"input": "Find nearest banh mi shop",
+		"output": "navigation"
+	}
+]

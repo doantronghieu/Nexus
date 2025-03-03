@@ -1,0 +1,298 @@
+# Multi-Agent System Development Guide
+
+## Table of Contents
+1. [Foundation and Architecture](#foundation-and-architecture)
+2. [Core Components](#core-components)
+3. [Implementation Guide](#implementation-guide)
+4. [Common Pitfalls and Solutions](#common-pitfalls-and-solutions)
+5. [Best Practices](#best-practices)
+6. [Extension Guidelines](#extension-guidelines)
+
+## Foundation and Architecture
+
+### System Overview
+Our multi-agent system is built on a hierarchical architecture with:
+- Base classes for extensibility
+- Type-safe state management
+- Clear separation of concerns
+- Robust message handling
+
+### Key Design Principles
+1. **Separation of Concerns**
+   - Agents handle specific tasks
+   - Supervisor handles routing
+   - Teams manage coordination
+
+2. **Type Safety**
+   - Generic state types
+   - Clear interfaces
+   - Strong typing throughout
+
+3. **Extensibility**
+   - Base classes for reuse
+   - Flexible team structure
+   - Pluggable components
+
+## Core Components
+
+### 1. Core Types
+```python
+class AgentRole(str, Enum):
+    WORKER = "worker"
+    SUPERVISOR = "supervisor"
+
+@dataclass
+class AgentConfig:
+    agent_id: str
+    role: AgentRole
+    system_prompt: str
+    allowed_tools: List[Any]
+    allowed_handoffs: List[str]
+
+class State(MessagesState):
+    context: Dict[str, Any]
+```
+
+**Important Notes:**
+- Always use AgentConfig for configuration
+- Extend State for custom contexts
+- Keep roles clear and separate
+
+### 2. Base Classes
+
+#### BaseAgent
+```python
+class BaseAgent:
+    def __init__(self, config: AgentConfig):
+        self.config = config
+        self.is_logging = True
+```
+
+**Key Responsibilities:**
+- Tool processing
+- Message handling
+- State management
+- Logging
+
+**Common Pitfalls:**
+- Don't modify state directly
+- Always use tool messages for tool results
+- Handle all tool exceptions
+
+#### BaseTeam
+```python
+class BaseTeam(Generic[T]):
+    def __init__(
+        self,
+        team_id: str,
+        agents: List[BaseAgent],
+        supervisor_prompt: str,
+        state_class: type[T] = State
+    )
+```
+
+**Key Responsibilities:**
+- Graph building
+- Agent coordination
+- State management
+- Input processing
+
+**Common Pitfalls:**
+- Always override _determine_next_agent
+- Handle state updates carefully
+- Maintain message order
+
+## Implementation Guide
+
+### 1. Setting Up New Agents
+
+```python
+def create_new_agent(
+    agent_id: str,
+    system_prompt: str,
+    tools: List[Any],
+    handoffs: List[str]
+) -> BaseAgent:
+    return BaseAgent(
+        config=AgentConfig(
+            agent_id=agent_id,
+            role=AgentRole.WORKER,
+            system_prompt=system_prompt,
+            allowed_tools=tools,
+            allowed_handoffs=handoffs
+        )
+    )
+```
+
+**Critical Points:**
+- Clear system prompts
+- Limited tool access
+- Explicit handoffs
+- Proper role assignment
+
+### 2. Implementing Teams
+
+```python
+class CustomTeam(BaseTeam[State]):
+    def _determine_next_agent(self, response: AIMessage) -> str:
+        # Custom routing logic
+        pass
+```
+
+**Requirements:**
+- Clear routing logic
+- State handling
+- Error management
+- Logging
+
+## Common Pitfalls and Solutions
+
+### 1. Message Flow Issues
+- **Problem:** Messages not properly chained
+- **Solution:** Always append tool messages after tool calls
+```python
+tool_msg = ToolMessage(
+    content=str(result),
+    tool_call_id=tool_call["id"],
+    name=tool_name
+)
+updated_messages.append(tool_msg)
+```
+
+### 2. State Management
+- **Problem:** State mutations
+- **Solution:** Always copy state before modifying
+```python
+updated_state = state.copy()
+updated_state["messages"] = state["messages"] + [response]
+```
+
+### 3. Supervisor Logic
+- **Problem:** Supervisor doing calculations
+- **Solution:** Clear routing-only prompts
+```python
+supervisor_prompt = """
+You are a supervisor. Your job is to:
+1. ONLY route tasks
+2. NEVER calculate
+3. Identify next operation
+"""
+```
+
+### 4. Tool Handling
+- **Problem:** Missing tool responses
+- **Solution:** Always handle all tool calls
+```python
+for tool_call in response.tool_calls:
+    # Handle each tool call
+    tool_msg = ToolMessage(...)
+    updated_messages.append(tool_msg)
+```
+
+## Best Practices
+
+### 1. System Prompts
+- Be explicit about roles
+- Clear instructions
+- Limited scope
+- Example format:
+```python
+system_prompt = (
+    "You are a [role] expert. Your job is to:\n"
+    "1. [Specific task]\n"
+    "2. [When to transfer]\n"
+    "3. [How to format output]\n"
+    "Remember: [Key limitations]"
+)
+```
+
+### 2. State Management
+- Use type hints
+- Copy before modify
+- Clear context
+- Handle errors
+
+### 3. Logging
+- Use agent ID prefix
+- Log all steps
+- Clear formatting
+- Error details
+
+### 4. Tool Implementation
+- Clear purpose
+- Error handling
+- Input validation
+- Response formatting
+
+## Extension Guidelines
+
+### 1. Adding New Agents
+1. Create agent config
+2. Define tools
+3. Set allowed handoffs
+4. Implement system prompt
+
+### 2. Creating New Teams
+1. Extend BaseTeam
+2. Override _determine_next_agent
+3. Define routing logic
+4. Handle state management
+
+### 3. Custom Tools
+1. Use @tool decorator
+2. Clear docstrings
+3. Type hints
+4. Error handling
+
+### 4. State Extensions
+1. Extend State class
+2. Add custom fields
+3. Update processing
+4. Maintain compatibility
+
+## Testing Recommendations
+
+### 1. Unit Tests
+- Test individual agents
+- Test tool processing
+- Test state management
+- Test message flow
+
+### 2. Integration Tests
+- Test agent interactions
+- Test team coordination
+- Test complex workflows
+- Test error cases
+
+### 3. Edge Cases
+- Empty messages
+- Invalid tools
+- State corruption
+- Message ordering
+
+## Maintenance and Updates
+
+### 1. Code Organization
+- Clear module structure
+- Proper imports
+- Type hints
+- Documentation
+
+### 2. Version Control
+- Clear commits
+- Feature branches
+- Version tags
+- Changelog
+
+### 3. Documentation
+- Update README
+- Code comments
+- Type hints
+- Examples
+
+### 4. Monitoring
+- Error logging
+- State tracking
+- Performance metrics
+- Usage patterns
+

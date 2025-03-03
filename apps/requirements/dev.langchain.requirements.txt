@@ -1,0 +1,65 @@
+httpx 
+python-dotenv
+psycopg
+psycopg-pool
+faker
+#===
+langchain
+langchain-community
+langchain_experimental
+langchain-core
+langchainhub 
+langgraph
+langgraph-checkpoint-postgres
+#===
+huggingface_hub
+openllm
+openlm
+# vllm
+sentence_transformers
+#---
+langchain-openai
+langchain-google-genai
+langchain-anthropic
+langchain-huggingface
+langchain-ollama
+ollama == 0.3.3
+#===
+qdrant-client
+fastembed
+neo4j
+pymongo
+#---
+langchain-qdrant
+langchain-neo4j
+langchain-mongodb
+#===
+gql
+playwright
+lxml
+openpyxl
+beautifulsoup4
+pypdf == 4.3.1
+# pymupdf
+jq
+docx2txt
+yt_dlp
+pydub
+librosa
+youtube-transcript-api
+pytube
+#---
+opencv-python-headless
+langchain-unstructured 
+unstructured-client
+unstructured 
+unstructured[all-docs]
+python-magic
+python-pptx
+snowflake-connector-python
+#===
+tavily-python
+youtube_search
+# duckduckgo-search
+
+# brew install libmagic poppler tesseract libxml2 libxslt

@@ -1,0 +1,30 @@
+{
+  "infra-redis": {
+    "host": "localhost",
+    "port": "6379"
+  },
+  "svc-wwd": {
+    "host": "localhost",
+    "port": "6500",
+    "protocol": "http",
+    "url": "http://localhost:6500"
+  },
+  "svc-tts": {
+    "host": "localhost",
+    "port": "6501",
+    "protocol": "http",
+    "url": "http://localhost:6501"
+  },
+  "svc-stt": {
+    "host": "localhost",
+    "port": "6502",
+    "protocol": "http",
+    "url": "http://localhost:6502"
+  },
+  "app-llm": {
+    "host": "localhost",
+    "port": "7501",
+    "protocol": "http",
+    "url": "http://localhost:7501"
+  }
+}

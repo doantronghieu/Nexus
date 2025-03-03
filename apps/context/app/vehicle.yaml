@@ -1,0 +1,6 @@
+qdrant:
+  collections:
+    dev: dev
+    vehicle: vehicle
+    user_query_category: user_query_category
+    vehicle_properties_field_paths: vehicle_properties_field_paths

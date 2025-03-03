@@ -1,0 +1,39 @@
+[
+  {
+    "case_id": "CASE-2024-10789",
+    "customer_id": "CUST-78945",
+    "charger_id": "CH-2023-10045",
+    "status": "open",
+    "priority": "medium",
+    "issue_type": "charging_interrupted",
+    "description": "Customer reports charging session terminated unexpectedly at 62%",
+    "created_at": "2024-10-26T14:32:19Z",
+    "agent_id": "AGT-456",
+    "communication_log": [
+      {
+        "timestamp": "2024-10-26T14:35:22Z",
+        "agent_id": "AGT-456",
+        "message": "Initial contact with customer. Verified charger ID and location."
+      },
+      {
+        "timestamp": "2024-10-26T14:37:45Z",
+        "agent_id": "AGT-456",
+        "message": "Customer confirms error message 'Connection lost' appeared on screen."
+      }
+    ],
+    "troubleshooting_steps": [
+      {
+        "step": "Remote charger restart",
+        "status": "completed",
+        "timestamp": "2024-10-26T14:40:10Z",
+        "notes": "Restart command sent successfully"
+      },
+      {
+        "step": "Connection diagnostics",
+        "status": "pending",
+        "timestamp": null,
+        "notes": null
+      }
+    ]
+  }
+]

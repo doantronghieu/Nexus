@@ -1,0 +1,157 @@
+# FEED IN PERPLEXITY FOR GETTING INFORMATION OR GOOGLE IT
+# Please assist me in filling out the information for this model based on the template. 
+# ```yaml
+# - model: STRING
+#   params: FLOAT # (B) Number of parameters
+#   size: FLOAT # GB
+#   context_window: FLOAT # (k) context length
+#   memory_estimated: FLOAT # GB
+#   support_tool_calling: BOOL
+#   support_vision: BOOL
+#   source: STRING
+#   model_url: STRING # Model card url or checkpoint url
+# ```
+# The model is:
+
+- model: llama3.1:8b
+  params: 8 # B
+  size: 4.7 # GB
+  context_window: 128 # k
+  memory_estimated: 4.7 # GB for the 8B model
+  source: Meta
+  support_tool_calling: True
+  support_vision: False
+  provider: Ollama
+
+- model: qwen2.5:0.5b
+  params: 0.5 # B
+  size: 0.398 # GB
+  context_window: 32 # k
+  memory_estimated: 0.4 # GB
+  source: Alibaba Cloud
+  support_tool_calling: True
+  support_vision: False
+  provider: Ollama
+
+- model: qwen2.5:1.5b
+  params: 1.5 # B
+  size: 0.986 # GB
+  context_window: 32 # k
+  memory_estimated: 1.0 # GB
+  source: Alibaba Cloud
+  support_tool_calling: True
+  support_vision: False
+  provider: Ollama
+
+- model: qwen2.5:3b
+  params: 3 # B
+  size: 1.9 # GB
+  context_window: 32 # k
+  memory_estimated: 1.9 # GB
+  source: Alibaba Cloud
+  support_tool_calling: True
+  support_vision: False
+  provider: Ollama
+
+- model: qwen2.5:7b
+  params: 7 # B
+  size: 4.7 # GB
+  context_window: 128 # k
+  memory_estimated: 4.7 # GB
+  source: Alibaba Cloud
+  support_tool_calling: True
+  support_vision: False
+  provider: Ollama
+
+- model: nemotron-mini
+  params: 4 # B
+  size: 2.7 # GB
+  context_window: 4.096 # k
+  memory_estimated: 0.0 # GB
+  source: NVIDIA
+  support_tool_calling: True
+  support_vision: False
+  provider: Ollama
+
+- model: mistral-nemo
+  params: 12 # B
+  size: 7.1 # GB
+  context_window: 128 # k
+  memory_estimated: 0.0 # GB
+  source: Mistral
+  support_tool_calling: True
+  support_vision: False
+  provider: Ollama
+
+- model: mistral
+  params: 7 # B
+  size: 4.1 # GB
+  context_window: 32 # k
+  memory_estimated: 0.0 # GB
+  source: Mistral
+  support_tool_calling: True
+  support_vision: False
+  provider: Ollama
+
+- model: hermes3:8b
+  params: 8 # B
+  size: 4.7 # GB
+  context_window: 128 # k
+  memory_estimated: 4.7 # GB
+  source: Nous Research
+  support_tool_calling: True
+  support_vision: False
+
+# here
+- model: Sheared-LLaMA-1.3B
+  params: 1.3 # B
+  size: 0.398 # GB
+  context_window: 4.096 # k
+  memory_estimated: 2.7 # GB
+  source: Princeton NLP
+  support_tool_calling: False
+  support_vision: False
+
+- model: Sheared-LLaMA-2.7B
+  params: 2.7 # B
+  size: 1.9 # GB
+  context_window: 32.768 # k
+  memory_estimated: 4.7 # GB
+  source: Princeton NLP
+  support_tool_calling: False
+  support_vision: False
+
+###
+
+- model: Stable-LM-2-1.6B 
+  params: 1.6 # B
+  size: 3.3 # GB
+  context_window: 4.096 # k
+  memory_estimated: 3.3 # GB
+  source: Stability AI
+  support_tool_calling: True
+  support_vision: False
+
+- model: Stable-LM-Zephyr-3B
+  params: 3 # B
+  size: 6.5 # GB
+  context_window: 4.096 # k
+  memory_estimated: 6.5 # GB
+  source: Stability AI
+  support_tool_calling: true
+  support_vision: false
+
+# TODO: Phi-2-2.7B, Gemma-2B, TinyLlama-1.1B, OpenLlama-3B, Llama-2-7B
+
+  # MLC_LLAMA_3_2_1B_Q4F16_0 = "HF://mlc-ai/Llama-3.2-1B-Instruct-q4f16_0-MLC" # ❌ 8k, 22 shards
+  # MLC_LLAMA_3_2_1B_Q4F16_1 = "HF://mlc-ai/Llama-3.2-1B-Instruct-q4f16_1-MLC" # ❌ 8k, 22 shards
+  # MLC_LLAMA_3_2_1B_Q0F16 = "HF://mlc-ai/Llama-3.2-1B-Instruct-q0f16-MLC" # 8k, 49 shards
+  # MLC_LLAMA_3_2_1B_Q0F32 = "HF://mlc-ai/Llama-3.2-1B-Instruct-q0f32-MLC" # 8k, 49 shards
+  # MLC_LLAMA_3_2_1B_Q4F32_1 = "HF://mlc-ai/Llama-3.2-1B-Instruct-q4f32_1-MLC" # 8k, 22 shards
+  
+  # QWEN_2_5_0_5B_Q0F16 = "HF://mlc-ai/Qwen2.5-0.5B-Instruct-q0f16-MLC" # 8k, 25 shards
+  # QWEN_2_5_1_5B_Q4F16_1 = "HF://mlc-ai/Qwen2.5-1.5B-Instruct-q4f16_1-MLC" # 8K, 30 shards
+  # QWEN_2_5_0_5B_Q0F32 = "HF://mlc-ai/Qwen2.5-0.5B-Instruct-q0f32-MLC" # TODO
+  # QWEN_2_5_0_5B_Q4F32_1 = "HF://mlc-ai/Qwen2.5-0.5B-Instruct-q4f32_1-MLC" # TODO
+  # QWEN_2_5_1_5B_Q4F32_1 = "HF://mlc-ai/Qwen2.5-1.5B-Instruct-q4f32_1-MLC" # TODO
+  # QWEN_2_5_1_5B_Q0F16 = "HF://mlc-ai/Qwen2.5-1.5B-Instruct-q0f16-MLC" # TODO

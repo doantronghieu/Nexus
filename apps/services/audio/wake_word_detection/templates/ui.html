@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wake Word Detection Test</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .controls {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        #startButton {
+            background-color: #4CAF50;
+            color: white;
+        }
+        #startButton:hover {
+            background-color: #45a049;
+        }
+        #startButton:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        #stopButton {
+            background-color: #f44336;
+            color: white;
+        }
+        #stopButton:hover {
+            background-color: #da190b;
+        }
+        #stopButton:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+
+        /* Recording Status */
+        .status {
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+
+        .status.active {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+            border-left: 4px solid #4CAF50;
+        }
+
+        .status.inactive {
+            background-color: #ffebee;
+            color: #c62828;
+            border-left: 4px solid #f44336;
+        }
+
+        .stats-display {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .stat-card {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2196F3;
+            font-family: monospace;
+        }
+
+        /* Chart Container */
+        .chart-container {
+            position: relative;
+            margin: 20px 0;
+            height: 150px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 10px;
+            background-color: #fff;
+        }
+
+        /* Connection Status */
+        #wsStatus {
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 4px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .connected {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+            border-left: 4px solid #4CAF50;
+        }
+
+        .disconnected {
+            background-color: #ffebee;
+            color: #c62828;
+            border-left: 4px solid #f44336;
+        }
+
+        /* Audio Level Bar */
+        #audioLevel {
+            margin-top: 10px;
+            width: 100%;
+            height: 20px;
+            background-color: #f5f5f5;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid #ddd;
+        }
+
+        #audioLevelBar {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, #4CAF50 0%, #8BC34A 100%);
+            transition: width 0.1s ease;
+        }
+
+        /* Detection Log Styles */
+        #detectionLog {
+            margin-top: 20px;
+            height: 400px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 12px;
+            background-color: #f8f9fa;
+            line-height: 1.5;
+        }
+
+        /* Scrollbar styles for detection log */
+        #detectionLog::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        #detectionLog::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+
+        #detectionLog::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 4px;
+        }
+
+        #detectionLog::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+
+        /* Log Entry Styles */
+        .log-entry {
+            padding: 4px 8px;
+            margin: 2px 0;
+            border-radius: 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            border-left: 4px solid transparent;
+            transition: background-color 0.2s ease;
+        }
+
+        .log-entry:hover {
+            background-color: rgba(0, 0, 0, 0.02);
+        }
+
+        .log-entry .timestamp {
+            color: #666;
+            margin-right: 10px;
+            white-space: nowrap;
+            min-width: 100px;
+        }
+
+        .log-entry .message {
+            flex-grow: 1;
+            word-break: break-word;
+            margin: 0 10px;
+        }
+
+        .log-entry .score {
+            color: #2196F3;
+            margin-left: 10px;
+            white-space: nowrap;
+            font-weight: bold;
+        }
+
+        /* Log Type Styles */
+        .log-entry.detected {
+            background-color: #e8f5e9;
+            border-left-color: #4CAF50;
+        }
+
+        .log-entry.debug {
+            color: #666;
+            border-left-color: #2196F3;
+        }
+
+        .log-entry.error {
+            background-color: #ffebee;
+            border-left-color: #f44336;
+            color: #c62828;
+        }
+
+        .log-entry.system {
+            border-left-color: #9c27b0;
+            font-style: italic;
+        }
+
+        .log-entry.warning {
+            background-color: #fff3e0;
+            border-left-color: #ff9800;
+            color: #e65100;
+        }
+
+
+        
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Wake Word Detection Test</h1>
+        
+        <div id="wsStatus" class="disconnected">
+            WebSocket Status: Disconnected
+        </div>
+
+        <div class="controls">
+            <button id="startButton">Start Recording</button>
+            <button id="stopButton" disabled>Stop Recording</button>
+        </div>
+
+        <div class="status inactive" id="recordingStatus">
+            Recording Status: Inactive
+        </div>
+
+        <div class="stats-display">
+            <div class="stat-card">
+                <div class="stat-label">Current Score</div>
+                <div id="currentScore" class="stat-value">0.000</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Last Detection</div>
+                <div id="lastDetection" class="stat-value">Never</div>
+            </div>
+        </div>
+
+        <div id="audioLevel">
+            <div id="audioLevelBar"></div>
+        </div>
+
+        <div class="chart-container">
+            <canvas id="audioChart"></canvas>
+        </div>
+
+        <div id="detectionLog"></div>
+    </div>
+
+    <script>
+        class WakeWordDetector {
+            constructor() {
+                this.config = {
+                    sampleRate: 16000,
+                    bufferSize: 2048,
+                    chunkSize: 1280,
+                    wsUrl: 'ws://localhost:{{ server_config.port }}/ws'
+                };
+
+                this.state = {
+                    isConnected: false,
+                    isRecording: false,
+                    socket: null,
+                    audioContext: null,
+                    processor: null,
+                    audioAccumulator: [],
+                    totalChunksSent: 0,
+                    lastChunkTime: null
+                };
+
+                this.chart = null;
+                this.setupUI();
+                this.setupWebSocket();
+                this.setupChart();
+            }
+
+            formatTimestamp(date = new Date()) {
+                return date.toLocaleTimeString('en-US', {
+                    hour12: false,
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit',
+                    fractionalSecondDigits: 3
+                });
+            }
+
+            setupUI() {
+                this.elements = {
+                    startButton: document.getElementById('startButton'),
+                    stopButton: document.getElementById('stopButton'),
+                    wsStatus: document.getElementById('wsStatus'),
+                    recordingStatus: document.getElementById('recordingStatus'),
+                    detectionLog: document.getElementById('detectionLog'),
+                    audioLevelBar: document.getElementById('audioLevelBar'),
+                    currentScore: document.getElementById('currentScore'),
+                    lastDetection: document.getElementById('lastDetection')
+                };
+
+                this.elements.startButton.addEventListener('click', () => this.startRecording());
+                this.elements.stopButton.addEventListener('click', () => this.stopRecording());
+                this.elements.startButton.disabled = true;
+                this.log('system', 'System initialized');
+            }
+
+            log(type, message, data = null) {
+                const entry = document.createElement('div');
+                entry.className = `log-entry ${type}`;
+
+                const timestamp = document.createElement('span');
+                timestamp.className = 'timestamp';
+                timestamp.textContent = this.formatTimestamp();
+
+                const messageSpan = document.createElement('span');
+                messageSpan.className = 'message';
+                messageSpan.textContent = message;
+
+                let score = null;
+                if (data && data.score !== undefined) {
+                    score = document.createElement('span');
+                    score.className = 'score';
+                    score.textContent = `Score: ${data.score.toFixed(3)}`;
+                    this.elements.currentScore.textContent = data.score.toFixed(3);
+                }
+
+                entry.appendChild(timestamp);
+                entry.appendChild(messageSpan);
+                if (score) entry.appendChild(score);
+
+                this.elements.detectionLog.insertBefore(entry, this.elements.detectionLog.firstChild);
+
+                // Keep only last 1000 entries
+                while (this.elements.detectionLog.children.length > 1000) {
+                    this.elements.detectionLog.removeChild(this.elements.detectionLog.lastChild);
+                }
+            }
+
+            handleServerMessage(data) {
+                try {
+                    if (data.type === 'log') {
+                        // Handle server logs
+                        this.log(data.log_type, data.message);
+                        
+                    } else if (data.type === 'result') {
+                        // Handle detection results
+                        const result = data.data;
+                        
+                        // Update current score
+                        if (result.score !== undefined) {
+                            this.elements.currentScore.textContent = result.score.toFixed(3);
+                        }
+                        
+                        if (result.wake_word_detected) {
+                            // Wake word detected
+                            this.log('detected', `Wake Word "${result.wake_word || 'Unknown'}" Detected!`, result);
+                            this.elements.lastDetection.textContent = this.formatTimestamp();
+                        } else {
+                            // Regular score update
+                            this.log('debug', 'Processing audio...', result);
+                        }
+                    }
+                } catch (error) {
+                    this.log('error', `Error processing server message: ${error}`);
+                }
+            }
+
+            log(type, message, data = null) {
+                const entry = document.createElement('div');
+                entry.className = `log-entry ${type}`;
+
+                const timestamp = document.createElement('span');
+                timestamp.className = 'timestamp';
+                timestamp.textContent = this.formatTimestamp();
+
+                const messageSpan = document.createElement('span');
+                messageSpan.className = 'message';
+                messageSpan.textContent = message;
+
+                let score = null;
+                if (data && data.score !== undefined) {
+                    score = document.createElement('span');
+                    score.className = 'score';
+                    score.textContent = `Score: ${data.score.toFixed(3)}`;
+                }
+
+                entry.appendChild(timestamp);
+                entry.appendChild(messageSpan);
+                if (score) entry.appendChild(score);
+
+                this.elements.detectionLog.insertBefore(entry, this.elements.detectionLog.firstChild);
+
+                // Keep only last 1000 entries
+                while (this.elements.detectionLog.children.length > 1000) {
+                    this.elements.detectionLog.removeChild(this.elements.detectionLog.lastChild);
+                }
+            }
+
+            setupWebSocket() {
+                this.log('system', 'Connecting to WebSocket...');
+                
+                if (this.state.socket) {
+                    this.state.socket.close();
+                }
+                
+                this.state.socket = new WebSocket(this.config.wsUrl);
+
+                this.state.socket.onopen = () => {
+                    this.state.isConnected = true;
+                    this.log('system', 'WebSocket connected successfully');
+                    this.elements.wsStatus.textContent = 'WebSocket Status: Connected';
+                    this.elements.wsStatus.className = 'connected';
+                    this.elements.startButton.disabled = false;
+                };
+
+                this.state.socket.onclose = () => {
+                    this.state.isConnected = false;
+                    this.log('system', 'WebSocket disconnected');
+                    this.elements.wsStatus.textContent = 'WebSocket Status: Disconnected';
+                    this.elements.wsStatus.className = 'disconnected';
+                    this.elements.startButton.disabled = true;
+                    
+                    if (this.state.isRecording) {
+                        this.stopRecording();
+                    }
+                    
+                    setTimeout(() => this.setupWebSocket(), 2000);
+                };
+
+                this.state.socket.onerror = (error) => {
+                    this.log('error', 'WebSocket error:', error);
+                };
+
+                this.state.socket.onmessage = (event) => {
+                    try {
+                        const data = JSON.parse(event.data);
+                        this.handleServerMessage(data);
+                    } catch (error) {
+                        this.log('error', `Error processing server message: ${error}`);
+                    }
+                };
+            }
+
+            setupChart() {
+                const ctx = document.getElementById('audioChart').getContext('2d');
+                this.chart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: Array(100).fill(''),
+                        datasets: [{
+                            label: 'Audio Level',
+                            data: Array(100).fill(0),
+                            borderColor: 'rgb(75, 192, 192)',
+                            tension: 0.1,
+                            fill: false
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                max: 255
+                            }
+                        },
+                        animation: {
+                            duration: 0
+                        }
+                    }
+                });
+            }
+
+            async startRecording() {
+                try {
+                    const stream = await navigator.mediaDevices.getUserMedia({
+                        audio: {
+                            sampleRate: this.config.sampleRate,
+                            channelCount: 1,
+                            echoCancellation: true,
+                            noiseSuppression: true
+                        }
+                    });
+
+                    this.state.audioContext = new AudioContext({
+                        sampleRate: this.config.sampleRate
+                    });
+
+                    const source = this.state.audioContext.createMediaStreamSource(stream);
+                    this.state.processor = this.state.audioContext.createScriptProcessor(
+                        this.config.bufferSize,
+                        1,
+                        1
+                    );
+
+                    this.state.processor.onaudioprocess = (e) => this.handleAudioProcess(e);
+                    source.connect(this.state.processor);
+                    this.state.processor.connect(this.state.audioContext.destination);
+
+                    this.state.isRecording = true;
+                    this.elements.startButton.disabled = true;
+                    this.elements.stopButton.disabled = false;
+                    this.elements.recordingStatus.textContent = 'Recording Status: Active';
+                    this.elements.recordingStatus.className = 'status active';
+
+                    this.log('system', 'Started recording');
+                    
+                } catch (error) {
+                    this.log('error', `Error starting recording: ${error}`);
+                }
+            }
+
+            stopRecording() {
+                if (this.state.processor) {
+                    this.state.processor.disconnect();
+                    this.state.processor = null;
+                }
+                if (this.state.audioContext) {
+                    this.state.audioContext.close();
+                    this.state.audioContext = null;
+                }
+
+                this.state.audioAccumulator = [];
+                this.state.isRecording = false;
+                this.state.totalChunksSent = 0;
+                this.state.lastChunkTime = null;
+
+                this.elements.startButton.disabled = false;
+                this.elements.stopButton.disabled = true;
+                this.elements.recordingStatus.textContent = 'Recording Status: Inactive';
+                this.elements.recordingStatus.className = 'status inactive';
+                this.elements.audioLevelBar.style.width = '0%';
+
+                this.log('system', 'Stopped recording');
+            }
+
+            handleAudioProcess(e) {
+                const inputData = e.inputBuffer.getChannelData(0);
+                const audioLevel = this.calculateAudioLevel(inputData);
+                this.updateAudioVisualization(audioLevel);
+
+                const int16Data = new Int16Array(inputData.length);
+                for (let i = 0; i < inputData.length; i++) {
+                    int16Data[i] = Math.max(-32768, Math.min(32767, Math.floor(inputData[i] * 32768)));
+                }
+
+                this.state.audioAccumulator.push(...int16Data);
+
+                while (this.state.audioAccumulator.length >= this.config.chunkSize) {
+                    const chunk = new Int16Array(
+                        this.state.audioAccumulator.slice(0, this.config.chunkSize)
+                    );
+                    this.state.audioAccumulator = this.state.audioAccumulator.slice(
+                        this.config.chunkSize
+                    );
+                    this.sendAudioChunk(chunk);
+                }
+            }
+
+            calculateAudioLevel(audioData) {
+                const sum = audioData.reduce((acc, val) => acc + (val * val), 0);
+                const rms = Math.sqrt(sum / audioData.length);
+                return Math.min(1, Math.max(0, rms * 5));
+            }
+
+            updateAudioVisualization(level) {
+                this.elements.audioLevelBar.style.width = `${level * 100}%`;
+                
+                const data = this.chart.data.datasets[0].data;
+                data.push(level * 255);
+                data.shift();
+                this.chart.update();
+            }
+
+            sendAudioChunk(chunk) {
+                if (this.state.socket && this.state.socket.readyState === WebSocket.OPEN) {
+                    try {
+                        this.state.socket.send(chunk.buffer);
+                        this.state.totalChunksSent++;
+                        
+                        const now = Date.now();
+                        if (this.state.lastChunkTime) {
+                            const timeDiff = now - this.state.lastChunkTime;
+                            if (timeDiff > 100) {  // Only log intervals > 100ms
+                                this.logDebug(`Chunk interval: ${timeDiff}ms`);
+                            }
+                        }
+                        this.state.lastChunkTime = now;
+                    } catch (error) {
+                        this.logError('Error sending audio chunk:', error);
+                    }
+                }
+            }
+        }
+
+        // Initialize on page load
+        window.addEventListener('load', () => {
+            window.wakeWordDetector = new WakeWordDetector();
+        });
+    </script>
+</body>
+</html>

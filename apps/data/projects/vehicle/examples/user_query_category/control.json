@@ -1,0 +1,1178 @@
+[
+  {
+    "input": "What kind of car is this?",
+    "output": "car_control"
+  },
+  {
+    "input": "What's my car's VIN number?",
+    "output": "car_control"
+  },
+  {
+    "input": "What's my license plate number?",
+    "output": "car_control"
+  },
+  {
+    "input": "What year is my car?",
+    "output": "car_control"
+  },
+  {
+    "input": "What's my current battery level?",
+    "output": "car_control"
+  },
+  {
+    "input": "How much range do I have left?",
+    "output": "car_control"
+  },
+  {
+    "input": "Is the car locked?",
+    "output": "car_control"
+  },
+  {
+    "input": "What's the current indoor temperature?",
+    "output": "car_control"
+  },
+  {
+    "input": "How much gas is left in the tank?",
+    "output": "car_control"
+  },
+  {
+    "input": "What's playing right now?",
+    "output": "car_control"
+  },
+  {
+    "input": "Is my trunk open?",
+    "output": "car_control"
+  },
+  {
+    "input": "What's the tire pressure in the front right tire?",
+    "output": "car_control"
+  },
+  {
+    "input": "When is my next service due?",
+    "output": "car_control"
+  },
+  {
+    "input": "How's my brake wear looking?",
+    "output": "car_control"
+  },
+  {
+    "input": "What's the current odometer reading?",
+    "output": "car_control"
+  },
+  {
+    "input": "Is the AC running?",
+    "output": "car_control"
+  },
+  {
+    "input": "Who was my last phone call with?",
+    "output": "car_control"
+  },
+  {
+    "input": "What's my hybrid mode set to?",
+    "output": "car_control"
+  },
+  {
+    "input": "What's the battery temperature?",
+    "output": "car_control"
+  },
+  {
+    "input": "Is the engine running?",
+    "output": "car_control"
+  },
+  {
+    "input": "Is the car charging right now?",
+    "output": "car_control"
+  },
+  {
+    "input": "What's the engine temperature?",
+    "output": "car_control"
+  },
+  {
+    "input": "What gear am I in?",
+    "output": "car_control"
+  },
+  {
+    "input": "Is the parking brake engaged?",
+    "output": "car_control"
+  },
+  {
+    "input": "Is traction control on?",
+    "output": "car_control"
+  },
+  {
+    "input": "What's the current incline?",
+    "output": "car_control"
+  },
+  {
+    "input": "How far have I driven on this trip?",
+    "output": "car_control"
+  },
+  {
+    "input": "Is stability control enabled?",
+    "output": "car_control"
+  },
+  {
+    "input": "Enable hill descent control",
+    "output": "car_control"
+  },
+  {
+    "input": "How's the car handling this slope?",
+    "output": "car_control"
+  },
+  {
+    "input": "Turn on the AC",
+    "output": "car_control"
+  },
+  {
+    "input": "Set the temperature to 22 degrees",
+    "output": "car_control"
+  },
+  {
+    "input": "Lock the car",
+    "output": "car_control"
+  },
+  {
+    "input": "Open the sunroof",
+    "output": "car_control"
+  },
+  {
+    "input": "Turn off the rear defroster",
+    "output": "car_control"
+  },
+  {
+    "input": "Increase the fan speed",
+    "output": "car_control"
+  },
+  {
+    "input": "Switch to radio",
+    "output": "car_control"
+  },
+  {
+    "input": "Turn on the windshield wipers",
+    "output": "car_control"
+  },
+  {
+    "input": "Enable autopilot",
+    "output": "car_control"
+  },
+  {
+    "input": "Turn on the seat heater",
+    "output": "car_control"
+  },
+  {
+    "input": "Set the charge limit to 85%",
+    "output": "car_control"
+  },
+  {
+    "input": "Fold the mirrors",
+    "output": "car_control"
+  },
+  {
+    "input": "Turn on ambient lighting",
+    "output": "car_control"
+  },
+  {
+    "input": "Change steering mode to sport",
+    "output": "car_control"
+  },
+  {
+    "input": "Enable regenerative braking",
+    "output": "car_control"
+  },
+  {
+    "input": "Adjust suspension height",
+    "output": "car_control"
+  },
+  {
+    "input": "Turn off start-stop system",
+    "output": "car_control"
+  },
+  {
+    "input": "Change to sport mode",
+    "output": "car_control"
+  },
+  {
+    "input": "What's my current steering mode set to?",
+    "output": "car_control"
+  },
+  {
+    "input": "Is the start-stop system active?",
+    "output": "car_control"
+  },
+  {
+    "input": "Show my current suspension height",
+    "output": "car_control"
+  },
+  {
+    "input": "What's my regenerative braking level?",
+    "output": "car_control"
+  },
+  {
+    "input": "What's the temperature in the back right seat?",
+    "output": "car_control"
+  },
+  {
+    "input": "Turn on the steering wheel heater",
+    "output": "car_control"
+  },
+  {
+    "input": "Enable dual-zone climate control",
+    "output": "car_control"
+  },
+  {
+    "input": "What's the air quality like inside?",
+    "output": "car_control"
+  },
+  {
+    "input": "Set humidity to 50%",
+    "output": "car_control"
+  },
+  {
+    "input": "Turn on seat ventilation",
+    "output": "car_control"
+  },
+  {
+    "input": "Direct air to feet only",
+    "output": "car_control"
+  },
+  {
+    "input": "What's the humidity level in the car?",
+    "output": "car_control"
+  },
+  {
+    "input": "Is humidity control turned on?",
+    "output": "car_control"
+  },
+  {
+    "input": "What's the current particulate matter reading?",
+    "output": "car_control"
+  },
+  {
+    "input": "What's my air filtration level set to?",
+    "output": "car_control"
+  },
+  {
+    "input": "When was the air filter last changed?",
+    "output": "car_control"
+  },
+  {
+    "input": "Direct air to face and feet",
+    "output": "car_control"
+  },
+  {
+    "input": "Is air flowing to the windshield?",
+    "output": "car_control"
+  },
+  {
+    "input": "Turn off floor vents only",
+    "output": "car_control"
+  },
+  {
+    "input": "Set all vents to auto",
+    "output": "car_control"
+  },
+  {
+    "input": "Why isn't air coming from the face vents?",
+    "output": "car_control"
+  },
+  {
+    "input": "Are the child locks enabled?",
+    "output": "car_control"
+  },
+  {
+    "input": "Enable walk-away door lock",
+    "output": "car_control"
+  },
+  {
+    "input": "Open the frunk",
+    "output": "car_control"
+  },
+  {
+    "input": "Set the mirror tilt for reverse",
+    "output": "car_control"
+  },
+  {
+    "input": "How much washer fluid is left?",
+    "output": "car_control"
+  },
+  {
+    "input": "Turn on auto-wipers",
+    "output": "car_control"
+  },
+  {
+    "input": "Set wiper sensitivity to maximum",
+    "output": "car_control"
+  },
+  {
+    "input": "Is auto-tilt in reverse enabled?",
+    "output": "car_control"
+  },
+  {
+    "input": "Turn on automatic mirror dimming",
+    "output": "car_control"
+  },
+  {
+    "input": "When do the mirrors auto-tilt?",
+    "output": "car_control"
+  },
+  {
+    "input": "Save current mirror positions",
+    "output": "car_control"
+  },
+  {
+    "input": "Reset mirror memory",
+    "output": "car_control"
+  },
+  {
+    "input": "What's the anti-pinch sensitivity?",
+    "output": "car_control"
+  },
+  {
+    "input": "Enable window child locks",
+    "output": "car_control"
+  },
+  {
+    "input": "Set window auto-close timer",
+    "output": "car_control"
+  },
+  {
+    "input": "Why did the sunroof auto-close?",
+    "output": "car_control"
+  },
+  {
+    "input": "Enable window rain-closing",
+    "output": "car_control"
+  },
+  {
+    "input": "Adjust the steering wheel position",
+    "output": "car_control"
+  },
+  {
+    "input": "Move my seat forward",
+    "output": "car_control"
+  },
+  {
+    "input": "Enable driver massage function",
+    "output": "car_control"
+  },
+  {
+    "input": "Save my seat position",
+    "output": "car_control"
+  },
+  {
+    "input": "Is the glovebox closed?",
+    "output": "car_control"
+  },
+  {
+    "input": "Save current seat position as preset 1",
+    "output": "car_control"
+  },
+  {
+    "input": "What's my lumbar support level?",
+    "output": "car_control"
+  },
+  {
+    "input": "Restore my preferred seat position",
+    "output": "car_control"
+  },
+  {
+    "input": "Enable easy entry mode",
+    "output": "car_control"
+  },
+  {
+    "input": "Adjust passenger seat position",
+    "output": "car_control"
+  },
+  {
+    "input": "Turn on ambient lighting",
+    "output": "car_control"
+  },
+  {
+    "input": "Enable auto high beams",
+    "output": "car_control"
+  },
+  {
+    "input": "Turn on the reading light",
+    "output": "car_control"
+  },
+  {
+    "input": "How long are the leave-home lights set for?",
+    "output": "car_control"
+  },
+  {
+    "input": "Turn on the fog lights",
+    "output": "car_control"
+  },
+  {
+    "input": "Are my welcome lights enabled?",
+    "output": "car_control"
+  },
+  {
+    "input": "How long do leave-home lights stay on?",
+    "output": "car_control"
+  },
+  {
+    "input": "Set welcome light duration",
+    "output": "car_control"
+  },
+  {
+    "input": "Enable theater mode lighting",
+    "output": "car_control"
+  },
+  {
+    "input": "Dim the ambient lights",
+    "output": "car_control"
+  },
+  {
+    "input": "What's my autopilot follow distance set to?",
+    "output": "car_control"
+  },
+  {
+    "input": "Enable traffic sign recognition",
+    "output": "car_control"
+  },
+  {
+    "input": "Turn on cross traffic alert",
+    "output": "car_control"
+  },
+  {
+    "input": "Is driver attention monitoring active?",
+    "output": "car_control"
+  },
+  {
+    "input": "Enable traffic jam assist",
+    "output": "car_control"
+  },
+  {
+    "input": "What's my current driver profile?",
+    "output": "car_control"
+  },
+  {
+    "input": "Is parallel park assist available here?",
+    "output": "car_control"
+  },
+  {
+    "input": "Enable perpendicular parking assist",
+    "output": "car_control"
+  },
+  {
+    "input": "What's my lane keeping strength set to?",
+    "output": "car_control"
+  },
+  {
+    "input": "List all available driver profiles",
+    "output": "car_control"
+  },
+  {
+    "input": "What are my current driver profile settings?",
+    "output": "car_control"
+  },
+  {
+    "input": "Take me to my saved work location",
+    "output": "car_control"
+  },
+  {
+    "input": "Avoid toll roads in navigation",
+    "output": "car_control"
+  },
+  {
+    "input": "Show alternate routes",
+    "output": "car_control"
+  },
+  {
+    "input": "What's my current audio balance setting?",
+    "output": "car_control"
+  },
+  {
+    "input": "Enable surround sound",
+    "output": "car_control"
+  },
+  {
+    "input": "Connect to Mary's Android phone",
+    "output": "car_control"
+  },
+  {
+    "input": "Turn on do not disturb",
+    "output": "car_control"
+  },
+  {
+    "input": "What's my audiobook playback speed set to?",
+    "output": "car_control"
+  },
+  {
+    "input": "Resume my last podcast episode",
+    "output": "car_control"
+  },
+  {
+    "input": "What's my current equalizer preset?",
+    "output": "car_control"
+  },
+  {
+    "input": "Increase the bass level",
+    "output": "car_control"
+  },
+  {
+    "input": "Show my recent navigation destinations",
+    "output": "car_control"
+  },
+  {
+    "input": "Adjust the midrange frequency",
+    "output": "car_control"
+  },
+  {
+    "input": "What's my current fader setting?",
+    "output": "car_control"
+  },
+  {
+    "input": "Balance the audio more to the right",
+    "output": "car_control"
+  },
+  {
+    "input": "Load rock equalizer preset",
+    "output": "car_control"
+  },
+  {
+    "input": "Save current equalizer settings",
+    "output": "car_control"
+  },
+  {
+    "input": "Reset audio to default settings",
+    "output": "car_control"
+  },
+  {
+    "input": "Enable night mode",
+    "output": "car_control"
+  },
+  {
+    "input": "Show tire pressure in the driver display",
+    "output": "car_control"
+  },
+  {
+    "input": "Adjust heads-up display brightness",
+    "output": "car_control"
+  },
+  {
+    "input": "Change units to imperial",
+    "output": "car_control"
+  },
+  {
+    "input": "Switch to dark theme",
+    "output": "car_control"
+  },
+  {
+    "input": "What widgets are currently showing?",
+    "output": "car_control"
+  },
+  {
+    "input": "Move the media widget to the center",
+    "output": "car_control"
+  },
+  {
+    "input": "What's in my top-left widget position?",
+    "output": "car_control"
+  },
+  {
+    "input": "Customize my widget layout",
+    "output": "car_control"
+  },
+  {
+    "input": "Enable sentry mode",
+    "output": "car_control"
+  },
+  {
+    "input": "Show recent security events",
+    "output": "car_control"
+  },
+  {
+    "input": "Turn on valet mode",
+    "output": "car_control"
+  },
+  {
+    "input": "How much dashcam storage is left?",
+    "output": "car_control"
+  },
+  {
+    "input": "Add a new fingerprint",
+    "output": "car_control"
+  },
+  {
+    "input": "Set up geofencing",
+    "output": "car_control"
+  },
+  {
+    "input": "What's my alarm sensitivity level?",
+    "output": "car_control"
+  },
+  {
+    "input": "Set alarm sensitivity to high",
+    "output": "car_control"
+  },
+  {
+    "input": "Show today's security events",
+    "output": "car_control"
+  },
+  {
+    "input": "When was the car last unlocked?",
+    "output": "car_control"
+  },
+  {
+    "input": "List all recent security activities",
+    "output": "car_control"
+  },
+  {
+    "input": "Disable sentry mode at home",
+    "output": "car_control"
+  },
+  {
+    "input": "Enable sentry mode at work",
+    "output": "car_control"
+  },
+  {
+    "input": "Save current dashcam footage",
+    "output": "car_control"
+  },
+  {
+    "input": "Show recent sentry mode events",
+    "output": "car_control"
+  },
+  {
+    "input": "Clear old dashcam footage",
+    "output": "car_control"
+  },
+  {
+    "input": "When was my last oil change?",
+    "output": "car_control"
+  },
+  {
+    "input": "Check brake fluid level",
+    "output": "car_control"
+  },
+  {
+    "input": "How's my battery health?",
+    "output": "car_control"
+  },
+  {
+    "input": "Is my suspension system okay?",
+    "output": "car_control"
+  },
+  {
+    "input": "When is my next service?",
+    "output": "car_control"
+  },
+  {
+    "input": "Check front left suspension status",
+    "output": "car_control"
+  },
+  {
+    "input": "Are all suspension components healthy?",
+    "output": "car_control"
+  },
+  {
+    "input": "Show suspension diagnostic report",
+    "output": "car_control"
+  },
+  {
+    "input": "When was the last suspension check?",
+    "output": "car_control"
+  },
+  {
+    "input": "What's the brake fluid temperature?",
+    "output": "car_control"
+  },
+  {
+    "input": "Show coolant level history",
+    "output": "car_control"
+  },
+  {
+    "input": "When was the last battery check?",
+    "output": "car_control"
+  },
+  {
+    "input": "Is the suspension system calibrated?",
+    "output": "car_control"
+  },
+  {
+    "input": "Schedule a brake inspection",
+    "output": "car_control"
+  },
+  {
+    "input": "Run full system diagnostic",
+    "output": "car_control"
+  },
+  {
+    "input": "Check software update status",
+    "output": "car_control"
+  },
+  {
+    "input": "Show power consumption report",
+    "output": "car_control"
+  },
+  {
+    "input": "Generate driving efficiency report",
+    "output": "car_control"
+  },
+  {
+    "input": "Display system health summary",
+    "output": "car_control"
+  },
+  {
+    "input": "Schedule next service appointment",
+    "output": "car_control"
+  },
+  {
+    "input": "Show maintenance history",
+    "output": "car_control"
+  },
+  {
+    "input": "Request mobile service",
+    "output": "car_control"
+  },
+  {
+    "input": "Check warranty status",
+    "output": "car_control"
+  },
+  {
+    "input": "View service bulletins",
+    "output": "car_control"
+  },
+  {
+    "input": "Set up scheduled charging",
+    "output": "car_control"
+  },
+  {
+    "input": "Add this location to preferred charging spots",
+    "output": "car_control"
+  },
+  {
+    "input": "Enable smart grid charging",
+    "output": "car_control"
+  },
+  {
+    "input": "Turn on battery preconditioning",
+    "output": "car_control"
+  },
+  {
+    "input": "What's my maximum charging speed?",
+    "output": "car_control"
+  },
+  {
+    "input": "Show my preferred charging times",
+    "output": "car_control"
+  },
+  {
+    "input": "Set charging to start at 1 AM",
+    "output": "car_control"
+  },
+  {
+    "input": "What are peak charging hours?",
+    "output": "car_control"
+  },
+  {
+    "input": "Optimize charging schedule for cost",
+    "output": "car_control"
+  },
+  {
+    "input": "Why didn't the car charge last night?",
+    "output": "car_control"
+  },
+  {
+    "input": "What are my wake word options?",
+    "output": "car_control"
+  },
+  {
+    "input": "Change navigation voice volume",
+    "output": "car_control"
+  },
+  {
+    "input": "Is voice guidance enabled?",
+    "output": "car_control"
+  },
+  {
+    "input": "Set custom wake phrase",
+    "output": "car_control"
+  },
+  {
+    "input": "Hey Car, I'm cold",
+    "output": "car_control"
+  },
+  {
+    "input": "OK Car, take me home",
+    "output": "car_control"
+  },
+  {
+    "input": "Hey Car, play some jazz",
+    "output": "car_control"
+  },
+  {
+    "input": "OK Car, call John's mobile",
+    "output": "car_control"
+  },
+  {
+    "input": "Hey Car, enable dog mode",
+    "output": "car_control"
+  },
+  {
+    "input": "Prepare the car for a track day",
+    "output": "car_control"
+  },
+  {
+    "input": "Set up for camping mode",
+    "output": "car_control"
+  },
+  {
+    "input": "Get ready for winter driving",
+    "output": "car_control"
+  },
+  {
+    "input": "Optimize for maximum range",
+    "output": "car_control"
+  },
+  {
+    "input": "Set up for valet parking",
+    "output": "car_control"
+  },
+  {
+    "input": "Prepare car for car wash mode",
+    "output": "car_control"
+  },
+  {
+    "input": "Set up for trailer towing",
+    "output": "car_control"
+  },
+  {
+    "input": "Configure for track day mode",
+    "output": "car_control"
+  },
+  {
+    "input": "Enable pet climate control",
+    "output": "car_control"
+  },
+  {
+    "input": "Set up for off-road driving",
+    "output": "car_control"
+  },
+  {
+    "input": "Set up morning commute routine",
+    "output": "car_control"
+  },
+  {
+    "input": "Configure evening park mode",
+    "output": "car_control"
+  },
+  {
+    "input": "Enable vacation mode",
+    "output": "car_control"
+  },
+  {
+    "input": "Prepare for car sharing",
+    "output": "car_control"
+  },
+  {
+    "input": "Set up family profile",
+    "output": "car_control"
+  },
+  {
+    "input": "Save current location as home",
+    "output": "car_control"
+  },
+  {
+    "input": "Create new location profile",
+    "output": "car_control"
+  },
+  {
+    "input": "Enable work location automations",
+    "output": "car_control"
+  },
+  {
+    "input": "Set up geofence alerts",
+    "output": "car_control"
+  },
+  {
+    "input": "When do location-based settings activate?",
+    "output": "car_control"
+  },
+  {
+    "input": "Schedule climate preconditioning",
+    "output": "car_control"
+  },
+  {
+    "input": "Set up weekend mode",
+    "output": "car_control"
+  },
+  {
+    "input": "Configure quiet hours",
+    "output": "car_control"
+  },
+  {
+    "input": "Enable time-based security modes",
+    "output": "car_control"
+  },
+  {
+    "input": "Schedule automatic updates",
+    "output": "car_control"
+  },
+  {
+    "input": "Switch to guest profile",
+    "output": "car_control"
+  },
+  {
+    "input": "Reset to default user settings",
+    "output": "car_control"
+  },
+  {
+    "input": "Share location with family",
+    "output": "car_control"
+  },
+  {
+    "input": "Enable passenger override",
+    "output": "car_control"
+  },
+  {
+    "input": "Restrict passenger controls",
+    "output": "car_control"
+  },
+  {
+    "input": "Enable weather-based route planning",
+    "output": "car_control"
+  },
+  {
+    "input": "Adjust wipers for light rain",
+    "output": "car_control"
+  },
+  {
+    "input": "Configure storm mode settings",
+    "output": "car_control"
+  },
+  {
+    "input": "Enable winter driving mode",
+    "output": "car_control"
+  },
+  {
+    "input": "Prepare for extreme heat",
+    "output": "car_control"
+  },
+  {
+    "input": "Call roadside assistance",
+    "output": "car_control"
+  },
+  {
+    "input": "Enable emergency power reserve",
+    "output": "car_control"
+  },
+  {
+    "input": "Activate hazard lights",
+    "output": "car_control"
+  },
+  {
+    "input": "Share current location with emergency services",
+    "output": "car_control"
+  },
+  {
+    "input": "What's the closest emergency facility?",
+    "output": "car_control"
+  },
+  {
+    "input": "It's too hot in here",
+    "output": "car_control"
+  },
+  {
+    "input": "The music is too loud",
+    "output": "car_control"
+  },
+  {
+    "input": "I'm feeling sleepy while driving",
+    "output": "car_control"
+  },
+  {
+    "input": "The sun is too bright",
+    "output": "car_control"
+  },
+  {
+    "input": "These seats are uncomfortable",
+    "output": "car_control"
+  },
+  {
+    "input": "I can barely see through the windshield",
+    "output": "car_control"
+  },
+  {
+    "input": "The car feels sluggish today",
+    "output": "car_control"
+  },
+  {
+    "input": "The steering feels too stiff",
+    "output": "car_control"
+  },
+  {
+    "input": "It's too hot in the back",
+    "output": "car_control"
+  },
+  {
+    "input": "The air quality isn't good",
+    "output": "car_control"
+  },
+  {
+    "input": "The windows are too foggy",
+    "output": "car_control"
+  },
+  {
+    "input": "There's a lot of glare from other cars",
+    "output": "car_control"
+  },
+  {
+    "input": "The seat massage is too intense",
+    "output": "car_control"
+  },
+  {
+    "input": "The steering wheel is too hot",
+    "output": "car_control"
+  },
+  {
+    "input": "The AC is making strange noises",
+    "output": "car_control"
+  },
+  {
+    "input": "The treble sounds too harsh",
+    "output": "car_control"
+  },
+  {
+    "input": "The car feels unstable on this incline",
+    "output": "car_control"
+  },
+  {
+    "input": "The mirror tilt seems miscalibrated",
+    "output": "car_control"
+  },
+  {
+    "input": "Audio balance changes with speed",
+    "output": "car_control"
+  },
+  {
+    "input": "Seat position feels different from my preset",
+    "output": "car_control"
+  },
+  {
+    "input": "Climate control isn't reaching set temperature",
+    "output": "car_control"
+  },
+  {
+    "input": "The mirrors aren't auto-tilting in reverse",
+    "output": "car_control"
+  },
+  {
+    "input": "Mirror auto-tilt isn't working",
+    "output": "car_control"
+  },
+  {
+    "input": "Stability control warning light is on",
+    "output": "car_control"
+  },
+  {
+    "input": "Audio system isn't responding",
+    "output": "car_control"
+  },
+  {
+    "input": "Seat memory buttons aren't working",
+    "output": "car_control"
+  },
+  {
+    "input": "Climate control is stuck on defrost",
+    "output": "car_control"
+  },
+  {
+    "input": "Why did smart charging fail?",
+    "output": "car_control"
+  },
+  {
+    "input": "Troubleshoot voice recognition",
+    "output": "car_control"
+  },
+  {
+    "input": "Fix navigation system errors",
+    "output": "car_control"
+  },
+  {
+    "input": "Reset climate control system",
+    "output": "car_control"
+  },
+  {
+    "input": "Calibrate security sensors",
+    "output": "car_control"
+  },
+  {
+    "input": "Is everything okay with the car?",
+    "output": "car_control"
+  },
+  {
+    "input": "Can I make it to San Francisco with this charge?",
+    "output": "car_control"
+  },
+  {
+    "input": "Do I need an oil change soon?",
+    "output": "car_control"
+  },
+  {
+    "input": "Is it safe to drive in these conditions?",
+    "output": "car_control"
+  },
+  {
+    "input": "Should I charge my car now?",
+    "output": "car_control"
+  },
+  {
+    "input": "What driving mode am I in?",
+    "output": "car_control"
+  },
+  {
+    "input": "Is sentry mode on?",
+    "output": "car_control"
+  },
+  {
+    "input": "How long until the car is fully charged?",
+    "output": "car_control"
+  },
+  {
+    "input": "What's the weather like outside?",
+    "output": "car_control"
+  },
+  {
+    "input": "I'm going on a long trip tomorrow, what should I check?",
+    "output": "car_control"
+  },
+  {
+    "input": "There's a warning light on the dashboard",
+    "output": "car_control"
+  },
+  {
+    "input": "I hear a strange noise from the front",
+    "output": "car_control"
+  },
+  {
+    "input": "The car isn't charging as fast as usual",
+    "output": "car_control"
+  },
+  {
+    "input": "I'm stuck in traffic and running low on battery",
+    "output": "car_control"
+  },
+  {
+    "input": "Someone just hit my car while it was parked",
+    "output": "car_control"
+  },
+  {
+    "input": "I forgot where I parked",
+    "output": "car_control"
+  },
+  {
+    "input": "The key fob isn't working",
+    "output": "car_control"
+  },
+  {
+    "input": "I need to pick someone up at the airport",
+    "output": "car_control"
+  },
+  {
+    "input": "Can you help me find the nearest charging station?",
+    "output": "car_control"
+  }
+]

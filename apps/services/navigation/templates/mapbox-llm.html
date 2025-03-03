@@ -1,0 +1,1428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Route Finder</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.js"></script>
+    <link href="https://api.tiles.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #dc2626;
+            --background-color: rgba(255, 255, 255, 0.98);
+            --panel-background: rgba(255, 255, 255, 0.95);
+            --text-color: #1f2937;
+            --text-secondary: #4b5563;
+            --border-color: #e5e7eb;
+            --hover-color: #1d4ed8;
+            --panel-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --transition-speed: 0.2s;
+            --success-color: #059669;
+            --error-color: #dc2626;
+            --warning-color: #d97706;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            color: var(--text-color);
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        #map {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 100%;
+            transition: all var(--transition-speed) ease;
+        }
+
+        .panel {
+            background: var(--panel-background);
+            border-radius: 12px;
+            box-shadow: var(--panel-shadow);
+            padding: 20px;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid var(--border-color);
+        }
+
+        #dashboard {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 340px;
+            z-index: 1;
+            transition: opacity 0.3s ease;
+        }
+
+        #instructions {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            width: 340px;
+            max-height: calc(100vh - 40px);
+            overflow-y: auto;
+            display: none;
+            z-index: 1;
+        }
+
+        #instructions.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .route-header {
+            padding: 16px;
+            border-bottom: 1px solid var(--border-color);
+            background: var(--background-color);
+            border-radius: 12px 12px 0 0;
+        }
+
+        .route-header h2 {
+            margin: 0;
+            color: var(--text-color);
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .route-summary {
+            padding: 16px;
+            background: var(--background-color);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .route-summary-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+            padding: 8px;
+            background: var(--background-color);
+            border-radius: 6px;
+            transition: all 0.2s ease;
+            border: 1px solid var(--border-color);
+        }
+
+        .route-summary-item:hover {
+            transform: translateY(-1px);
+        }
+
+        .summary-label {
+            color: var(--text-secondary);
+            font-size: 14px;
+            flex: 1;
+        }
+
+        .summary-value {
+            font-weight: 500;
+            color: var(--text-color);
+            font-size: 14px;
+        }
+
+        .route-steps {
+            padding: 16px;
+            background: var(--background-color);
+        }
+
+        .route-steps ol {
+            list-style-position: inside;
+            padding: 0;
+        }
+
+        .route-steps li {
+            padding: 12px;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 14px;
+            line-height: 1.5;
+            color: var(--text-color);
+            transition: all 0.2s ease;
+        }
+
+        .route-steps li:last-child {
+            border-bottom: none;
+        }
+
+        .route-steps li:hover {
+            background: var(--background-color);
+            transform: translateX(2px);
+        }
+
+        .search-container {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 400px;
+            z-index: 1;
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            font-size: 14px;
+            outline: none;
+            background: var(--background-color);
+            color: var(--text-color);
+            transition: all 0.3s ease;
+        }
+
+        .search-box:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .search-results {
+            display: none;
+            max-height: 300px;
+            overflow-y: auto;
+            background: var(--background-color);
+            border-radius: 0 0 8px 8px;
+            margin-top: 4px;
+            border: 1px solid var(--border-color);
+        }
+
+        .search-result-item {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            padding: 12px;
+            cursor: pointer;
+            border-bottom: 1px solid var(--border-color);
+            transition: all 0.2s ease;
+        }
+
+        .search-result-item:hover {
+            background: var(--background-color);
+            transform: translateX(2px);
+        }
+
+        .search-result-item:last-child {
+            border-bottom: none;
+        }
+
+        .result-name {
+            font-weight: 500;
+            color: var(--text-color);
+            margin-bottom: 4px;
+        }
+
+        .result-address {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .result-distance {
+            font-size: 12px;
+            color: var(--primary-color);
+            margin-top: 4px;
+            font-weight: 500;
+        }
+
+        .control-group {
+            padding: 16px;
+            border-bottom: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+        }
+
+        .control-group:last-child {
+            border-bottom: none;
+        }
+
+        h2 {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-color);
+            margin-bottom: 12px;
+        }
+
+        label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+        }
+
+        select, input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            background: var(--background-color);
+            color: var(--text-color);
+        }
+
+        select:hover, input:hover {
+            border-color: var(--primary-color);
+        }
+
+        select:focus, input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .coordinate-input {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .coordinate-input {
+            flex-direction: column;
+        }
+
+        .coordinate-buttons {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        button {
+            padding: 12px 16px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            background: var(--background-color);
+            color: var(--text-color);
+            min-height: 42px;
+        }
+
+        .button-primary {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+        }
+
+        .button-primary:hover {
+            background: var(--hover-color);
+            transform: translateY(-1px);
+        }
+
+        .button-secondary {
+            background: var(--background-color);
+            border: 1px solid var(--border-color);
+        }
+
+        .button-secondary:hover {
+            background: rgba(243, 244, 246, 0.9);
+            transform: translateY(-1px);
+        }
+
+        #route-stats {
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .stat {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            padding: 8px;
+            background: var(--background-color);
+            border-radius: 6px;
+            transition: all 0.2s ease;
+            border: 1px solid var(--border-color);
+        }
+
+        .stat:hover {
+            transform: translateY(-1px);
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .stat-value {
+            font-weight: 500;
+            color: var(--text-color);
+        }
+
+        .loading-indicator {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: var(--panel-background);
+            padding: 20px 40px;
+            border-radius: 12px;
+            box-shadow: var(--panel-shadow);
+            display: none;
+            z-index: 1000;
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+        }
+
+        .loading-indicator.active {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        /* Cache indicator styles */
+        .cache-indicator {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--primary-color);
+            color: white;
+            padding: 6px;
+            border-radius: 50%;
+            font-size: 12px;
+            cursor: pointer;
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+        }
+
+        .cache-indicator.active {
+            opacity: 1;
+        }
+
+        .cache-indicator.bounce {
+            animation: bounce 0.5s ease;
+        }
+
+        .cache-indicator i {
+            width: 16px;
+            height: 16px;
+        }
+        
+        .cache-count {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: var(--error-color);
+            color: white;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(-50%) scale(1); }
+            50% { transform: translateY(-50%) scale(1.2); }
+        }
+
+        .cache-dropdown {
+            position: absolute;
+            right: 10px;
+            top: calc(100% + 5px);
+            background: var(--panel-background);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            box-shadow: var(--panel-shadow);
+            padding: 8px 0;
+            display: none;
+            z-index: 3;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .cache-dropdown.active {
+            display: block;
+        }
+
+        .cache-item {
+            padding: 8px 16px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .cache-item:hover {
+            background: rgba(37, 99, 235, 0.1);
+        }
+
+        /* Loading animation */
+        @keyframes loadingDots {
+            0%, 20% { content: '.'; }
+            40%, 60% { content: '..'; }
+            80%, 100% { content: '...'; }
+        }
+
+        .loading-dots::after {
+            content: '';
+            animation: loadingDots 1.5s infinite;
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #a1a1a1;
+        }
+
+        /* Mobile responsiveness */
+        @media (max-width: 768px) {
+            #dashboard {
+                width: calc(100% - 20px);
+                margin: 10px;
+                bottom: 10px;
+                top: auto;
+                max-height: 60vh;
+                overflow-y: auto;
+            }
+
+            #instructions {
+                width: calc(100% - 20px);
+                margin: 10px;
+                max-height: 40vh;
+            }
+
+            .search-container {
+                width: calc(100% - 20px);
+                top: 10px;
+            }
+
+            .coordinate-buttons {
+                flex-direction: column;
+            }
+
+            button {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .panel {
+                padding: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="search-container panel">
+        <div style="position: relative;">
+            <input type="text" class="search-box" placeholder="Search for a location..." autocomplete="off" aria-label="Search location">
+            <div class="cache-indicator" role="button" aria-label="Show cached places">
+                <i data-lucide="history"></i>
+                <span class="cache-count">0</span>
+            </div>
+            <div class="cache-dropdown" role="listbox"></div>
+        </div>
+        <div class="search-results" role="listbox"></div>
+    </div>
+
+    <div id="map" role="application" aria-label="Interactive map"></div>
+    
+    <div id="instructions" class="panel" role="complementary" aria-label="Route instructions">
+        <div class="instructions-content"></div>
+    </div>
+
+    <div id="dashboard" class="panel" role="complementary" aria-label="Route controls">
+        <div class="control-group">
+            <h2>Location Controls</h2>
+            <div class="coordinate-buttons">
+                <button onclick="setCurrentLocation()" class="button-primary" aria-label="Use current location">
+                    Use Current Location
+                </button>
+                <button onclick="setLocationFromMap()" class="button-secondary" aria-label="Set location from map">
+                    Set Location from Map
+                </button>
+            </div>
+        </div>
+
+        <div class="control-group">
+            <h2>Destination Controls</h2>
+            <div class="coordinate-buttons">
+                <button onclick="setEndFromMap()" class="button-primary" aria-label="Set end point from map">
+                    Set Destination from Map
+                </button>
+            </div>
+        </div>
+
+        <div class="control-group">
+            <h2>Map Options</h2>
+            <label for="map-style">Map Style</label>
+            <select id="map-style" aria-label="Select map style">
+                <option value="mapbox://styles/mapbox/streets-v12">Streets</option>
+                <option value="mapbox://styles/mapbox/outdoors-v12">Outdoors</option>
+                <option value="mapbox://styles/mapbox/light-v11">Light</option>
+                <option value="mapbox://styles/mapbox/dark-v11">Dark</option>
+                <option value="mapbox://styles/mapbox/satellite-v9">Satellite</option>
+            </select>
+        </div>
+
+        <div class="control-group">
+            <h2>Travel Mode</h2>
+            <label for="profile">Select Mode</label>
+            <select id="profile" aria-label="Select travel mode">
+                <option value="driving" selected>Driving</option>
+                <option value="cycling">Cycling</option>
+                <option value="walking">Walking</option>
+            </select>
+        </div>
+
+        <div id="route-stats">
+            <div class="stat">
+                <span class="stat-label">Distance</span>
+                <span class="stat-value" id="distance" aria-label="Route distance">-</span>
+            </div>
+            <div class="stat">
+                <span class="stat-label">Duration</span>
+                <span class="stat-value" id="duration" aria-label="Route duration">-</span>
+            </div>
+            <button id="clear-route" class="button-secondary" style="width: 100%; margin-top: 16px;" aria-label="Clear route">
+                Clear Route
+            </button>
+        </div>
+    </div>
+
+    <div class="loading-indicator" role="alert" aria-live="polite">
+        <div class="loading-spinner"></div>
+        <span>Loading...</span>
+    </div>
+
+    <script>
+        // Global variables
+        let map;
+        let endMarker = null;
+        let currentLocationMarker = null;
+        let isSettingEnd = false;
+        let isLocationOverridden = false;
+        let manualLocation = null;
+        let lastPlacesCache = null;
+        let lastDirectionsCache = null;
+        let placesHash = null;
+        let dropdownVisible = false;
+        
+        // Utility Functions
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+            notification.style.position = 'fixed';
+            notification.style.top = '20px';
+            notification.style.left = '50%';
+            notification.style.transform = 'translateX(-50%)';
+            notification.style.padding = '12px 24px';
+            notification.style.borderRadius = '8px';
+            notification.style.background = 'var(--panel-background)';
+            notification.style.border = '1px solid var(--border-color)';
+            notification.style.zIndex = '1000';
+            notification.style.animation = 'fadeIn 0.3s ease';
+
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.animation = 'fadeOut 0.3s ease';
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
+        }
+
+        function showLoading(show = true) {
+            const loadingIndicator = document.querySelector('.loading-indicator');
+            if (show) {
+                loadingIndicator.classList.add('active');
+            } else {
+                loadingIndicator.classList.remove('active');
+            }
+        }
+
+        function formatDistance(meters) {
+            if (meters < 1000) return `${Math.round(meters)}m`;
+            return `${(meters/1000).toFixed(1)}km`;
+        }
+
+        function formatDuration(seconds) {
+            if (seconds < 60) return `${Math.round(seconds)}s`;
+            if (seconds < 3600) return `${Math.floor(seconds/60)}min`;
+            const hours = Math.floor(seconds/3600);
+            const minutes = Math.floor((seconds%3600)/60);
+            return `${hours}h ${minutes}min`;
+        }
+
+        // Location Functions
+        async function getCurrentLocation() {
+            try {
+                const response = await fetch('/api/location', {
+                    method: 'GET',
+                    headers: {
+                        'accept': 'application/json'
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to fetch location');
+                }
+
+                const data = await response.json();
+                return {
+                    lng: data.coordinates.longitude,
+                    lat: data.coordinates.latitude
+                };
+            } catch (error) {
+                console.error('Error fetching location:', error);
+                showNotification('Failed to get current location', 'error');
+                return null;
+            }
+        }
+
+        async function updateCurrentLocation() {
+            if (isLocationOverridden) return;
+
+            const location = await getCurrentLocation();
+            if (!location) return;
+
+            if (currentLocationMarker) {
+                currentLocationMarker.remove();
+            }
+
+            currentLocationMarker = new mapboxgl.Marker({
+                color: '#3887be',
+                scale: 1.2,
+                draggable: true
+            })
+            .setLngLat([location.lng, location.lat])
+            .addTo(map);
+
+            currentLocationMarker.on('dragend', async () => {
+                const lngLat = currentLocationMarker.getLngLat();
+                manualLocation = { lng: lngLat.lng, lat: lngLat.lat };
+                isLocationOverridden = true;
+                showNotification('Location manually set', 'success');
+                if (endMarker) {
+                    await updateRoute();
+                }
+            });
+
+            if (!isLocationOverridden && !map.isMoving()) {
+                map.flyTo({
+                    center: [location.lng, location.lat],
+                    zoom: 15
+                });
+            }
+
+            if (endMarker) {
+                await updateRoute();
+            }
+        }
+
+        async function setCurrentLocation() {
+            try {
+                showLoading(true);
+                const location = await getCurrentLocation();
+                if (!location) throw new Error('Failed to get location');
+
+                isLocationOverridden = false;
+                manualLocation = null;
+
+                if (currentLocationMarker) {
+                    currentLocationMarker.remove();
+                }
+
+                currentLocationMarker = new mapboxgl.Marker({
+                    color: '#3887be',
+                    scale: 1.2,
+                    draggable: true
+                })
+                .setLngLat([location.lng, location.lat])
+                .addTo(map);
+
+                currentLocationMarker.on('dragend', async () => {
+                    const lngLat = currentLocationMarker.getLngLat();
+                    manualLocation = { lng: lngLat.lng, lat: lngLat.lat };
+                    isLocationOverridden = true;
+                    showNotification('Location manually set', 'success');
+                    if (endMarker) {
+                        await updateRoute();
+                    }
+                });
+
+                map.flyTo({
+                    center: [location.lng, location.lat],
+                    zoom: 15
+                });
+
+                if (endMarker) {
+                    await updateRoute();
+                }
+
+                showNotification('Using current location', 'success');
+            } catch (error) {
+                console.error('Error setting current location:', error);
+                showNotification('Failed to set current location', 'error');
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        function setLocationFromMap() {
+            showNotification('Click on the map to set your location', 'info');
+            map.getCanvas().style.cursor = 'crosshair';
+            
+            const clickHandler = async (e) => {
+                const coords = [e.lngLat.lng, e.lngLat.lat];
+                
+                if (currentLocationMarker) {
+                    currentLocationMarker.remove();
+                }
+
+                currentLocationMarker = new mapboxgl.Marker({
+                    color: '#3887be',
+                    scale: 1.2,
+                    draggable: true
+                })
+                .setLngLat(coords)
+                .addTo(map);
+
+                currentLocationMarker.on('dragend', async () => {
+                    const lngLat = currentLocationMarker.getLngLat();
+                    manualLocation = { lng: lngLat.lng, lat: lngLat.lat };
+                    isLocationOverridden = true;
+                    showNotification('Location manually set', 'success');
+                    if (endMarker) {
+                        await updateRoute();
+                    }
+                });
+
+                manualLocation = { lng: coords[0], lat: coords[1] };
+                isLocationOverridden = true;
+
+                map.getCanvas().style.cursor = '';
+                map.off('click', clickHandler);
+                
+                showNotification('Location set from map', 'success');
+                
+                if (endMarker) {
+                    await updateRoute();
+                }
+            };
+
+            map.once('click', clickHandler);
+        }
+
+        async function checkCachedData() {
+            try {
+                // Check for cached places
+                const placesResponse = await fetch('/api/stored-places');
+                if (placesResponse.ok) {
+                    const placesData = await placesResponse.json();
+                    
+                    if (placesData.places && placesData.places.length > 0) {
+                        // Create a hash of the current data
+                        const currentHash = JSON.stringify(placesData.places);
+                        
+                        // If hash is different, update UI
+                        if (currentHash !== placesHash) {
+                            placesHash = currentHash;
+                            const indicator = document.querySelector('.cache-indicator');
+                            const dropdown = document.querySelector('.cache-dropdown');
+                            
+                            // Trigger bounce animation
+                            indicator.classList.remove('bounce');
+                            void indicator.offsetWidth; // Trigger reflow
+                            indicator.classList.add('bounce');
+                            
+                            // Update UI elements
+                            showCacheIndicator(placesData.places);
+                            
+                            // Show dropdown when data changes
+                            dropdown.classList.add('active');
+                            dropdownVisible = true;
+                            
+                            showNotification('New places available', 'info');
+                        }
+                    } else {
+                        // Hide indicator if no places
+                        const indicator = document.querySelector('.cache-indicator');
+                        const dropdown = document.querySelector('.cache-dropdown');
+                        indicator.classList.remove('active');
+                        dropdown.classList.remove('active');
+                        dropdownVisible = false;
+                        placesHash = null;
+                    }
+                }
+          
+                // Check for cached directions
+                const directionsResponse = await fetch('/api/stored-directions');
+                if (directionsResponse.ok) {
+                    const directionsData = await directionsResponse.json();
+                    if (directionsData.success && directionsData.directions && 
+                        JSON.stringify(directionsData.directions) !== JSON.stringify(lastDirectionsCache)) {
+                        lastDirectionsCache = directionsData.directions;
+                        await visualizeCachedDirections(directionsData.directions);
+                    }
+                }
+            } catch (error) {
+                console.error('Error checking cached data:', error);
+            }
+          }
+          
+        function showCacheIndicator(places) {
+            const indicator = document.querySelector('.cache-indicator');
+            const dropdown = document.querySelector('.cache-dropdown');
+            const countElement = indicator.querySelector('.cache-count');
+            
+            indicator.classList.add('active');
+            countElement.textContent = places.length;
+            
+            // Populate dropdown
+            dropdown.innerHTML = places.map(place => `
+                <div class="cache-item" data-mapbox-id="${place.mapbox_id}">
+                    <div class="result-name">${place.name}</div>
+                    <div class="result-address">${place.place_formatted || ''}</div>
+                </div>
+            `).join('');
+            
+            // Handle indicator click
+            indicator.onclick = (e) => {
+                e.stopPropagation();
+                dropdown.classList.toggle('active');
+                dropdownVisible = dropdown.classList.contains('active');
+            };
+            
+            // Handle dropdown item clicks
+            dropdown.querySelectorAll('.cache-item').forEach(item => {
+                item.onclick = (e) => {
+                    e.stopPropagation();
+                    selectSearchResult(item);
+                    dropdown.classList.remove('active');
+                    dropdownVisible = false;
+                };
+            });
+          }
+
+        async function visualizeCachedDirections(directions) {
+            try {
+                showLoading(true);
+                const route = directions.routes[0];
+                
+                // Create end marker
+                const endCoords = route.legs[0].steps[route.legs[0].steps.length - 1].maneuver.location;
+                if (endMarker) endMarker.remove();
+                endMarker = new mapboxgl.Marker({
+                    color: '#f30',
+                    scale: 1.2
+                })
+                .setLngLat(endCoords)
+                .addTo(map);
+                
+                // Update route visualization
+                const geojson = {
+                    type: 'Feature',
+                    properties: {},
+                    geometry: route.geometry
+                };
+                
+                updateRouteLayer(geojson);
+                updateRouteStatistics(route);
+                updateRouteInstructions(route);
+                
+                // Fit map to show the entire route
+                const bounds = new mapboxgl.LngLatBounds();
+                route.geometry.coordinates.forEach(coord => bounds.extend(coord));
+                map.fitBounds(bounds, {
+                    padding: 50,
+                    duration: 1000
+                });
+                
+                showNotification('Cached route loaded', 'success');
+            } catch (error) {
+                console.error('Error visualizing cached directions:', error);
+                showNotification('Failed to load cached route', 'error');
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        // Map Functions
+        async function initializeMap() {
+            try {
+                showLoading(true);
+                const location = await getCurrentLocation();
+                if (!location) throw new Error('Failed to get location');
+
+                mapboxgl.accessToken = '{{ mapbox_token }}';
+                map = new mapboxgl.Map({
+                    container: 'map',
+                    style: 'mapbox://styles/mapbox/streets-v12',
+                    center: [location.lng, location.lat],
+                    zoom: 15
+                });
+
+                map.on('load', () => {
+                    currentLocationMarker = new mapboxgl.Marker({
+                        color: '#3887be',
+                        scale: 1.2,
+                        draggable: true
+                    })
+                    .setLngLat([location.lng, location.lat])
+                    .addTo(map);
+
+                    currentLocationMarker.on('dragend', async () => {
+                        const lngLat = currentLocationMarker.getLngLat();
+                        manualLocation = { lng: lngLat.lng, lat: lngLat.lat };
+                        isLocationOverridden = true;
+                        if (endMarker) {
+                            await updateRoute();
+                        }
+                    });
+
+                    showLoading(false);
+                    showNotification('Map loaded successfully', 'success');
+                });
+
+                map.on('click', handleMapClick);
+                map.addControl(new mapboxgl.NavigationControl(), 'top-right');
+                map.addControl(new mapboxgl.ScaleControl({
+                    maxWidth: 100,
+                    unit: 'metric'
+                }));
+
+                return map;
+
+            } catch (error) {
+                console.error('Error initializing map:', error);
+                showLoading(false);
+                showNotification('Failed to initialize map', 'error');
+                return initializeMapWithDefaults();
+            }
+        }
+
+        function initializeMapWithDefaults() {
+          mapboxgl.accessToken = '{{ mapbox_token }}';
+          return new mapboxgl.Map({
+              container: 'map',
+              style: 'mapbox://styles/mapbox/streets-v12',
+              center: [{{ map_center_lat }}, {{ map_center_lng }}],
+              zoom: {{ map_zoom }}
+          });
+      }
+
+      async function handleMapClick(event) {
+          if (isSettingEnd) {
+              const coords = [event.lngLat.lng, event.lngLat.lat];
+              
+              if (endMarker) endMarker.remove();
+              endMarker = new mapboxgl.Marker({
+                  color: '#f30',
+                  scale: 1.2
+              })
+              .setLngLat(coords)
+              .addTo(map);
+              
+              isSettingEnd = false;
+              map.getCanvas().style.cursor = '';
+              showNotification('Destination set', 'success');
+              
+              await updateRoute();
+          }
+      }
+
+      // Route Functions
+      async function updateRoute() {
+          if (!endMarker) return;
+
+          try {
+              showLoading(true);
+              const endCoords = endMarker.getLngLat();
+              await getRoute(endCoords);
+              showNotification('Route updated', 'success');
+          } catch (error) {
+              console.error('Error updating route:', error);
+              showNotification('Failed to update route', 'error');
+          } finally {
+              showLoading(false);
+          }
+      }
+
+      async function getRoute(end) {
+          try {
+              const start = isLocationOverridden && manualLocation ? manualLocation : 
+                          currentLocationMarker ? currentLocationMarker.getLngLat() : null;
+              
+              if (!start) {
+                  throw new Error('No start location available');
+              }
+
+              const query = await fetch(
+                  `/api/directions/?start_lng=${start.lng}&start_lat=${start.lat}&end_lng=${end.lng}&end_lat=${end.lat}`,
+                  { method: 'GET' }
+              );
+              
+              if (!query.ok) {
+                  throw new Error(`HTTP error! status: ${query.status}`);
+              }
+              
+              const json = await query.json();
+              const data = json.routes[0];
+              const route = data.geometry.coordinates;
+              const geojson = {
+                  type: 'Feature',
+                  properties: {},
+                  geometry: {
+                      type: 'LineString',
+                      coordinates: route
+                  }
+              };
+
+              updateRouteStatistics(data);
+              updateRouteLayer(geojson);
+              updateRouteInstructions(data);
+
+          } catch (error) {
+              console.error('Error:', error);
+              showRouteError();
+          }
+      }
+
+      function updateRouteStatistics(data) {
+          document.getElementById('distance').textContent = formatDistance(data.distance);
+          document.getElementById('duration').textContent = formatDuration(data.duration);
+      }
+
+      function updateRouteLayer(geojson) {
+          if (map.getSource('route')) {
+              map.getSource('route').setData(geojson);
+          } else {
+              map.addLayer({
+                  id: 'route',
+                  type: 'line',
+                  source: {
+                      type: 'geojson',
+                      data: geojson
+                  },
+                  layout: {
+                      'line-join': 'round',
+                      'line-cap': 'round'
+                  },
+                  paint: {
+                      'line-color': '#3887be',
+                      'line-width': 5,
+                      'line-opacity': 0.75
+                  }
+              });
+          }
+      }
+
+      function updateRouteInstructions(data) {
+          const instructions = document.getElementById('instructions');
+          instructions.classList.add('active');
+          const steps = data.legs[0].steps;
+
+          instructions.innerHTML = `
+              <div class="route-header">
+                  <h2>Route Instructions</h2>
+              </div>
+              <div class="route-summary">
+                  <div class="route-summary-item">
+                      <span class="summary-label">Total Distance</span>
+                      <span class="summary-value">${formatDistance(data.distance)}</span>
+                  </div>
+                  <div class="route-summary-item">
+                      <span class="summary-label">Estimated Time</span>
+                      <span class="summary-value">${formatDuration(data.duration)}</span>
+                  </div>
+              </div>
+              <div class="route-steps">
+                  <ol>
+                      ${steps.map(step => `
+                          <li>${step.maneuver.instruction}</li>
+                      `).join('')}
+                  </ol>
+              </div>
+          `;
+      }
+
+      function showRouteError() {
+          const instructions = document.getElementById('instructions');
+          instructions.classList.add('active');
+          instructions.innerHTML = `
+              <div class="route-header">
+                  <h2>Error</h2>
+              </div>
+              <div class="route-summary" style="color: var(--error-color);">
+                  <p>Sorry, couldn't calculate the route. Please try again.</p>
+              </div>
+          `;
+      }
+
+      function clearRoute() {
+          if (endMarker) endMarker.remove();
+          if (map.getLayer('route')) map.removeLayer('route');
+          if (map.getSource('route')) map.removeSource('route');
+          
+          document.getElementById('instructions').classList.remove('active');
+          document.getElementById('distance').textContent = '-';
+          document.getElementById('duration').textContent = '-';
+          
+          endMarker = null;
+          showNotification('Route cleared', 'success');
+      }
+
+      function setEndFromMap() {
+          isSettingEnd = true;
+          map.getCanvas().style.cursor = 'crosshair';
+          showNotification('Click on the map to set destination', 'info');
+      }
+
+      // Search Functions
+      function initializeSearch() {
+          const searchBox = document.querySelector('.search-box');
+          const searchResults = document.querySelector('.search-results');
+          let searchTimeout;
+
+          searchBox.addEventListener('input', (e) => {
+              clearTimeout(searchTimeout);
+              const query = e.target.value.trim();
+              
+              if (query.length < 3) {
+                  searchResults.style.display = 'none';
+                  return;
+              }
+
+              searchTimeout = setTimeout(() => performSearch(query), 300);
+          });
+
+          searchBox.addEventListener('focus', () => {
+              if (searchResults.children.length) {
+                  searchResults.style.display = 'block';
+              }
+          });
+
+          document.addEventListener('click', (e) => {
+              if (!e.target.closest('.search-container')) {
+                  searchResults.style.display = 'none';
+              }
+          });
+
+          searchResults.addEventListener('wheel', (e) => {
+              e.stopPropagation();
+          });
+      }
+
+      async function performSearch(query) {
+          try {
+              const location = isLocationOverridden && manualLocation ? manualLocation : 
+                             currentLocationMarker ? currentLocationMarker.getLngLat() : null;
+              
+              if (!location) {
+                  throw new Error('No location available');
+              }
+
+              const response = await fetch(
+                  `/api/search/?` + new URLSearchParams({
+                      query: query,
+                      language: 'en',
+                      limit: 5,
+                      navigation_profile: document.getElementById('profile').value,
+                      country: 'vn',
+                      proximity_lng: location.lng,
+                      proximity_lat: location.lat
+                  })
+              );
+        
+              if (!response.ok) throw new Error('Search failed');
+              
+              const data = await response.json();
+              const sortedSuggestions = data.suggestions.sort((a, b) => a.distance - b.distance);
+              displaySearchResults(sortedSuggestions);
+          } catch (error) {
+              console.error('Search error:', error);
+              showNotification('Search failed', 'error');
+          }
+      }
+        
+      function displaySearchResults(results) {
+          const searchResults = document.querySelector('.search-results');
+          
+          if (!results.length) {
+              searchResults.style.display = 'none';
+              return;
+          }
+        
+          searchResults.innerHTML = results.map(result => `
+              <div class="search-result-item" data-mapbox-id="${result.mapbox_id}">
+                  <div class="result-name">${result.name}</div>
+                  <div class="result-address">${result.full_address}</div>
+                  <div class="result-distance">${formatSearchDistance(result.distance)}</div>
+              </div>
+          `).join('');
+        
+          searchResults.style.display = 'block';
+      }
+        
+      function formatSearchDistance(meters) {
+          if (typeof meters !== 'number') return '';
+          if (meters < 1000) {
+              return `${Math.round(meters)}m away`;
+          }
+          return `${(meters/1000).toFixed(1)}km away`;
+      }
+
+      async function selectSearchResult(result) {
+          try {
+              const mapboxId = result.dataset.mapboxId;
+              showLoading(true);
+              
+              const response = await fetch(`/api/retrieve/${mapboxId}`);
+              if (!response.ok) throw new Error('Failed to retrieve location details');
+              
+              const data = await response.json();
+              const feature = data.features[0];
+              const coordinates = [
+                  feature.properties.coordinates.longitude,
+                  feature.properties.coordinates.latitude
+              ];
+              
+              if (endMarker) endMarker.remove();
+              endMarker = new mapboxgl.Marker({
+                  color: '#f30',
+                  scale: 1.2
+              })
+              .setLngLat(coordinates)
+              .addTo(map);
+      
+              await updateRoute();
+          
+              document.querySelector('.search-box').value = '';
+              document.querySelector('.search-results').style.display = 'none';
+          
+              map.flyTo({
+                  center: coordinates,
+                  zoom: 15,
+                  essential: true
+              });
+      
+              showNotification('Destination set from search', 'success');
+          } catch (error) {
+              console.error('Error selecting location:', error);
+              showNotification('Failed to get location details', 'error');
+          } finally {
+              showLoading(false);
+          }
+      }
+
+      // Event Listeners
+      function addEventListeners() {
+          // Map style change
+          document.getElementById('map-style').addEventListener('change', (e) => {
+              map.setStyle(e.target.value);
+              showNotification('Map style updated', 'success');
+          });
+
+          // Clear route
+          document.getElementById('clear-route').addEventListener('click', clearRoute);
+
+          // Profile change
+          document.getElementById('profile').addEventListener('change', () => {
+              if (endMarker) {
+                  updateRoute();
+                  showNotification('Travel mode updated', 'success');
+              }
+          });
+
+          // Search result selection
+          document.addEventListener('click', (e) => {
+              const searchResultItem = e.target.closest('.search-result-item');
+              if (searchResultItem) {
+                  selectSearchResult(searchResultItem);
+              }
+          });
+
+          document.addEventListener('click', () => {
+              const dropdown = document.querySelector('.cache-dropdown');
+              dropdown.classList.remove('active');
+              dropdownVisible = false;
+          });
+
+          // Handle keyboard navigation
+          document.addEventListener('keydown', (e) => {
+              if (e.key === 'Escape') {
+                  if (isSettingEnd) {
+                      isSettingEnd = false;
+                      map.getCanvas().style.cursor = '';
+                      showNotification('Destination selection cancelled', 'info');
+                  }
+              }
+          });
+      }
+
+      // Initialize the application
+      (async () => {
+          try {
+              lucide.createIcons();
+              await initializeMap();
+              initializeSearch();
+              addEventListeners();
+
+              // Check for cached data after initialization
+              await checkCachedData();
+
+              // Start location updates only if not manually set
+              setInterval(() => {
+                  if (!isLocationOverridden) {
+                      updateCurrentLocation();
+                  }
+              }, 10000);
+
+              // Start Redis cache check updates
+              setInterval(async () => {
+                await checkCachedData();
+              }, 3000); // Check every 3 seconds
+
+
+          } catch (error) {
+              console.error('Application initialization failed:', error);
+              showNotification('Failed to initialize application', 'error');
+          }
+      })();
+  </script>
+</body>
+</html>

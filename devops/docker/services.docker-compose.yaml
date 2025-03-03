@@ -1,0 +1,188 @@
+services:
+  svc-nav-main:
+    build:
+      context: ../..
+      dockerfile: devops/docker/services/navigation/Main.Dockerfile
+    container_name: Svc.Nav.Main
+    restart: always
+    networks:
+      - infra_my_network
+    env_file:
+    - ../../apps/ports.env
+    environment:
+    - IN_PROD=True
+    - PORT_SVC_MAP=${PORT_SVC_MAP:-8443}
+    ports:
+    - "${PORT_SVC_MAP:-8443}:${PORT_SVC_MAP:-8443}"
+    # networks:
+    #   - app-network
+    # depends_on:
+    #   - SERVICE_NAME
+    # healthcheck:
+    #   test:
+    #     [
+    #       "CMD",
+    #       "curl",
+    #       "-f",
+    #       "http://localhost:${PORT_SVC:-8443}/"
+    #     ]
+    #   interval: 15s
+    #   timeout: 10s
+    #   retries: 3
+    #   start_period: 10s
+
+  svc-nav-mapbox:
+    build:
+      context: ../..
+      dockerfile: devops/docker/services/navigation/Mapbox.Dockerfile
+    container_name: Svc.Nav.Mapbox
+    restart: always
+    networks:
+      - infra_my_network
+    env_file:
+    - ../../apps/ports.env
+    environment:
+    - IN_PROD=True
+    - PORT_SVC_MAPBOX=${PORT_SVC_MAPBOX:-6001}
+    ports:
+    - "${PORT_SVC_MAPBOX:-6001}:${PORT_SVC_MAPBOX:-6001}"
+    depends_on:
+    - svc-nav-main
+
+  # svc-infotainment:
+  #   build:
+  #     context: ../..
+  #     dockerfile: devops/docker/services/Infotainment.Dockerfile
+  #   container_name: Infotainment
+  #   restart: always
+  #   networks:
+  #     - infra_my_network
+  #   env_file:
+  #   - ../../apps/ports.env
+  #   environment:
+  #   - IN_PROD=True
+  #   - PORT_SVC_INFOTAINMENT=${PORT_SVC_INFOTAINMENT:-6002}
+  #   ports:
+  #   - "${PORT_SVC_INFOTAINMENT:-6002}:${PORT_SVC_INFOTAINMENT:-6002}"
+
+  # svc-audio-keyword-spotting:
+  #   build:
+  #     context: ../..
+  #     dockerfile: devops/docker/services/audio/KeywordSpotting.Dockerfile
+  #   container_name: Audio.KeywordSpotting
+  #   restart: always
+  #   networks:
+  #     - infra_my_network
+  #   env_file:
+  #   - ../../apps/ports.env
+  #   environment:
+  #   - IN_PROD=True
+  #   - PORT_SVC_KWS=${PORT_SVC_KWS:-8000}
+  #   ports:
+  #   - "${PORT_SVC_KWS:-8000}:${PORT_SVC_KWS:-8000}"
+
+  svc-audio-wwd:
+    build:
+      context: ../..
+      dockerfile: devops/docker/services/audio/WakeWordDetection.Dockerfile
+    container_name: Svc.Audio.WWD
+    restart: always
+    networks:
+      - infra_my_network
+    env_file:
+    - ../../apps/ports.env
+    environment:
+    - IN_PROD=True
+    - PORT_SVC_WWD=${PORT_SVC_WWD:-6500}
+    ports:
+    - "${PORT_SVC_WWD:-6500}:${PORT_SVC_TTS:-6500}"
+
+  svc-audio-tts:
+    build:
+      context: ../..
+      dockerfile: devops/docker/services/audio/TextToSpeech.Dockerfile
+    container_name: Svc.Audio.TTS
+    restart: always
+    networks:
+      - infra_my_network
+    env_file:
+    - ../../apps/ports.env
+    environment:
+    - IN_PROD=True
+    - PORT_SVC_TTS=${PORT_SVC_TTS:-6501}
+    ports:
+    - "${PORT_SVC_TTS:-6501}:${PORT_SVC_TTS:-6501}"
+    # networks:
+    #   - app-network
+    # depends_on:
+    #   - SERVICE_NAME
+    # healthcheck:
+    #   test: 
+    #     - "CMD"
+    #     - "curl"
+    #     - "-f"
+    #     - "-s"
+    #     - "-S"
+    #     - "http://localhost:${PORT_SVC_TTS:-6501}/health"
+    #   interval: 15s
+    #   timeout: 10s
+    #   retries: 3
+    #   start_period: 10s
+
+  svc-audio-stt:
+    build:
+      context: ../..
+      dockerfile: devops/docker/services/audio/SpeechToText.Dockerfile
+    container_name: Svc.Audio.STT
+    restart: always
+    networks:
+      - infra_my_network
+    env_file:
+    - ../../apps/ports.env
+    environment:
+    - IN_PROD=True
+    - PORT_SVC_STT=${PORT_SVC_STT:-6502}
+    ports:
+    - "${PORT_SVC_STT:-6502}:${PORT_SVC_STT:-6502}"
+
+  svc-vision-face:
+    build:
+      context: ../..
+      dockerfile: devops/docker/services/vision/detection/Faces.Dockerfile
+    container_name: Svc.Vision.Face
+    restart: always
+    networks:
+      - infra_my_network
+    env_file:
+    - ../../apps/ports.env
+    environment:
+    - IN_PROD=True
+    - PORT_SVC_FACE=${PORT_SVC_FACE:-6503}
+    ports:
+    - "${PORT_SVC_FACE:-6503}:${PORT_SVC_FACE:-6503}"
+
+  svc-music:
+    build:
+      context: ../..
+      dockerfile: devops/docker/services/Music.Dockerfile
+    container_name: Svc.Music
+    restart: always
+    networks:
+      - infra_my_network
+    env_file:
+    - ../../apps/ports.env
+    environment:
+    - IN_PROD=True
+    - PORT_SVC_MUSIC=${PORT_SVC_MUSIC:-6002}
+    ports:
+    - "${PORT_SVC_MUSIC:-6002}:${PORT_SVC_MUSIC:-6002}"
+
+networks:
+  infra_my_network:
+    external: true
+
+
+# docker compose -f devops/docker/services.docker-compose.yaml up --build --detach
+# docker compose -f devops/docker/services.docker-compose.yaml down
+# docker compose -f devops/docker/services.docker-compose.yaml up --build -d SERVICE
+# docker compose -f devops/docker/services.docker-compose.yaml down --remove-orphans

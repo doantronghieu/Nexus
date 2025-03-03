@@ -1,0 +1,571 @@
+{
+	"_id": "v123",
+	"vin": "1HGCM82633A123456",
+	"metadata": {
+		"make": "Toyota",
+		"model": "Camry",
+		"year": 2024,
+		"type": "sedan",
+		"color": "silver",
+		"features": [
+			"hybrid",
+			"automatic",
+			"sunroof",
+			"lane_assist",
+			"adaptive_cruise"
+		],
+		"registration": {
+			"plate": "ABC123",
+			"state": "CA",
+			"expirationDate": "2024-12-31T00:00:00Z"
+		}
+	},
+	"currentState": {
+		"lastUpdated": "2024-02-05T10:30:00Z",
+		"ignition": {
+			"isOn": true,
+			"mode": "run",
+			"smartKey": {
+				"isPresent": true,
+				"lastDetected": "2024-02-05T10:30:00Z"
+			},
+			"timestamp": "2024-02-05T10:30:00Z"
+		},
+		"powertrain": {
+			"transmission": {
+				"gear": "D",
+				"driveMode": "eco",
+				"timestamp": "2024-02-05T10:30:00Z"
+			},
+			"autoStartStop": {
+				"isEnabled": true,
+				"isEngineRunning": true,
+				"timestamp": "2024-02-05T10:30:00Z"
+			},
+			"hybridSystem": {
+				"batteryLevel": 75,
+				"chargingStatus": "not_charging",
+				"regenerativeBraking": {
+					"isActive": false,
+					"intensity": 2
+				}
+			}
+		},
+		"speed": {
+			"current": 65.5,
+			"limit": 70,
+			"unit": "mph",
+			"timestamp": "2024-02-05T10:30:00Z"
+		},
+		"odometer": {
+			"total": 17500.5,
+			"trip": {
+				"A": {
+					"distance": 125.4,
+					"timestamp": "2024-02-05T10:30:00Z"
+				},
+				"B": {
+					"distance": 75.2,
+					"timestamp": "2024-02-05T10:30:00Z"
+				}
+			},
+			"unit": "miles"
+		},
+		"location": {
+			"coordinates": {
+				"longitude": -122.419416,
+				"latitude": 37.774929,
+				"altitude": 0.0,
+				"heading": 275,
+				"accuracy": 5.0
+			},
+			"timestamp": "2024-02-05T10:30:00Z"
+		},
+		"fuelSystem": {
+			"level": 75.5,
+			"range": 350.2,
+			"unit": "miles",
+			"type": "hybrid",
+			"consumption": {
+				"instant": 42.3,
+				"average": 39.8,
+				"unit": "mpg",
+				"timestamp": "2024-02-05T10:30:00Z"
+			},
+			"isFuelDoorLocked": true
+		},
+		"temperature": {
+			"engine": {
+				"value": 195.5,
+				"timestamp": "2024-02-05T10:30:00Z"
+			},
+			"ambient": {
+				"value": 72.0,
+				"timestamp": "2024-02-05T10:30:00Z"
+			},
+			"unit": "fahrenheit"
+		},
+		"tripComputer": {
+			"averageSpeed": 45.2,
+			"drivingTime": 95,
+			"idleTime": 15,
+			"distance": 71.5,
+			"energyUsage": {
+				"electric": 3.2,
+				"fuel": 42.3
+			},
+			"timestamp": "2024-02-05T10:30:00Z"
+		},
+		"occupancy": {
+			"seats": {
+				"driver": {
+					"isOccupied": true,
+					"weight": 165,
+					"isSeatbeltFastened": true
+				},
+				"passenger": {
+					"isOccupied": false,
+					"weight": 0,
+					"isSeatbeltFastened": false
+				},
+				"rearLeft": {
+					"isOccupied": false,
+					"weight": 0,
+					"isSeatbeltFastened": false
+				},
+				"rearRight": {
+					"isOccupied": false,
+					"weight": 0,
+					"isSeatbeltFastened": false
+				}
+			},
+			"timestamp": "2024-02-05T10:30:00Z"
+		}
+	},
+	"status": {
+		"engine": {
+			"hasError": false,
+			"isRunning": true,
+			"rpm": 2500,
+			"load": 45,
+			"timestamp": "2024-02-05T10:30:00Z"
+		},
+		"brakeSystem": {
+			"hasError": false,
+			"fluid": {
+				"level": 95,
+				"hasWarning": false
+			},
+			"pads": {
+				"wear": {
+					"front": 75,
+					"rear": 80
+				},
+				"hasWarning": false
+			},
+			"abs": {
+				"isActive": false,
+				"hasError": false
+			},
+			"parkingBrake": {
+				"isEngaged": false,
+				"isAutoHoldActive": true
+			}
+		},
+		"battery": {
+			"voltage": 12.6,
+			"current": 2.1,
+			"health": 95,
+			"hasChargingError": false,
+			"hasLowVoltageWarning": false,
+			"timestamp": "2024-02-05T10:30:00Z"
+		},
+		"oilSystem": {
+			"pressure": {
+				"value": 40,
+				"hasWarning": false
+			},
+			"level": {
+				"value": 95,
+				"hasWarning": false
+			},
+			"temperature": {
+				"value": 195,
+				"hasWarning": false
+			},
+			"life": {
+				"remaining": 65,
+				"mileage": 5000
+			}
+		},
+		"tires": {
+			"pressures": {
+				"frontLeft": {
+					"value": 32.5,
+					"recommended": 32.0,
+					"hasWarning": false
+				},
+				"frontRight": {
+					"value": 32.5,
+					"recommended": 32.0,
+					"hasWarning": false
+				},
+				"rearLeft": {
+					"value": 32.0,
+					"recommended": 32.0,
+					"hasWarning": false
+				},
+				"rearRight": {
+					"value": 32.0,
+					"recommended": 32.0,
+					"hasWarning": false
+				},
+				"unit": "psi"
+			},
+			"temperatures": {
+				"frontLeft": 95,
+				"frontRight": 95,
+				"rearLeft": 93,
+				"rearRight": 93,
+				"unit": "fahrenheit"
+			},
+			"timestamp": "2024-02-05T10:30:00Z"
+		},
+		"doors": {
+			"driver": { "isLocked": true },
+			"passenger": { "isLocked": true },
+			"rearLeft": { "isLocked": true },
+			"rearRight": { "isLocked": true },
+			"trunk": { "isLocked": true },
+			"hood": { "isLocked": true }
+		},
+		"windows": {
+			"driver": { "position": 0 },
+			"passenger": { "position": 0 },
+			"rearLeft": { "position": 0 },
+			"rearRight": { "position": 0 }
+		},
+		"sunroof": {
+			"position": 0,
+			"isVentPosition": false
+		},
+		"lights": {
+			"exterior": {
+				"headlights": {
+					"mode": "auto",
+					"isHighBeam": false,
+					"isAutoHighBeam": true,
+					"isDaytimeRunning": true
+				},
+				"fog": {
+					"front": false,
+					"rear": false
+				},
+				"signals": {
+					"isLeftActive": false,
+					"isRightActive": false,
+					"isHazardActive": false
+				}
+			},
+			"interior": {
+				"brightness": 70,
+				"isDomeOn": false,
+				"isAutomatic": true
+			}
+		},
+		"wipers": {
+			"front": {
+				"speed": 0,
+				"intermittentSpeed": 3
+			},
+			"rear": {
+				"speed": 0
+			},
+			"hasLowWasherFluid": false,
+			"isAutomatic": true,
+			"rainSensor": {
+				"sensitivity": 3,
+				"intensity": 0
+			}
+		},
+		"parkingAssist": {
+			"sensors": {
+				"front": {
+					"left": 150,
+					"centerLeft": 175,
+					"center": 200,
+					"centerRight": 175,
+					"right": 150,
+					"unit": "cm"
+				},
+				"rear": {
+					"left": 180,
+					"centerLeft": 190,
+					"center": 200,
+					"centerRight": 190,
+					"right": 175,
+					"unit": "cm"
+				}
+			},
+			"camera": {
+				"isActive": false,
+				"view": "rear",
+				"guidelines": {
+					"isActive": true,
+					"isDynamic": true
+				}
+			},
+			"crossTraffic": {
+				"isActive": true,
+				"hasAlert": false
+			}
+		},
+		"power": {
+			"outlets": {
+				"front": {
+					"isActive": true,
+					"current": 0.1,
+					"voltage": 12.0
+				},
+				"rear": {
+					"isActive": true,
+					"current": 0.0,
+					"voltage": 12.0
+				}
+			},
+			"usb": {
+				"port1": {
+					"isActive": true,
+					"deviceConnected": true,
+					"current": 2.1,
+					"type": "USB-A",
+					"power": 10
+				},
+				"port2": {
+					"isActive": true,
+					"deviceConnected": false,
+					"current": 0.0,
+					"type": "USB-C",
+					"power": 0
+				}
+			}
+		}
+	},
+	"settings": {
+		"driverProfile": {
+			"activeProfile": "profile_1",
+			"profiles": {
+				"profile_1": {
+					"name": "Default",
+					"steeringWheel": {
+						"tilt": 15,
+						"telescope": 20,
+						"heatingLevel": 0
+					},
+					"seat": {
+						"position": {
+							"recline": 105,
+							"height": 15,
+							"distance": 20,
+							"lumbar": 2,
+							"bolster": 1
+						},
+						"heating": 0,
+						"ventilation": 0
+					},
+					"mirrors": {
+						"left": {
+							"horizontal": 15,
+							"vertical": 10,
+							"isAutoFold": true,
+							"isHeated": false
+						},
+						"right": {
+							"horizontal": 15,
+							"vertical": 10,
+							"isAutoFold": true,
+							"isHeated": false
+						}
+					},
+					"climate": {
+						"mode": "auto",
+						"temperature": 72,
+						"fanSpeed": 2,
+						"airFlow": "split",
+						"isRecirculateOn": false,
+						"zoneSync": true
+					},
+					"driverAssistance": {
+						"preferences": {
+							"warningTiming": "medium",
+							"warningVolume": 2
+						}
+					}
+				}
+			}
+		},
+		"driverAssistance": {
+			"laneAssist": {
+				"isEnabled": true,
+				"sensitivity": "medium",
+				"warningType": "vibrate"
+			},
+			"adaptiveCruise": {
+				"isEnabled": true,
+				"followingDistance": 3,
+				"setSpeed": 65,
+				"acceleration": "normal"
+			},
+			"parkingAssist": {
+				"isEnabled": true,
+				"isSensorsActive": true,
+				"alertVolume": 2
+			},
+			"blindSpot": {
+				"isEnabled": true,
+				"isMirrorIndicatorOn": true
+			},
+			"emergencyBraking": {
+				"isEnabled": true,
+				"sensitivity": "medium"
+			}
+		},
+		"connectivity": {
+			"bluetooth": {
+				"isEnabled": true,
+				"connectedDevices": [
+					{
+						"name": "User's iPhone",
+						"type": "phone",
+						"isConnected": true,
+						"lastConnected": "2024-02-05T10:30:00Z",
+						"batteryLevel": 75
+					}
+				]
+			},
+			"smartphone": {
+				"integration": {
+					"type": "carplay",
+					"isActive": true,
+					"connectedDevice": "User's iPhone",
+					"connection": "wired"
+				},
+				"apps": {
+					"navigation": "waze",
+					"music": "spotify",
+					"lastUsed": "2024-02-05T10:30:00Z"
+				}
+			},
+			"wifi": {
+				"isHotspotEnabled": false,
+				"ssid": "Vehicle-1234",
+				"connectedDevices": 0,
+				"signalStrength": 0
+			}
+		},
+		"entertainment": {
+			"audio": {
+				"volume": {
+					"entertainment": 12,
+					"navigation": 15,
+					"phone": 18,
+					"safetyAlerts": 20
+				},
+				"equalizer": {
+					"bass": 2,
+					"mid": 0,
+					"treble": 1
+				},
+				"balance": {
+					"leftRight": 0,
+					"frontRear": 2
+				},
+				"source": "bluetooth"
+			},
+			"radio": {
+				"band": "fm",
+				"presets": {
+					"fm": ["98.5", "102.1", "105.7"],
+					"am": ["750", "1020"],
+					"satellite": ["ch1", "ch2"]
+				}
+			}
+		},
+		"display": {
+			"theme": "auto",
+			"brightness": {
+				"day": 80,
+				"night": 40
+			},
+			"units": {
+				"speed": "mph",
+				"distance": "miles",
+				"temperature": "fahrenheit",
+				"pressure": "psi",
+				"consumption": "mpg"
+			}
+		}
+	},
+	"notifications": {
+		"active": [
+			{
+				"id": "notif_001",
+				"type": "maintenance",
+				"priority": "low",
+				"category": "service",
+				"message": "Oil change due in 500 miles",
+				"timestamp": "2024-02-05T10:30:00Z",
+				"isAcknowledged": false,
+				"actionRequired": false
+			}
+		],
+		"history": [
+			{
+				"id": "notif_000",
+				"type": "system",
+				"message": "Low tire pressure warning cleared",
+				"timestamp": "2024-02-01T15:20:00Z",
+				"resolved": "2024-02-01T16:45:00Z"
+			}
+		]
+	},
+	"maintenance": {
+		"lastService": {
+			"date": "2023-12-15T00:00:00Z",
+			"mileage": 15000,
+			"type": "regular",
+			"description": "15,000 mile service",
+			"items": [
+				{
+					"type": "oil_change",
+					"status": "completed",
+					"details": {
+						"oilType": "5W-30",
+						"quantity": 5.5,
+						"filterReplaced": true
+					}
+				}
+			]
+		},
+		"nextService": {
+			"dueDate": "2024-06-15T00:00:00Z",
+			"dueMileage": 20000,
+			"type": "regular",
+			"estimatedCost": 125.0
+		},
+		"schedule": [
+			{
+				"type": "tire_rotation",
+				"interval": 5000,
+				"lastMileage": 15000,
+				"nextMileage": 20000
+			},
+			{
+				"type": "brake_inspection",
+				"interval": 15000,
+				"lastMileage": 15000,
+				"nextMileage": 30000
+			}
+		]
+	}
+}

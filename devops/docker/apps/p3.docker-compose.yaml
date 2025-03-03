@@ -1,0 +1,25 @@
+services:
+  app-llm-p3:
+    build:
+      context: ../../..
+      dockerfile: devops/docker/services/llm/agents/P3.Dockerfile
+    container_name: App.LLM.P3
+    restart: always
+    networks:
+      - docker_my_network
+    env_file:
+    - ../../../apps/ports.env
+    environment:
+    - IN_PROD=True
+    - PORT_APP_LLM_P3=${PORT_APP_LLM_P3:-7501}
+    ports:
+    - "${PORT_APP_LLM_P3:-7501}:${PORT_APP_LLM_P3:-7501}"
+
+networks:
+  docker_my_network:
+    external: true
+
+# docker compose -f devops/docker/apps/p3.docker-compose.yaml up --build --detach
+# docker compose -f devops/docker/apps/p3.docker-compose.yaml down
+# docker compose -f devops/docker/apps/p3.docker-compose.yaml up --build -d SERVICE
+# docker compose -f devops/docker/apps/p3.docker-compose.yaml down --remove-orphans

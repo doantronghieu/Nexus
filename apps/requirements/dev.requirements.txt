@@ -1,0 +1,140 @@
+# Main
+pika
+ipython >= 8.29.0
+loguru >= 0.7.2
+statistic
+termcolor >= 2.5.0
+rich >= 13.9.4 
+python-dotenv >= 1.0.1
+plotly >= 5.24.1
+# nbformat # 🚫
+# pymongo # 🙅
+motor >= 3.6.0
+redis >= 5.2.0
+# pyaudio >= 0.2.14
+
+pydantic-settings
+
+## Server
+fastapi >= 0.115.4
+python-multipart
+sse-starlette >= 2.1.3
+fastapi-utils >= 0.7.0
+uvicorn >= 0.32.0
+websockets >= 13.1
+psutil
+aiofiles >= 24.1.0
+
+httpcore >= 1.0.6
+grpcio >= 1.67.1
+grpcio-tools >= 1.67.1
+
+# streamlit # 🚫
+# streamlit-mic-recorder # 🚫
+
+## Loaders
+# unstructured # 🚫
+# unstructured.pytesseract # 🚫
+# unstructured_inference # 🚫
+# pytesseract # 🚫
+# pdfminer.six # 🚫
+# pi_heif # 🚫
+# xformers
+
+## Utils
+# speedtest-cli
+
+#*------------------------------------------------------------------------------
+openai >= 1.54.3 #== 1.52.0 # (OpenLLM) # >= 1.54.3
+huggingface-hub >= 0.26.2
+langchain
+
+# LlamaIndex
+llama-index >= 0.11.22
+# llama-index-indices-managed-llama-cloud
+llama-index-utils-workflow >= 0.2.2
+# llama_deploy # ⌛ 
+# llama-hub # 🚫
+# llama-agents[rabbitmq]
+
+## Data
+### Loaders
+# llama-parse # 🚫
+llama-index-readers-web # 🚫
+llama-index-readers-json # 🚫
+llama-index-readers-database # 🚫
+# llama-index-readers-smart-pdf-loader # 🚫
+# llmsherpa # 🚫
+# llama-index-extractors-entity # 🚫
+
+### nltk
+
+## Models
+llama-index-llms-openai >= 0.2.16
+# ollama
+llama-index-llms-ollama >= 0.3.6
+openllm >= 0.6.14
+llama-index-llms-openllm >= 0.3.1
+# llama-index-llms-llama-cpp
+llama-index-llms-vllm
+# vllm
+
+## Embeddings
+llama-index-embeddings-openai >= 0.2.5
+llama-index-embeddings-huggingface >= 0.3.1
+llama-index-embeddings-ollama >= 0.3.1
+llama-index-embeddings-fastembed # ⌛
+fastembed # ⌛
+
+llama-index-readers-file # 🙅
+pymupdf # 🙅
+
+qdrant-client >= 1.12.1
+llama-index-vector-stores-qdrant >= 0.3.3
+llama-index-graph-stores-neo4j
+### wandb protobuf onnx onnxruntime
+# llama-index-storage-docstore-mongodb # ⌛
+# llama-index-storage-index-store-mongodb # ⌛
+
+llama-index-storage-chat-store-redis # ⌛
+
+# llama-index-postprocessor-cohere-rerank # ⌛
+
+# deepeval # ⌛
+
+# llama-index-callbacks-wandb # ⌛
+
+# Agents
+llama-index-agent-openai >= 0.3.4
+tavily-python
+openmeteo-requests
+openmeteo-sdk
+requests-cache
+retry-requests
+#*------------------------------------------------------------------------------
+# LangChain
+
+#*------------------------------------------------------------------------------
+# Speech
+pydub >= 0.25.1
+# openai-whisper
+# faster-whisper
+# piper-tts # Python 3.10
+# numpy=2.0.2
+# ctranslate2 #==3.24.0 # Python < 3.12
+tiktoken
+setuptools-rust
+librosa 
+soundfile
+torchaudio
+openwakeword # Python 3.10.15
+
+#*------------------------------------------------------------------------------
+# Agents
+## Map
+geopy
+overpy
+polyline
+rapidfuzz
+## Music
+yt-dlp 

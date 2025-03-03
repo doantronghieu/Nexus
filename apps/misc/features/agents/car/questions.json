@@ -1,0 +1,77 @@
+{
+  "climate": {
+    "temperature": [
+      "What is current driver temperature",
+      "Increase driver temperature",
+      "Decrease driver temperature",
+      "Set driver temperature to 20",
+      "What is the current status of the AC mode",
+      "Activate the AC mode"
+    ],
+    "seats": [
+      "Turn on/off driver's seat heater"
+    ],
+    "airflow": [
+      "Cool down passenger side",
+      "Direct airflow to face",
+      "Synchronize climate settings",
+      "Increase/decrease fan speed",
+      "Set temperature/fan speed to...",
+      "Activate air recirculation"
+    ],
+    "defrost": [
+      "Turn on/off rear defroster"
+    ]
+  },
+  "wipers": [
+    "What is current front wiper speed",
+    "Increase front wiper speed",
+    
+    "Increase/decrease windshield wiper speed by...",
+    "Turn on/off wipers"
+  ],
+  "doors_and_mirrors": [
+    "Unlook doors",
+    "Lock/unlock doors",
+    "Fold/unfold mirrors",
+    "Open glovebox"
+  ],
+  "charging": [
+    "Open/close charging port",
+    "Start/stop charging"
+  ],
+  "settings": [
+    "Open service settings"
+  ],
+  "navigation": [
+    "Locate [location]",
+    "Navigate to [location]",
+    "Show nearby Superchargers",
+    "Find restaurants nearby",
+    "Stop navigation",
+    "Mute voice guidance"
+  ],
+  "communication": [
+    "Call [contact name/phone number]",
+    "Text [contact name/phone number]"
+  ],
+  "media": {
+    "playback": [
+      "Play [song name]",
+      "Adjust volume",
+      "Skip to next track",
+      "Pause/resume playback"
+    ],
+    "source": [
+      "Change media source to [source]"
+    ]
+  },
+  "apps": [
+    "Open [browser/phone]",
+    "Search for..."
+  ],
+  "display": [
+    "Reduce screen brightness",
+    "Display Owner's Manual"
+  ]
+}

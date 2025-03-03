@@ -1,0 +1,54 @@
+
+## UI/UX Best Practices
+
+### UI Libraries & Styling
+- Implement Tailwind CSS effectively
+- Use Shadcn UI components properly
+- Integrate Radix UI primitives
+- Configure DaisyUI themes
+- Implement Material Design patterns
+- Use CSS Grid/Flexbox for layouts
+- Implement responsive design patterns
+- Follow mobile-first approach
+- Support dark mode effectively
+- Optimize for different screen sizes
+- Handle proper component composition
+- Implement proper theming
+- Use proper CSS variables
+- Handle proper animations
+- Implement proper loading states
+
+### Accessibility (a11y)
+- Follow WCAG guidelines
+- Implement proper ARIA labels
+- Ensure keyboard navigation
+- Provide proper color contrast
+- Support screen readers
+- Implement proper focus management
+- Test with accessibility tools
+- Handle responsive design
+- Provide alt text for images
+- Implement proper form labels
+- Handle proper heading hierarchy
+- Implement proper skip links
+- Use proper semantic HTML
+- Handle proper tab order
+- Implement proper error messaging
+
+
+### Internationalization (i18n)
+- Use appropriate i18n libraries
+- Implement key-based translations
+- Handle RTL languages properly
+- Format dates, numbers, currencies
+- Handle multiple languages
+- Implement proper font handling
+- Support cultural differences
+- Handle pluralization rules
+- Implement fallback mechanisms
+- Use proper language detection
+- Handle proper text direction
+- Implement proper number formatting
+- Handle proper date/time formatting
+- Implement proper currency formatting
+- Handle proper collation

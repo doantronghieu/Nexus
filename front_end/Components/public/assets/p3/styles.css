@@ -1,0 +1,272 @@
+:root {
+  /* Color palette */
+  --primary: #3563E9;
+  --primary-light: #D6E4FF;
+  --primary-dark: #1E429F;
+  --success: #00C853;
+  --warning: #FFB800;
+  --error: #F03E3E;
+  --text-primary: #1A202C;
+  --text-secondary: #4A5568;
+  --text-tertiary: #718096;
+  --bg-light: #F7FAFC;
+  --bg-white: #FFFFFF;
+  --border-light: #E2E8F0;
+  --border-medium: #CBD5E0;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.05);
+  --shadow-md: 0 4px 6px rgba(0,0,0,0.05);
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --transition: all 0.2s ease;
+}
+
+/* Global reset and base styles */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-primary);
+  background-color: var(--bg-light);
+}
+
+/* Card styling */
+.dash-card {
+  background-color: var(--bg-white);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  transition: var(--transition);
+}
+
+.dash-card:hover {
+  box-shadow: var(--shadow-md);
+}
+
+.card-header {
+  padding: 12px 16px;
+  background-color: var(--bg-light);
+  border-bottom: 1px solid var(--border-light);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.card-title {
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.card-body {
+  padding: 12px 16px;
+  flex: 1;
+  overflow: auto;
+}
+
+/* Status indicators */
+.status-badge {
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: capitalize;
+  display: inline-flex;
+  align-items: center;
+}
+
+.status-badge:before {
+  content: "";
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: 4px;
+}
+
+.status-online:before, .status-available:before, .status-completed:before {
+  background-color: var(--success);
+}
+
+.status-offline:before, .status-failed:before {
+  background-color: var(--error);
+}
+
+.status-warning:before, .status-pending:before, .status-in-progress:before {
+  background-color: var(--warning);
+}
+
+/* Buttons */
+.btn {
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition);
+  border: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.btn-primary {
+  background-color: var(--primary);
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: var(--primary-dark);
+}
+
+.btn-outline {
+  background-color: transparent;
+  color: var(--primary);
+  border: 1px solid var(--primary);
+}
+
+.btn-outline:hover {
+  background-color: var(--primary-light);
+}
+
+.btn-icon {
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Form elements */
+.input {
+  padding: 8px 12px;
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  width: 100%;
+  transition: var(--transition);
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px var(--primary-light);
+}
+
+/* Layout helpers */
+.flex {
+  display: flex;
+}
+
+.flex-col {
+  flex-direction: column;
+}
+
+.items-center {
+  align-items: center;
+}
+
+.justify-between {
+  justify-content: space-between;
+}
+
+.gap-2 {
+  gap: 8px;
+}
+
+.gap-3 {
+  gap: 12px;
+}
+
+.gap-4 {
+  gap: 16px;
+}
+
+.mt-2 {
+  margin-top: 8px;
+}
+
+.mb-2 {
+  margin-bottom: 8px;
+}
+
+.w-full {
+  width: 100%;
+}
+
+/* Responsive utilities */
+@media (max-width: 1024px) {
+  .dash-card {
+    margin-bottom: 12px;
+  }
+}
+
+/* Dashboard grid system */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  grid-auto-rows: minmax(min-content, max-content);
+  gap: 12px;
+  height: calc(100vh - 60px);
+  padding: 12px;
+  overflow: hidden;
+}
+
+.grid-span-3 {
+  grid-column: span 3;
+}
+
+.grid-span-4 {
+  grid-column: span 4;
+}
+
+.grid-span-6 {
+  grid-column: span 6;
+}
+
+.grid-span-8 {
+  grid-column: span 8;
+}
+
+.grid-span-12 {
+  grid-column: span 12;
+}
+
+/* Row heights */
+.grid-h-1 {
+  grid-row: span 1;
+}
+
+.grid-h-2 {
+  grid-row: span 2;
+}
+
+.grid-h-3 {
+  grid-row: span 3;
+}
+
+/* For small screens, stack all elements */
+@media (max-width: 768px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+    height: auto;
+    overflow: auto;
+  }
+  
+  [class*="grid-span-"] {
+    grid-column: span 1;
+  }
+}

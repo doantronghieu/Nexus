@@ -1,0 +1,28 @@
+### Vue.js (Vue 3)
+- Use Composition API with script setup
+- Implement Pinia for state management:
+  - Proper store organization
+  - Action/mutation patterns
+  - State composition
+- Configure Vue Router effectively:
+  - Route management
+  - Navigation guards
+  - Lazy loading
+- Implement responsive design with Tailwind
+- Optimize components with VueUse
+- Use Suspense for async components
+- Implement proper code splitting
+- Optimize for Web Vitals
+- Use Headless UI and Element Plus components
+
+- Pinia:
+  - Structure stores by feature
+  - Use composition API integration
+  - Implement proper type safety
+  - Handle SSR hydration
+  - Implement store modules
+  - Handle hot module replacement
+  - Use proper devtools
+  - Handle proper state persistence
+  - Implement proper getters
+  - Use proper actions

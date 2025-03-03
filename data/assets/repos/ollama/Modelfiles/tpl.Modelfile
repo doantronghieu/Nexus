@@ -1,0 +1,93 @@
+# Generic Modelfile Template
+
+# Note: Lines starting with '#' are comments and are ignored by Ollama
+# The Modelfile format is not case-sensitive, but uppercase is used here for readability
+
+# Define the base model (Required) - Choose one of the following options:
+
+# Option 1: Use an existing model
+FROM llama2
+
+# Option 2: Build from a Safetensors model
+# FROM /path/to/model/directory
+
+# Option 3: Build from a GGUF file
+# FROM ./path/to/model.gguf
+
+# Set parameters for model execution
+PARAMETER temperature 0.0        # Controls creativity vs coherence
+PARAMETER num_ctx 2048           # Sets the context window size (default: 2048)
+PARAMETER num_predict 128        # Maximum tokens to predict (-1 = infinite, -2 = fill context)
+PARAMETER top_k 40               # Reduces nonsense generation (default: 40)
+PARAMETER top_p 0.9              # Works with top_k for text diversity (default: 0.9)
+PARAMETER min_p 0.05             # Minimum probability for token consideration
+PARAMETER repeat_last_n 64       # Lookback window to prevent repetition (default: 64, 0 = disabled, -1 = num_ctx)
+PARAMETER repeat_penalty 1.1     # Penalty for repetitions (default: 1.1)
+PARAMETER mirostat 0             # Mirostat sampling for perplexity control (0 = disabled, 1 = Mirostat, 2 = Mirostat 2.0)
+PARAMETER mirostat_eta 0.1       # Mirostat learning rate (default: 0.1)
+PARAMETER mirostat_tau 5.0       # Mirostat target entropy (default: 5.0)
+PARAMETER seed 42                # Random seed for reproducibility (default: 0)
+PARAMETER tfs_z 1                # Tail free sampling parameter (default: 1)
+PARAMETER stop "<|im_start|>"    # Stop sequence
+PARAMETER stop "<|im_end|>"      # Stop sequence
+PARAMETER stop "<|eot_id|>"      # Stop sequence
+PARAMETER stop "<|reserved_special_token"  # Stop sequence
+
+# Specify the system message (optional)
+SYSTEM """You are a helpful AI assistant created by Anthropic to be safe, ethical, and beneficial."""
+
+# Define the full prompt template
+TEMPLATE """{{ if .System }}
+<|im_start|>system
+{{ .System }}
+<|im_end|>
+{{ end }}
+{{ if .Prompt }}
+<|im_start|>user
+{{ .Prompt }}
+<|im_end|>
+{{ end }}
+<|im_start|>assistant
+{{ .Response }}
+<|im_end|>
+"""
+
+# Add example conversation history (optional)
+MESSAGE system You are a helpful AI assistant created by Anthropic.
+MESSAGE user Hello! Can you tell me about Modelfiles?
+MESSAGE assistant Certainly! A Modelfile is a configuration file used by Ollama to create and customize AI language models. It contains instructions and parameters that define how the model should behave, including its base architecture, response patterns, and various settings that affect its performance and output. Modelfiles allow users to fine-tune existing models or create new ones tailored to specific tasks or domains.
+
+MESSAGE user What are some key components of a Modelfile?
+MESSAGE assistant A Modelfile typically includes several key components:
+
+1. FROM instruction: Specifies the base model to use.
+2. PARAMETER instructions: Set various model parameters like temperature, context size, and sampling methods.
+3. SYSTEM instruction: Defines the system message for the model's behavior.
+4. TEMPLATE instruction: Specifies the full prompt template for the model.
+5. MESSAGE instructions: Can be used to provide example conversations.
+6. LICENSE instruction: Specifies the legal license for the model.
+7. ADAPTER instruction: Can be used to apply LoRA adapters to the base model.
+
+Each of these components helps customize the model's behavior and performance for specific use cases.
+
+# Specify the legal license (optional)
+LICENSE """
+This model is subject to the terms of the MIT License.
+
+Copyright (c) [year] [fullname]
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+[Full license text continues...]
+"""
+
+# Define LoRA adapter (optional)
+# ADAPTER ./path/to/lora_adapter.safetensors
+
+# Alternatively, for GGUF adapter:
+# ADAPTER ./path/to/lora_adapter.gguf

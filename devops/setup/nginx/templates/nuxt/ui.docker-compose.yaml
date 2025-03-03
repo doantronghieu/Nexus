@@ -1,0 +1,16 @@
+services:
+  nuxtjs-APP:
+    # TODO
+    container_name: NuxtJs.APP # TODO
+    build:
+      context: ../..
+      dockerfile: devops/docker/ui/NuxtJs.Template.Dockerfile
+    ports:
+    - "3000:3000"
+    restart: always
+    environment:
+    - NODE_ENV=production
+    - BASE_URL=/ui
+    - NITRO_PRESET=node-server
+    - HOST=0.0.0.0
+    - PORT=3000

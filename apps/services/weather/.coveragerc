@@ -1,0 +1,25 @@
+[run]
+branch = True
+source = weather
+omit =
+    */tests/*
+    */migrations/*
+    */site-packages/*
+    */__init__.py
+
+[report]
+exclude_lines =
+    pragma: no cover
+    def __repr__
+    if self.debug:
+    raise NotImplementedError
+    if __name__ == .__main__.:
+    pass
+    raise ImportError
+    except ImportError:
+    raise AssertionError
+    
+ignore_errors = True
+
+[html]
+directory = coverage_html

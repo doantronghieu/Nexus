@@ -1,0 +1,1 @@
+from langchain.chains.base import Chain

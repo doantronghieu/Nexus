@@ -1,0 +1,45 @@
+services:
+  dev.cuda:
+    build:
+      context: .
+      dockerfile: dev.cuda.Dockerfile
+    image: dev.cuda:latest
+    container_name: dev.cuda
+    restart: unless-stopped
+    environment:
+    - DISPLAY=${DISPLAY}
+    - NVIDIA_VISIBLE_DEVICES=all
+    - HOST_UID=${HOST_UID}
+    - HOST_GID=${HOST_GID}
+    - HOST_USER=${HOST_USER}
+    volumes:
+    - /home/${HOST_USER}:/home/${HOST_USER}
+    - /etc/passwd:/etc/passwd:ro
+    - /etc/group:/etc/group:ro
+    - /etc/shadow:/etc/shadow:ro
+    - /tmp/.X11-unix:/tmp/.X11-unix
+    working_dir: /home/${HOST_USER}
+    command: |
+      bash -c '
+      if ! getent passwd ${HOST_UID} > /dev/null 2>&1; then
+        groupadd -g ${HOST_GID} ${HOST_USER}
+        useradd -m -s /bin/bash -u ${HOST_UID} -g ${HOST_GID} ${HOST_USER}
+      fi
+      chown ${HOST_USER}:${HOST_USER} /home/${HOST_USER}
+      echo ". /opt/conda/etc/profile.d/conda.sh" >> /home/${HOST_USER}/.bashrc
+      echo "conda activate dev" >> /home/${HOST_USER}/.bashrc
+      su - ${HOST_USER}
+      '
+    user: root
+    tty: true
+    deploy:
+      resources:
+        reservations:
+          devices:
+          - driver: nvidia
+            count: all
+            capabilities: [ gpu ]
+
+# docker compose -f devops/docker/cuda/dev.cuda.docker-compose.yaml build
+# docker compose -f devops/docker/cuda/dev.cuda.docker-compose.yaml up -d
+# docker compose -f devops/docker/cuda/dev.cuda.docker-compose.yaml exec dev.cuda bash

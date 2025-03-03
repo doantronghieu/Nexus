@@ -1,0 +1,25 @@
+services:
+  app-vehicle:
+    build:
+      context: ../../..
+      dockerfile: devops/docker/services/llm/agents/Vehicle.Dockerfile
+    container_name: App.Vehicle
+    restart: always
+    networks:
+      - infra_my_network
+    env_file:
+    - ../../../apps/ports.env
+    environment:
+    - IN_PROD=True
+    - PORT_APP_VEHICLE=${PORT_APP_VEHICLE:-7500}
+    ports:
+    - "${PORT_APP_VEHICLE:-7500}:${PORT_APP_VEHICLE:-7500}"
+
+networks:
+  infra_my_network:
+    external: true
+
+# docker compose -f devops/docker/apps/vehicle.docker-compose.yaml up --build --detach
+# docker compose -f devops/docker/apps/vehicle.docker-compose.yaml down
+# docker compose -f devops/docker/apps/vehicle.docker-compose.yaml up --build -d SERVICE
+# docker compose -f devops/docker/apps/vehicle.docker-compose.yaml down --remove-orphans

@@ -1,0 +1,376 @@
+{# File: /Users/thung/Documents/Me/Coding/Embedded-AI/apps/services/weather/templates/ui.html #}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Service API Testing</title>
+    <link rel="stylesheet" href="{{ url_for('static', path='/css/styles.css') }}">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <h1>Weather Service API Testing</h1>
+            <p>Version: {{ version }}</p>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- Navigation Tabs -->
+        <nav class="nav-tabs">
+            <button class="nav-tab active" data-tab="forecast">Weather Forecast</button>
+            <button class="nav-tab" data-tab="historical">Historical Weather</button>
+            <button class="nav-tab" data-tab="marine">Marine Weather</button>
+            <button class="nav-tab" data-tab="air-quality">Air Quality</button>
+            <button class="nav-tab" data-tab="geocoding">Geocoding</button>
+            <button class="nav-tab" data-tab="elevation">Elevation</button>
+            <button class="nav-tab" data-tab="flood">Flood Data</button>
+            <button class="nav-tab" data-tab="ensemble">Ensemble Forecast</button>
+            <button class="nav-tab" data-tab="climate">Climate Data</button>
+        </nav>
+
+        <!-- Weather Forecast Form -->
+        <form class="form-section" data-tab="forecast" data-endpoint="forecast">
+            <h2>Weather Forecast</h2>
+            
+            <div class="form-group">
+                <label class="form-label">Coordinates</label>
+                <div class="form-row">
+                    <input type="number" name="coordinates.latitude" class="form-input" placeholder="Latitude" step="any" required>
+                    <input type="number" name="coordinates.longitude" class="form-input" placeholder="Longitude" step="any" required>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Time Range</label>
+                <div class="form-row">
+                    <input type="number" name="time_range.forecast_days" class="form-input" placeholder="Forecast Days (0-16)" min="0" max="16">
+                    <input type="number" name="time_range.past_days" class="form-input" placeholder="Past Days (0-92)" min="0" max="92">
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Variables</label>
+                <div class="form-row">
+                    <select name="hourly" class="form-select" multiple>
+                        <option value="temperature_2m">Temperature (2m)</option>
+                        <option value="relative_humidity_2m">Relative Humidity (2m)</option>
+                        <option value="precipitation">Precipitation</option>
+                        <option value="rain">Rain</option>
+                        <option value="snowfall">Snowfall</option>
+                        <option value="wind_speed_10m">Wind Speed (10m)</option>
+                        <option value="wind_direction_10m">Wind Direction (10m)</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Settings</label>
+                <div class="form-row">
+                    <select name="timezone" class="form-select">
+                        <option value="UTC">UTC</option>
+                        <option value="auto">Auto</option>
+                    </select>
+                    <select name="temperature_unit" class="form-select">
+                        <option value="celsius">Celsius</option>
+                        <option value="fahrenheit">Fahrenheit</option>
+                    </select>
+                    <select name="wind_speed_unit" class="form-select">
+                        <option value="kmh">km/h</option>
+                        <option value="ms">m/s</option>
+                        <option value="mph">mph</option>
+                        <option value="kn">knots</option>
+                    </select>
+                </div>
+            </div>
+            
+            <button type="submit" class="btn btn-primary">Get Forecast</button>
+        </form>
+
+        <!-- Historical Weather Form -->
+        <form class="form-section" data-tab="historical" data-endpoint="historical" style="display: none;">
+            <h2>Historical Weather</h2>
+            
+            <div class="form-group">
+                <label class="form-label">Coordinates</label>
+                <div class="form-row">
+                    <input type="number" name="coordinates.latitude" class="form-input" placeholder="Latitude" step="any" required>
+                    <input type="number" name="coordinates.longitude" class="form-input" placeholder="Longitude" step="any" required>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Time Range</label>
+                <div class="form-row">
+                    <input type="date" name="time_range.start_date" class="form-input" required>
+                    <input type="date" name="time_range.end_date" class="form-input" required>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Variables</label>
+                <div class="form-row">
+                    <select name="hourly" class="form-select" multiple>
+                        <option value="temperature_2m">Temperature (2m)</option>
+                        <option value="relative_humidity_2m">Relative Humidity (2m)</option>
+                        <option value="precipitation">Precipitation</option>
+                        <option value="rain">Rain</option>
+                        <option value="snowfall">Snowfall</option>
+                        <option value="wind_speed_10m">Wind Speed (10m)</option>
+                        <option value="wind_direction_10m">Wind Direction (10m)</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Settings</label>
+                <div class="form-row">
+                    <select name="timezone" class="form-select">
+                        <option value="UTC">UTC</option>
+                        <option value="auto">Auto</option>
+                    </select>
+                </div>
+            </div>
+            
+            <button type="submit" class="btn btn-primary">Get Historical Data</button>
+        </form>
+
+        <!-- Marine Weather Form -->
+        <form class="form-section" data-tab="marine" data-endpoint="marine" style="display: none;">
+            <h2>Marine Weather</h2>
+            
+            <div class="form-group">
+                <label class="form-label">Coordinates</label>
+                <div class="form-row">
+                    <input type="number" name="coordinates.latitude" class="form-input" placeholder="Latitude" step="any" required>
+                    <input type="number" name="coordinates.longitude" class="form-input" placeholder="Longitude" step="any" required>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Variables</label>
+                <div class="form-row">
+                    <select name="hourly" class="form-select" multiple>
+                        <option value="wave_height">Wave Height</option>
+                        <option value="wave_direction">Wave Direction</option>
+                        <option value="wave_period">Wave Period</option>
+                        <option value="wind_wave_height">Wind Wave Height</option>
+                        <option value="wind_wave_direction">Wind Wave Direction</option>
+                        <option value="wind_wave_period">Wind Wave Period</option>
+                        <option value="swell_wave_height">Swell Wave Height</option>
+                        <option value="swell_wave_direction">Swell Wave Direction</option>
+                        <option value="swell_wave_period">Swell Wave Period</option>
+                    </select>
+                </div>
+            </div>
+            
+            <button type="submit" class="btn btn-primary">Get Marine Data</button>
+        </form>
+
+        <!-- Air Quality Form -->
+        <form class="form-section" data-tab="air-quality" data-endpoint="airQuality" style="display: none;">
+            <h2>Air Quality</h2>
+            
+            <div class="form-group">
+                <label class="form-label">Coordinates</label>
+                <div class="form-row">
+                    <input type="number" name="coordinates.latitude" class="form-input" placeholder="Latitude" step="any" required>
+                    <input type="number" name="coordinates.longitude" class="form-input" placeholder="Longitude" step="any" required>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Variables</label>
+                <div class="form-row">
+                    <select name="hourly" class="form-select" multiple>
+                        <option value="pm10">PM10</option>
+                        <option value="pm2_5">PM2.5</option>
+                        <option value="carbon_monoxide">Carbon Monoxide</option>
+                        <option value="nitrogen_dioxide">Nitrogen Dioxide</option>
+                        <option value="sulphur_dioxide">Sulphur Dioxide</option>
+                        <option value="ozone">Ozone</option>
+                        <option value="aerosol_optical_depth">Aerosol Optical Depth</option>
+                        <option value="dust">Dust</option>
+                        <option value="uv_index">UV Index</option>
+                    </select>
+                </div>
+            </div>
+            
+            <button type="submit" class="btn btn-primary">Get Air Quality Data</button>
+        </form>
+
+        <!-- Geocoding Form -->
+        <form class="form-section" data-tab="geocoding" data-endpoint="geocoding" style="display: none;">
+            <h2>Geocoding</h2>
+            
+            <div class="form-group">
+                <label class="form-label">Location Name</label>
+                <input type="text" name="name" class="form-input" placeholder="Enter location name" required>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Settings</label>
+                <div class="form-row">
+                    <input type="number" name="count" class="form-input" placeholder="Result count (1-100)" min="1" max="100" value="10">
+                    <select name="language" class="form-select">
+                        <option value="en">English</option>
+                        <option value="de">German</option>
+                        <option value="fr">French</option>
+                        <option value="es">Spanish</option>
+                    </select>
+                </div>
+            </div>
+            
+            <button type="submit" class="btn btn-primary">Search Location</button>
+        </form>
+
+        <!-- Elevation Form -->
+        <form class="form-section" data-tab="elevation" data-endpoint="elevation" style="display: none;">
+            <h2>Elevation</h2>
+            
+            <div class="form-group">
+                <label class="form-label">Coordinates</label>
+                <div class="form-row">
+                    <input type="number" name="latitude" class="form-input" placeholder="Latitude" step="any" required>
+                    <input type="number" name="longitude" class="form-input" placeholder="Longitude" step="any" required>
+                </div>
+            </div>
+            
+            <button type="submit" class="btn btn-primary">Get Elevation</button>
+        </form>
+
+        <!-- Flood Data Form -->
+        <form class="form-section" data-tab="flood" data-endpoint="flood" style="display: none;">
+            <h2>Flood Data</h2>
+            
+            <div class="form-group">
+                <label class="form-label">Coordinates</label>
+                <div class="form-row">
+                    <input type="number" name="coordinates.latitude" class="form-input" placeholder="Latitude" step="any" required>
+                    <input type="number" name="coordinates.longitude" class="form-input" placeholder="Longitude" step="any" required>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Settings</label>
+                <div class="form-row">
+                    <select name="ensemble" class="form-select">
+                        <option value="false">Disable Ensemble</option>
+                        <option value="true">Enable Ensemble</option>
+                    </select>
+                </div>
+            </div>
+            
+            <button type="submit" class="btn btn-primary">Get Flood Data</button>
+        </form>
+
+        <!-- Ensemble Forecast Form -->
+        <form class="form-section" data-tab="ensemble" data-endpoint="ensemble" style="display: none;">
+            <h2>Ensemble Forecast</h2>
+            
+            <div class="form-group">
+                <label class="form-label">Coordinates</label>
+                <div class="form-row">
+                    <input type="number" name="coordinates.latitude" class="form-input" placeholder="Latitude" step="any" required>
+                    <input type="number" name="coordinates.longitude" class="form-input" placeholder="Longitude" step="any" required>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Models</label>
+                <div class="form-row">
+                    <select name="models" class="form-select" multiple>
+                        <option value="icon_seamless">ICON Seamless</option>
+                        <option value="icon_global">ICON Global</option>
+                        <option value="icon_eu">ICON EU</option>
+                        <option value="gfs_seamless">GFS Seamless</option>
+                        <option value="gfs_global">GFS Global</option>
+                        <option value="ecmwf_ifs04">ECMWF IFS 0.4°</option>
+                    </select>
+                </div>
+            </div>
+            
+            <button type="submit" class="btn btn-primary">Get Ensemble Forecast</button>
+        </form>
+
+        <!-- Climate Data Form -->
+        <form class="form-section" data-tab="climate" data-endpoint="climate" style="display: none;">
+            <h2>Climate Data</h2>
+            
+            <div class="form-group">
+                <label class="form-label">Coordinates</label>
+                <div class="form-row">
+                    <input type="number" name="coordinates.latitude" class="form-input" placeholder="Latitude" step="any" required>
+                    <input type="number" name="coordinates.longitude" class="form-input" placeholder="Longitude" step="any" required>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Time Range</label>
+                <div class="form-row">
+                    <input type="date" name="time_range.start_date" class="form-input" min="1950-01-01" max="2050-12-31" required>
+                    <input type="date" name="time_range.end_date" class="form-input" min="1950-01-01" max="2050-12-31" required>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Climate Models</label>
+                <div class="form-row">
+                    <select name="models" class="form-select" multiple>
+                        <option value="CMCC_CM2_VHR4">CMCC-CM2-VHR4 (30 km)</option>
+                        <option value="FGOALS_f3_H">FGOALS-f3-H (28 km)</option>
+                        <option value="HiRAM_SIT_HR">HiRAM-SIT-HR (25 km)</option>
+                        <option value="MRI_AGCM3_2_S">MRI-AGCM3-2-S (20 km)</option>
+                        <option value="EC_Earth3P_HR">EC-Earth3P-HR (29 km)</option>
+                        <option value="MPI_ESM1_2_XR">MPI-ESM1-2-XR (51 km)</option>
+                        <option value="NICAM16_8S">NICAM16-8S (31 km)</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Daily Variables</label>
+                <div class="form-row">
+                    <select name="daily" class="form-select" multiple>
+                        <option value="temperature_2m_max">Maximum Temperature (2m)</option>
+                        <option value="temperature_2m_min">Minimum Temperature (2m)</option>
+                        <option value="temperature_2m_mean">Mean Temperature (2m)</option>
+                        <option value="precipitation_sum">Precipitation Sum</option>
+                        <option value="rain_sum">Rain Sum</option>
+                        <option value="snowfall_sum">Snowfall Sum</option>
+                        <option value="wind_speed_10m_max">Maximum Wind Speed (10m)</option>
+                        <option value="wind_direction_10m_dominant">Dominant Wind Direction (10m)</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Settings</label>
+                <div class="form-row">
+                    <select name="disable_bias_correction" class="form-select">
+                        <option value="false">Enable Bias Correction</option>
+                        <option value="true">Disable Bias Correction</option>
+                    </select>
+                </div>
+            </div>
+            
+            <button type="submit" class="btn btn-primary">Get Climate Data</button>
+        </form>
+
+        <!-- Response Section -->
+        <div class="response-section" style="display: none;">
+            <div class="response-header">
+                <h3 class="response-title">Response</h3>
+                <button class="btn" onclick="clearResponse()">Clear</button>
+            </div>
+            <div class="loading">
+                <div class="spinner"></div>
+                <span>Loading...</span>
+            </div>
+            <pre class="response-content"></pre>
+        </div>
+    </main>
+
+    <script src="{{ url_for('static', path='/js/main.js') }}"></script>
+</body>
+</html>

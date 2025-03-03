@@ -1,0 +1,1 @@
+from langchain_core.documents.compressor import BaseDocumentCompressor

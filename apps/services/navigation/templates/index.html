@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Location Tracker</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Core colors */
+            --primary-color: #2563eb;
+            --primary-dark: #1d4ed8;
+            --primary-light: #3b82f6;
+            --success-color: #16a34a;
+            --error-color: #dc2626;
+            --warning-color: #f59e0b;
+
+            /* Background colors */
+            --bg-primary: #f8fafc;
+            --bg-secondary: #f1f5f9;
+            --bg-card: #ffffff;
+
+            /* Text colors */
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --text-light: #94a3b8;
+
+            /* Border colors */
+            --border-light: #e2e8f0;
+            --border-focus: #3b82f6;
+
+            /* Shadow variations */
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+
+            /* Spacing */
+            --spacing-xs: 0.25rem;
+            --spacing-sm: 0.5rem;
+            --spacing-md: 1rem;
+            --spacing-lg: 1.5rem;
+            --spacing-xl: 2rem;
+
+            /* Border radius */
+            --radius-sm: 0.375rem;
+            --radius-md: 0.5rem;
+            --radius-lg: 0.75rem;
+
+            /* Transitions */
+            --transition-normal: all 0.2s ease;
+            --transition-slow: all 0.3s ease;
+        }
+
+        /* Reset and base styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.5;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            padding: var(--spacing-md);
+            min-height: 100vh;
+        }
+
+        /* Layout */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: var(--spacing-md);
+        }
+
+        /* Header styles */
+        .header {
+            text-align: center;
+            margin-bottom: var(--spacing-xl);
+            padding: var(--spacing-lg);
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-md);
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: var(--spacing-sm);
+            letter-spacing: -0.025em;
+        }
+
+        .header p {
+            color: var(--text-secondary);
+            font-size: 1.125rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Card styles */
+        .card {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow);
+            margin-bottom: var(--spacing-lg);
+            transition: var(--transition-normal);
+            border: 1px solid var(--border-light);
+            overflow: hidden;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .card-header {
+            padding: var(--spacing-lg);
+            border-bottom: 1px solid var(--border-light);
+            background: var(--bg-secondary);
+        }
+
+        .card-body {
+            padding: var(--spacing-lg);
+        }
+
+        /* Status styles */
+        .status-card {
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .status {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            font-weight: 500;
+        }
+
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+        }
+
+        .status.error {
+            color: var(--error-color);
+        }
+
+        .status.error .status-indicator {
+            background-color: var(--error-color);
+        }
+
+        .status.success {
+            color: var(--success-color);
+        }
+
+        .status.success .status-indicator {
+            background-color: var(--success-color);
+        }
+
+        /* Search section styles */
+        .search-section {
+            padding: var(--spacing-lg);
+        }
+
+        .search-container {
+            display: grid;
+            grid-template-columns: 1fr auto auto;
+            gap: var(--spacing-md);
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .search-input {
+            padding: var(--spacing-md);
+            border: 2px solid var(--border-light);
+            border-radius: var(--radius-md);
+            font-size: 1rem;
+            outline: none;
+            transition: var(--transition-normal);
+            width: 100%;
+        }
+
+        .search-input:focus {
+            border-color: var(--border-focus);
+        }
+
+        .search-controls {
+            display: flex;
+            gap: var(--spacing-sm);
+        }
+
+        .search-control {
+            padding: var(--spacing-md);
+            border: 2px solid var(--border-light);
+            border-radius: var(--radius-md);
+            font-size: 0.875rem;
+            outline: none;
+            background-color: var(--bg-card);
+            cursor: pointer;
+            transition: var(--transition-normal);
+            min-width: 120px;
+        }
+
+        .search-control:focus {
+            border-color: var(--border-focus);
+        }
+
+        .search-button {
+            padding: var(--spacing-md) var(--spacing-lg);
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: var(--radius-md);
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition-normal);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+
+        .search-button:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .search-button:disabled {
+            background-color: var(--text-light);
+            cursor: not-allowed;
+        }
+
+        /* Places list styles */
+        .places-list {
+            display: grid;
+            gap: var(--spacing-md);
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        }
+
+        .place-card {
+            background: var(--bg-card);
+            border-radius: var(--radius-md);
+            padding: var(--spacing-lg);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-light);
+            transition: var(--transition-normal);
+        }
+
+        .place-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .place-name {
+            font-weight: 600;
+            font-size: 1.125rem;
+            margin-bottom: var(--spacing-sm);
+            color: var(--text-primary);
+        }
+
+        .place-category {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-bottom: var(--spacing-sm);
+            padding: var(--spacing-xs) var(--spacing-sm);
+            background: var(--bg-secondary);
+            border-radius: var(--radius-sm);
+            display: inline-block;
+        }
+
+        .place-distance {
+            font-size: 0.875rem;
+            color: var(--primary-color);
+            margin-bottom: var(--spacing-sm);
+            font-weight: 500;
+        }
+
+        .place-address {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-bottom: var(--spacing-md);
+            line-height: 1.4;
+        }
+
+        .place-actions {
+            display: flex;
+            gap: var(--spacing-sm);
+            margin-top: var(--spacing-md);
+        }
+
+        .place-action-btn {
+            flex: 1;
+            padding: var(--spacing-sm) var(--spacing-md);
+            font-size: 0.875rem;
+            color: var(--primary-color);
+            background: transparent;
+            border: 1px solid var(--primary-color);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: var(--transition-normal);
+            text-decoration: none;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--spacing-sm);
+        }
+
+        .place-action-btn:hover {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        /* Location display styles */
+        .location-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--spacing-lg);
+        }
+
+        .location-section {
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .section-title {
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-secondary);
+            margin-bottom: var(--spacing-md);
+            font-weight: 600;
+        }
+
+        .location-item {
+            margin-bottom: var(--spacing-md);
+            padding: var(--spacing-md);
+            background-color: var(--bg-secondary);
+            border-radius: var(--radius-md);
+            transition: var(--transition-normal);
+        }
+
+        .location-item:hover {
+            background-color: var(--bg-primary);
+        }
+
+        .location-label {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .location-value {
+            font-size: 1rem;
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        /* Utility classes */
+        .divider {
+            height: 1px;
+            background-color: var(--border-light);
+            margin: var(--spacing-lg) 0;
+        }
+
+        .timestamp {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            text-align: right;
+            margin-top: var(--spacing-md);
+            padding-top: var(--spacing-md);
+            border-top: 1px solid var(--border-light);
+        }
+
+        .loading {
+            text-align: center;
+            padding: var(--spacing-xl);
+            color: var(--text-secondary);
+        }
+
+        .error-message {
+            padding: var(--spacing-md);
+            background-color: #fef2f2;
+            border: 1px solid #fecaca;
+            border-radius: var(--radius-md);
+            color: var(--error-color);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .no-results {
+            text-align: center;
+            padding: var(--spacing-xl);
+            color: var(--text-secondary);
+            background: var(--bg-secondary);
+            border-radius: var(--radius-md);
+        }
+
+        /* Responsive styles */
+        @media (max-width: 768px) {
+            .container {
+                padding: var(--spacing-sm);
+            }
+
+            .search-container {
+                grid-template-columns: 1fr;
+            }
+
+            .search-controls {
+                grid-column: 1;
+                flex-direction: column;
+            }
+
+            .search-button {
+                grid-column: 1;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .places-list {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Loading animation */
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        .loading-pulse {
+            animation: pulse 1.5s infinite ease-in-out;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>Location Tracker</h1>
+            <p>Real-time location monitoring system</p>
+        </header>
+
+        <div class="card status-card">
+            <div id="status" class="status">
+                <div class="status-indicator"></div>
+                <span>Initializing system...</span>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <div class="section-title">Search Nearby Places</div>
+            </div>
+            <div class="search-section">
+                <div class="search-container">
+                    <input type="text" 
+                           id="searchInput" 
+                           class="search-input" 
+                           placeholder="Search for restaurants, gas stations, etc..."
+                           onkeypress="handleSearchKeyPress(event)">
+                    <div class="search-controls">
+                        <select id="radiusSelect" class="search-control">
+                            <option value="1000">1km radius</option>
+                            <option value="2000">2km radius</option>
+                            <option value="5000" selected>5km radius</option>
+                            <option value="10000">10km radius</option>
+                            <option value="20000">20km radius</option>
+                        </select>
+                        <select id="limitSelect" class="search-control">
+                            <option value="5">5 results</option>
+                            <option value="10" selected>10 results</option>
+                            <option value="15">15 results</option>
+                            <option value="20">20 results</option>
+                        </select>
+                    </div>
+                    <button id="searchButton" 
+                            class="search-button" 
+                            onclick="searchNearbyPlaces()">
+                        <span>Search</span>
+                    </button>
+                </div>
+                <div id="searchResults" class="search-results"></div>
+            </div>
+        </div>
+
+        <div class="card location-card">
+            <div class="card-header">
+                <div class="section-title">Current Location</div>
+            </div>
+            <div class="card-body">
+                <div id="location-display">
+                    <div class="section-title loading-pulse">Loading location data...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let trackingInterval = null;
+        let errorCount = 0;
+        const MAX_ERRORS = 3;
+        const INITIAL_INTERVAL = 5000;
+        let currentInterval = INITIAL_INTERVAL;
+
+        function formatLocationData(data) {
+            if (!data || !data.coordinates) {
+                return '<div class="error-message">Error: Invalid location data received</div>';
+            }
+          
+            return `
+                <div class="location-grid">
+                    <div class="location-section">
+                        <div class="section-title">Coordinates</div>
+                        <div class="location-item">
+                            <div class="location-label">Latitude</div>
+                            <div class="location-value">${data.coordinates.latitude.toFixed(6)}°</div>
+                        </div>
+                        <div class="location-item">
+                            <div class="location-label">Longitude</div>
+                            <div class="location-value">${data.coordinates.longitude.toFixed(6)}°</div>
+                        </div>
+                        ${data.coordinates.accuracy ? `
+                            <div class="location-item">
+                                <div class="location-label">Accuracy</div>
+                                <div class="location-value">${data.coordinates.accuracy.toFixed(1)} meters</div>
+                            </div>
+                        ` : ''}
+                    </div>
+          
+                    <div class="location-section">
+                        <div class="section-title">Address</div>
+                        ${data.address.street ? `
+                            <div class="location-item">
+                                <div class="location-label">Street</div>
+                                <div class="location-value">${data.address.street} ${data.address.house_number || ''}</div>
+                            </div>
+                        ` : ''}
+                        ${data.address.neighborhood ? `
+                            <div class="location-item">
+                                <div class="location-label">Neighborhood</div>
+                                <div class="location-value">${data.address.neighborhood}</div>
+                            </div>
+                        ` : ''}
+                        <div class="location-item">
+                            <div class="location-label">Location</div>
+                            <div class="location-value">${data.address.city}${data.address.state ? `, ${data.address.state}` : ''}</div>
+                        </div>
+                        ${data.address.postal_code ? `
+                            <div class="location-item">
+                                <div class="location-label">Postal Code</div>
+                                <div class="location-value">${data.address.postal_code}</div>
+                            </div>
+                        ` : ''}
+                    </div>
+                </div>
+          
+                <div class="divider"></div>
+          
+                <div class="location-section">
+                    <div class="section-title">Complete Address</div>
+                    <div class="location-item">
+                        <div class="location-value">${data.address.full_address}</div>
+                    </div>
+                </div>
+          
+                <div class="divider"></div>
+          
+                <div class="location-section">
+                    <div class="section-title">Maps</div>
+                    <div class="place-actions">
+                        <a href="https://www.google.com/maps/search/?api=1&query=${data.coordinates.latitude},${data.coordinates.longitude}" 
+                           target="_blank" 
+                           class="place-action-btn">
+                            View on Maps
+                        </a>
+                        <a href="https://www.google.com/maps/dir/?api=1&destination=${data.coordinates.latitude},${data.coordinates.longitude}" 
+                           target="_blank" 
+                           class="place-action-btn">
+                            Get Directions
+                        </a>
+                    </div>
+                </div>
+          
+                <div class="timestamp">
+                    Last updated: ${new Date(data.timestamp).toLocaleString()}
+                </div>
+            `;
+          }
+        
+        async function searchNearbyPlaces() {
+            const searchInput = document.getElementById('searchInput');
+            const radiusSelect = document.getElementById('radiusSelect');
+            const limitSelect = document.getElementById('limitSelect');
+            const searchButton = document.getElementById('searchButton');
+            const searchResults = document.getElementById('searchResults');
+            
+            if (!searchInput.value.trim()) {
+                searchResults.innerHTML = `
+                    <div class="error-message">
+                        Please enter a search term
+                    </div>
+                `;
+                return;
+            }
+            
+            searchButton.disabled = true;
+            searchResults.innerHTML = '<div class="loading loading-pulse">Searching nearby places...</div>';
+            
+            try {
+                const response = await fetch('/api/places/nearby', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        keyword: searchInput.value,
+                        radius: parseInt(radiusSelect.value),
+                        limit: parseInt(limitSelect.value)
+                    })
+                });
+
+                const places = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(places.detail || 'Failed to search places');
+                }
+
+                if (!places || places.length === 0) {
+                    searchResults.innerHTML = `
+                        <div class="no-results">
+                            No places found matching "${searchInput.value}" within ${formatDistance(parseInt(radiusSelect.value))}
+                        </div>
+                    `;
+                    return;
+                }
+
+                searchResults.innerHTML = `
+                    <div class="section-title">Found ${places.length} places within ${formatDistance(parseInt(radiusSelect.value))}</div>
+                    <div class="places-list">
+                        ${places.map(place => `
+                            <div class="place-card">
+                                <div class="place-name">${place.name}</div>
+                                ${place.category ? `
+                                    <div class="place-category">${place.category}</div>
+                                ` : ''}
+                                <div class="place-distance">${formatDistance(place.distance)}</div>
+                                <div class="place-address">${place.address}</div>
+                                <div class="place-actions">
+                                    <a href="https://www.google.com/maps/search/?api=1&query=${place.latitude},${place.longitude}" 
+                                       target="_blank" 
+                                       class="place-action-btn">
+                                        View on Maps
+                                    </a>
+                                    <a href="https://www.google.com/maps/dir/?api=1&destination=${place.latitude},${place.longitude}" 
+                                       target="_blank" 
+                                       class="place-action-btn">
+                                        Get Directions
+                                    </a>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+                
+            } catch (error) {
+                searchResults.innerHTML = `
+                    <div class="error-message">
+                        ${error.message}
+                    </div>
+                `;
+            } finally {
+                searchButton.disabled = false;
+            }
+        }
+
+        function formatDistance(meters) {
+            if (meters < 1000) {
+                return `${meters} meters`;
+            }
+            return `${(meters / 1000).toFixed(1)} km`;
+        }
+
+        function handleSearchKeyPress(event) {
+            if (event.key === 'Enter') {
+                searchNearbyPlaces();
+            }
+        }
+
+        function updateStatus(message, type = 'info') {
+            const statusEl = document.getElementById('status');
+            statusEl.className = `status ${type}`;
+            statusEl.innerHTML = `
+                <div class="status-indicator"></div>
+                <span>${message}</span>
+            `;
+        }
+
+        function handleError() {
+            errorCount++;
+            if (errorCount >= MAX_ERRORS) {
+                currentInterval = Math.min(currentInterval * 2, 60000);
+                errorCount = 0;
+                updateStatus('Connection issues detected. Retrying less frequently...', 'error');
+                restartTracking();
+            }
+        }
+
+        function resetErrorCount() {
+            if (errorCount > 0) {
+                errorCount = 0;
+                currentInterval = INITIAL_INTERVAL;
+                updateStatus('Connection restored. Tracking normally.', 'success');
+                restartTracking();
+            }
+        }
+
+        function getLocation() {
+            if (navigator.geolocation) {
+                updateStatus('Fetching location...', 'info');
+                
+                navigator.geolocation.getCurrentPosition(
+                    position => {
+                        const locationData = {
+                            latitude: position.coords.latitude,
+                            longitude: position.coords.longitude,
+                            accuracy: position.coords.accuracy,
+                            timestamp: position.timestamp
+                        };
+
+                        fetch('/api/location', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify(locationData)
+                        })
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error(`HTTP error! status: ${response.status}`);
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            document.getElementById('location-display').innerHTML = formatLocationData(data);
+                            updateStatus('Location tracking active', 'success');
+                            resetErrorCount();
+                        })
+                        .catch(error => {
+                            updateStatus(`Error: ${error.message}`, 'error');
+                            handleError();
+                        });
+                    },
+                    error => {
+                        let errorMessage = 'Geolocation error';
+                        switch(error.code) {
+                            case error.PERMISSION_DENIED:
+                                errorMessage = 'Location access denied. Please enable location services.';
+                                break;
+                            case error.POSITION_UNAVAILABLE:
+                                errorMessage = 'Location information unavailable. Please try again.';
+                                break;
+                            case error.TIMEOUT:
+                                errorMessage = 'Location request timed out. Please try again.';
+                                break;
+                            default:
+                                errorMessage = `Geolocation error: ${error.message}`;
+                        }
+                        updateStatus(errorMessage, 'error');
+                        handleError();
+                    },
+                    {
+                        enableHighAccuracy: true,
+                        timeout: 5000,
+                        maximumAge: 0
+                    }
+                );
+            } else {
+                updateStatus("Geolocation is not supported by this browser.", 'error');
+            }
+        }
+
+        function restartTracking() {
+            if (trackingInterval) {
+                clearInterval(trackingInterval);
+            }
+            trackingInterval = setInterval(getLocation, currentInterval);
+        }
+
+        // Event listeners for page visibility
+        document.addEventListener('visibilitychange', function() {
+            if (document.hidden) {
+                if (trackingInterval) {
+                    clearInterval(trackingInterval);
+                }
+                updateStatus('Tracking paused (page inactive)', 'info');
+            } else {
+                getLocation();
+                restartTracking();
+                updateStatus('Tracking resumed', 'success');
+            }
+        });
+
+        // Event listeners for online/offline status
+        window.addEventListener('online', function() {
+            updateStatus('Network connection restored', 'success');
+            getLocation();
+            restartTracking();
+        });
+
+        window.addEventListener('offline', function() {
+            updateStatus('Network connection lost', 'error');
+            if (trackingInterval) {
+                clearInterval(trackingInterval);
+            }
+        });
+
+        // Initialize tracking
+        getLocation();
+        restartTracking();
+    </script>
+</body>
+</html>

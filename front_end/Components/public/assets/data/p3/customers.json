@@ -1,0 +1,18 @@
+[
+  {
+    "id": "CUST-78945",
+    "name": "Anna Schmidt",
+    "email": "anna.schmidt@example.com",
+    "phone": "+49 170 1234567",
+    "language": "German",
+    "membership": "Premium",
+    "vehicle": {
+      "model": "Tesla Model 3",
+      "year": 2022,
+      "license_plate": "B-EV-2022"
+    },
+    "payment_method": "App Wallet",
+    "account_created": "2022-05-18",
+    "last_charging": "2024-10-26"
+  }
+]

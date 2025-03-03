@@ -1,0 +1,35 @@
+[
+  {
+    "name": "Mine",
+    "description": "",
+    "tracks": [
+      {
+        "id": "FN7ALfpGxiI",
+        "title": "N\u01a0I N\u00c0Y C\u00d3 ANH | OFFICIAL MUSIC VIDEO | S\u01a0N T\u00d9NG M-TP",
+        "thumbnail": "https://i.ytimg.com/vi_webp/FN7ALfpGxiI/maxresdefault.webp",
+        "duration": "278",
+        "view_count": 391232301
+      },
+      {
+        "id": "JGwWNGJdvx8",
+        "title": "Ed Sheeran - Shape of You (Official Music Video)",
+        "thumbnail": "https://i.ytimg.com/vi/JGwWNGJdvx8/sddefault.jpg",
+        "duration": "263",
+        "view_count": 6422009977
+      }
+    ]
+  },
+  {
+    "name": "favorites",
+    "description": "Playlist created for favorites",
+    "tracks": [
+      {
+        "id": "YQHsXMglC9A",
+        "title": "Adele - Hello (Official Music Video)",
+        "thumbnail": "https://i.ytimg.com/vi/YQHsXMglC9A/maxresdefault.jpg",
+        "duration": "367",
+        "view_count": 3191588802
+      }
+    ]
+  }
+]

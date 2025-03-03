@@ -1,0 +1,62 @@
+[
+  {
+    "instruction": "What is the recommended seating position for children in a vehicle?",
+    "output": "It is recommended that children sit in the rear seats to avoid accidental contact with the shift lever, wiper switch, etc."
+  },
+  {
+    "instruction": "How can parents prevent children from accidentally opening doors or windows while driving?",
+    "output": "Parents can use the rear door child-protector lock or the window lock switch to prevent children from opening doors or operating power windows accidentally."
+  },
+  {
+    "instruction": "When should a child start using the vehicle's seat belt instead of a child restraint system?",
+    "output": "A child restraint system should be used until the child becomes large enough to properly wear the vehicle's seat belt. The exact timing depends on the child's size and the specific regulations in your area."
+  },
+  {
+    "instruction": "What is the main purpose of child restraint systems?",
+    "output": "Child restraint systems are designed to provide effective protection for children in automobile accidents and sudden stops. They work together with the seat belts to help reduce the risk of death or serious injury."
+  },
+  {
+    "instruction": "Why is it recommended to install child restraint systems in the rear seat?",
+    "output": "According to accident statistics, a child is safer when properly restrained in the rear seat than in the front seat. Additionally, it keeps children away from front airbags, which can be dangerous for young children if deployed."
+  },
+  {
+    "instruction": "Can a child restraint system be installed in the front passenger seat?",
+    "output": "While it's not recommended, if unavoidable, the front passenger seat should be adjusted as follows: move it fully rearward, adjust to the uppermost position if height is adjustable, set the seatback to the most upright position, and ensure the 'AIR BAG OFF' indicator is illuminated for forward-facing seats."
+  },
+  {
+    "instruction": "What should you do if the vehicle's head restraint interferes with the child restraint system?",
+    "output": "If the head restraint interferes with the child restraint system and can be removed, remove it. Otherwise, put the head restraint in the uppermost position. Always ensure good contact between the child restraint system and the seatback."
+  },
+  {
+    "instruction": "Is it safe to install a rear-facing child restraint system on the front passenger seat?",
+    "output": "No, never install a rear-facing child restraint system on the front passenger seat, even if the 'AIR BAG OFF' indicator light is illuminated. In the event of an accident, the force of the airbag deployment could cause death or serious injury to the child."
+  },
+  {
+    "instruction": "What are the international standards for child restraint systems mentioned in the document?",
+    "output": "The document mentions UN(ECE) R44 and UN(ECE) R129 as U.N. regulations for child restraint systems. These standards include specifications for the design, testing, and approval of child restraint systems."
+  },
+  {
+    "instruction": "What are the categories of child restraint systems mentioned in the document?",
+    "output": "The categories mentioned are 'universal', 'semi-universal', 'restricted', and 'vehicle specific'. These categories indicate the type of vehicle and seating positions in which the child restraint system can be used."
+  },
+  {
+    "instruction": "What is ISOFIX and where are ISOFIX lower anchorages located in the vehicle?",
+    "output": "ISOFIX is a standardized child restraint system. ISOFIX lower anchorages are provided for the outboard rear seats in the vehicle. In some regions, particularly North America, this system is known as LATCH (Lower Anchors and Tethers for Children)."
+  },
+  {
+    "instruction": "What should you do after installing a child restraint system to ensure it's secure?",
+    "output": "After installing the child restraint system, rock it back and forth to ensure that it is installed securely. If it moves significantly, check the installation again and tighten as necessary."
+  },
+  {
+    "instruction": "How should the seat belt be positioned when using a booster seat?",
+    "output": "When using a booster seat, ensure that the shoulder belt is positioned across the center of the child's shoulder and the lap belt is as low as possible on the hips. The belt should be kept away from the child's neck but not falling off the shoulder."
+  },
+  {
+    "instruction": "What precaution should be taken when using seat belt extenders with child restraint systems?",
+    "output": "Do not use a seat belt extender when installing a child restraint system, as it may not securely hold the system, increasing the risk of injury in an accident. If a seat belt extender is used when installing a child restraint system, the seat belt will not securely hold the child restraint system."
+  },
+  {
+    "instruction": "What is the LATCH system and what does it conform to?",
+    "output": "LATCH (Lower Anchors and Tethers for Children) is a system for attaching child restraint systems in vehicles. It conforms to FMVSS225 or CMVSS210.2 standards. The LATCH system is designed to make the installation of child restraint systems easier and more secure, using dedicated anchors instead of the vehicle's seat belts."
+  }
+]

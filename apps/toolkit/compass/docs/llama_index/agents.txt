@@ -1,0 +1,4960 @@
+https://docs.llamaindex.ai/en/stable/understanding/agent/basic_agent/
+
+Building a basic agent#
+In LlamaIndex, an agent is a semi-autonomous piece of software powered by an LLM that is given a task and executes a series of steps towards solving that task. It is given a set of tools, which can be anything from arbitrary functions up to full LlamaIndex query engines, and it selects the best available tool to complete each step. When each step is completed, the agent judges whether the task is now complete, in which case it returns a result to the user, or whether it needs to take another step, in which case it loops back to the start.
+
+In LlamaIndex, you can either use our prepackaged agents/tools or build your own agentic workflows from scratch, covered in the "Building Workflows" section. This section covers our prepackaged agents and tools.
+
+agent flow
+
+Getting started#
+You can find all of this code in the tutorial repo.
+
+To avoid conflicts and keep things clean, we'll start a new Python virtual environment. You can use any virtual environment manager, but we'll use poetry here:
+
+
+poetry init
+poetry shell
+And then we'll install the LlamaIndex library and some other dependencies that will come in handy:
+
+
+pip install llama-index python-dotenv
+If any of this gives you trouble, check out our more detailed installation guide.
+
+OpenAI Key#
+Our agent will be powered by OpenAI's GPT-3.5-Turbo LLM, so you'll need an API key. Once you have your key, you can put it in a .env file in the root of your project:
+
+
+OPENAI_API_KEY=sk-proj-xxxx
+If you don't want to use OpenAI, we'll show you how to use other models later.
+
+Bring in dependencies#
+We'll start by importing the components of LlamaIndex we need, as well as loading the environment variables from our .env file:
+
+
+from dotenv import load_dotenv
+
+load_dotenv()
+from llama_index.core.agent import ReActAgent
+from llama_index.llms.openai import OpenAI
+from llama_index.core.tools import FunctionTool
+Create basic tools#
+For this simple example we'll be creating two tools: one that knows how to multiply numbers together, and one that knows how to add them.
+
+
+def multiply(a: float, b: float) -> float:
+    """Multiply two numbers and returns the product"""
+    return a * b
+
+
+multiply_tool = FunctionTool.from_defaults(fn=multiply)
+
+
+def add(a: float, b: float) -> float:
+    """Add two numbers and returns the sum"""
+    return a + b
+
+
+add_tool = FunctionTool.from_defaults(fn=add)
+As you can see, these are regular vanilla Python functions. The docstring comments provide metadata to the agent about what the tool does: if your LLM is having trouble figuring out which tool to use, these docstrings are what you should tweak first.
+
+After each function is defined we create FunctionTool objects from these functions, which wrap them in a way that the agent can understand.
+
+Initialize the LLM#
+GPT-3.5-Turbo is going to be doing the work today:
+
+
+llm = OpenAI(model="gpt-3.5-turbo", temperature=0)
+You could also pick another popular model accessible via API, such as those from Mistral, Claude from Anthropic or Gemini from Google.
+
+Initialize the agent#
+Now we create our agent. In this case, this is a ReAct agent, a relatively simple but powerful agent. We give it an array containing our two tools, the LLM we just created, and set verbose=True so we can see what's going on:
+
+
+agent = ReActAgent.from_tools([multiply_tool, add_tool], llm=llm, verbose=True)
+Ask a question#
+We specify that it should use a tool, as this is pretty simple and GPT-3.5 doesn't really need this tool to get the answer.
+
+
+response = agent.chat("What is 20+(2*4)? Use a tool to calculate every step.")
+This should give you output similar to the following:
+
+
+Thought: The current language of the user is: English. I need to use a tool to help me answer the question.
+Action: multiply
+Action Input: {'a': 2, 'b': 4}
+Observation: 8
+Thought: I need to add 20 to the result of the multiplication.
+Action: add
+Action Input: {'a': 20, 'b': 8}
+Observation: 28
+Thought: I can answer without using any more tools. I'll use the user's language to answer
+Answer: The result of 20 + (2 * 4) is 28.
+The result of 20 + (2 * 4) is 28.
+As you can see, the agent picks the correct tools one after the other and combines the answers to give the final result. Check the repo to see what the final code should look like.
+
+Congratulations! You've built the most basic kind of agent. Next you can find out how to use local models or skip to adding RAG to your agent.
+
+https://docs.llamaindex.ai/en/stable/understanding/agent/rag_agent/
+Adding RAG to an agent#
+To demonstrate using RAG engines as a tool in an agent, we're going to create a very simple RAG query engine. Our source data is going to be the Wikipedia page about the 2023 Canadian federal budget that we've printed as a PDF.
+
+Bring in new dependencies#
+To read the PDF and index it, we'll need a few new dependencies. They were installed along with the rest of LlamaIndex, so we just need to import them:
+
+
+from llama_index.core import SimpleDirectoryReader, VectorStoreIndex, Settings
+Add LLM to settings#
+We were previously passing the LLM directly, but now we need to use it in multiple places, so we'll add it to the global settings.
+
+
+Settings.llm = OpenAI(model="gpt-3.5-turbo", temperature=0)
+Place this line near the top of the file; you can delete the other llm assignment.
+
+Load and index documents#
+We'll now do 3 things in quick succession: we'll load the PDF from a folder called "data", index and embed it using the VectorStoreIndex, and then create a query engine from that index:
+
+
+documents = SimpleDirectoryReader("./data").load_data()
+index = VectorStoreIndex.from_documents(documents)
+query_engine = index.as_query_engine()
+We can run a quick smoke-test to make sure the engine is working:
+
+
+response = query_engine.query(
+    "What was the total amount of the 2023 Canadian federal budget?"
+)
+print(response)
+The response is fast:
+
+
+The total amount of the 2023 Canadian federal budget was $496.9 billion.
+Add a query engine tool#
+This requires one more import:
+
+
+from llama_index.core.tools import QueryEngineTool
+Now we turn our query engine into a tool by supplying the appropriate metadata (for the python functions, this was being automatically extracted so we didn't need to add it):
+
+
+budget_tool = QueryEngineTool.from_defaults(
+    query_engine,
+    name="canadian_budget_2023",
+    description="A RAG engine with some basic facts about the 2023 Canadian federal budget.",
+)
+We modify our agent by adding this engine to our array of tools (we also remove the llm parameter, since it's now provided by settings):
+
+
+agent = ReActAgent.from_tools(
+    [multiply_tool, add_tool, budget_tool], verbose=True
+)
+Ask a question using multiple tools#
+This is kind of a silly question, we'll ask something more useful later:
+
+
+response = agent.chat(
+    "What is the total amount of the 2023 Canadian federal budget multiplied by 3? Go step by step, using a tool to do any math."
+)
+
+print(response)
+We get a perfect answer:
+
+
+Thought: The current language of the user is English. I need to use the tools to help me answer the question.
+Action: canadian_budget_2023
+Action Input: {'input': 'total'}
+Observation: $496.9 billion
+Thought: I need to multiply the total amount of the 2023 Canadian federal budget by 3.
+Action: multiply
+Action Input: {'a': 496.9, 'b': 3}
+Observation: 1490.6999999999998
+Thought: I can answer without using any more tools. I'll use the user's language to answer
+Answer: The total amount of the 2023 Canadian federal budget multiplied by 3 is $1,490.70 billion.
+The total amount of the 2023 Canadian federal budget multiplied by 3 is $1,490.70 billion.
+As usual, you can check the repo to see this code all together.
+
+Excellent! Your agent can now use any arbitrarily advanced query engine to help answer questions. You can also add as many different RAG engines as you need to consult different data sources. Next, we'll look at how we can answer more advanced questions using LlamaParse.
+
+https://docs.llamaindex.ai/en/stable/understanding/agent/memory/
+Memory#
+We've now made several additions and subtractions to our code. To make it clear what we're using, you can see the current code for our agent in the repo. It's using OpenAI for the LLM and LlamaParse to enhance parsing.
+
+We've also added 3 questions in a row. Let's see how the agent handles them:
+
+
+response = agent.chat(
+    "How much exactly was allocated to a tax credit to promote investment in green technologies in the 2023 Canadian federal budget?"
+)
+
+print(response)
+
+response = agent.chat(
+    "How much was allocated to a implement a means-tested dental care program in the 2023 Canadian federal budget?"
+)
+
+print(response)
+
+response = agent.chat(
+    "How much was the total of those two allocations added together? Use a tool to answer any questions."
+)
+
+print(response)
+This is demonstrating a powerful feature of agents in LlamaIndex: memory. 
+
+The agent remembers that it already has the budget allocations from previous questions, and can answer a contextual question like "add those two allocations together" without needing to specify which allocations exactly. It even correctly uses the other addition tool to sum up the numbers.
+
+Having demonstrated how memory helps, let's add some more complex tools to our agent.
+
+Adding other tools#
+Now that you've built a capable agent, we hope you're excited about all it can do. The core of expanding agent capabilities is the tools available, and we have good news: LlamaHub from LlamaIndex has hundreds of integrations, including dozens of existing agent tools that you can use right away. We'll show you how to use one of the existing tools, and also how to build and contribute your own.
+
+Using an existing tool from LlamaHub#
+For our example, we're going to use the Yahoo Finance tool from LlamaHub. It provides a set of six agent tools that look up a variety of information about stock ticker symbols.
+
+First we need to install the tool:
+
+
+pip install llama-index-tools-yahoo-finance
+Then we can set up our dependencies. This is exactly the same as our previous examples, except for the final import:
+
+
+from dotenv import load_dotenv
+
+load_dotenv()
+from llama_index.core.agent import ReActAgent
+from llama_index.llms.openai import OpenAI
+from llama_index.core.tools import FunctionTool
+from llama_index.core import Settings
+from llama_index.tools.yahoo_finance import YahooFinanceToolSpec
+To show how custom tools and LlamaHub tools can work together, we'll include the code from our previous examples the defines a "multiple" tool. We'll also take this opportunity to set up the LLM:
+
+
+# settings
+Settings.llm = OpenAI(model="gpt-4o", temperature=0)
+
+
+# function tools
+def multiply(a: float, b: float) -> float:
+    """Multiply two numbers and returns the product"""
+    return a * b
+
+
+multiply_tool = FunctionTool.from_defaults(fn=multiply)
+
+
+def add(a: float, b: float) -> float:
+    """Add two numbers and returns the sum"""
+    return a + b
+
+
+add_tool = FunctionTool.from_defaults(fn=add)
+Now we'll do the new step, which is to fetch the array of tools:
+
+
+finance_tools = YahooFinanceToolSpec().to_tool_list()
+This is just a regular array, so we can use Python's extend method to add our own tools to the mix:
+
+
+finance_tools.extend([multiply_tool, add_tool])
+Then we set up the agent as usual, and ask a question:
+
+
+agent = ReActAgent.from_tools(finance_tools, verbose=True)
+
+response = agent.chat("What is the current price of NVDA?")
+
+print(response)
+The response is very wordy, so we've truncated it:
+
+
+Thought: The current language of the user is English. I need to use a tool to help me answer the question.
+Action: stock_basic_info
+Action Input: {'ticker': 'NVDA'}
+Observation: Info:
+{'address1': '2788 San Tomas Expressway'
+...
+'currentPrice': 135.58
+...}
+Thought: I have obtained the current price of NVDA from the stock basic info.
+Answer: The current price of NVDA (NVIDIA Corporation) is $135.58.
+The current price of NVDA (NVIDIA Corporation) is $135.58.
+Perfect! As you can see, using existing tools is a snap.
+
+As always, you can check the repo to see this code all in one place.
+
+Building and contributing your own tools#
+We love open source contributions of new tools! You can see an example of what the code of the Yahoo finance tool looks like: * A class that extends BaseToolSpec * A set of arbitrary Python functions * A spec_functions list that maps the functions to the tool's API
+
+Once you've got a tool working, follow our contributing guide for instructions on correctly setting metadata and submitting a pull request.
+
+Congratulations! You've completed our guide to building agents with LlamaIndex. We can't wait to see what use-cases you build!
+
+https://docs.llamaindex.ai/en/stable/module_guides/deploying/agents/
+
+Agents#
+Concept#
+Data Agents are LLM-powered knowledge workers in LlamaIndex that can intelligently perform various tasks over your data, in both a “read” and “write” function. They are capable of the following:
+
+Perform automated search and retrieval over different types of data - unstructured, semi-structured, and structured.
+Calling any external service API in a structured fashion, and processing the response + storing it for later.
+In that sense, agents are a step beyond our query engines in that they can not only "read" from a static source of data, but can dynamically ingest and modify data from a variety of different tools.
+
+Building a data agent requires the following core components:
+
+A reasoning loop
+Tool abstractions
+A data agent is initialized with set of APIs, or Tools, to interact with; these APIs can be called by the agent to return information or modify state. Given an input task, the data agent uses a reasoning loop to decide which tools to use, in which sequence, and the parameters to call each tool.
+
+Reasoning Loop#
+The reasoning loop depends on the type of agent. We have support for the following agents:
+
+Function Calling Agents (integrates with any function calling LLM)
+ReAct agent (works across any chat/text completion endpoint).
+"Advanced Agents": LLMCompiler, Chain-of-Abstraction, Language Agent Tree Search, and more.
+Tool Abstractions#
+You can learn more about our Tool abstractions in our Tools section.
+
+Blog Post#
+For full details, please check out our detailed blog post.
+
+Lower-level API: Step-Wise Execution#
+By default, our agents expose query and chat functions that will execute a user-query end-to-end.
+
+We also offer a lower-level API allowing you to perform step-wise execution of an agent. This gives you much more control in being able to create tasks, and analyze + act upon the input/output of each step within a task.
+
+Check out our guide.
+
+Usage Pattern#
+Data agents can be used in the following manner (the example uses the OpenAI Function API)
+
+
+from llama_index.agent.openai import OpenAIAgent
+from llama_index.llms.openai import OpenAI
+
+# import and define tools
+...
+
+# initialize llm
+llm = OpenAI(model="gpt-3.5-turbo-0613")
+
+# initialize openai agent
+agent = OpenAIAgent.from_tools(tools, llm=llm, verbose=True)
+See our usage pattern guide for more details.
+
+Modules#
+Learn more about our different agent types and use cases in our module guides.
+
+We also have a lower-level api guide for agent runenrs and workers.
+
+Also take a look at our tools section!
+
+https://docs.llamaindex.ai/en/stable/module_guides/deploying/agents/usage_pattern/
+
+Usage Pattern#
+Getting Started#
+An agent is initialized from a set of Tools. Here's an example of instantiating a ReAct agent from a set of Tools.
+
+
+from llama_index.core.tools import FunctionTool
+from llama_index.llms.openai import OpenAI
+from llama_index.core.agent import ReActAgent
+
+
+# define sample Tool
+def multiply(a: int, b: int) -> int:
+    """Multiple two integers and returns the result integer"""
+    return a * b
+
+
+multiply_tool = FunctionTool.from_defaults(fn=multiply)
+
+# initialize llm
+llm = OpenAI(model="gpt-3.5-turbo-0613")
+
+# initialize ReAct agent
+agent = ReActAgent.from_tools([multiply_tool], llm=llm, verbose=True)
+An agent supports both chat and query endpoints, inheriting from our ChatEngine and QueryEngine respectively.
+
+Example usage:
+
+
+agent.chat("What is 2123 * 215123")
+To automatically pick the best agent depending on the LLM, you can use the from_llm method to generate an agent.
+
+
+from llama_index.core.agent import AgentRunner
+
+agent = AgentRunner.from_llm([multiply_tool], llm=llm, verbose=True)
+Defining Tools#
+Query Engine Tools#
+It is easy to wrap query engines as tools for an agent as well. Simply do the following:
+
+
+from llama_index.core.agent import ReActAgent
+from llama_index.core.tools import QueryEngineTool
+
+# NOTE: lyft_index and uber_index are both SimpleVectorIndex instances
+lyft_engine = lyft_index.as_query_engine(similarity_top_k=3)
+uber_engine = uber_index.as_query_engine(similarity_top_k=3)
+
+query_engine_tools = [
+    QueryEngineTool(
+        query_engine=lyft_engine,
+        metadata=ToolMetadata(
+            name="lyft_10k",
+            description="Provides information about Lyft financials for year 2021. "
+            "Use a detailed plain text question as input to the tool.",
+        ),
+        return_direct=False,
+    ),
+    QueryEngineTool(
+        query_engine=uber_engine,
+        metadata=ToolMetadata(
+            name="uber_10k",
+            description="Provides information about Uber financials for year 2021. "
+            "Use a detailed plain text question as input to the tool.",
+        ),
+        return_direct=False,
+    ),
+]
+
+# initialize ReAct agent
+agent = ReActAgent.from_tools(query_engine_tools, llm=llm, verbose=True)
+Use other agents as Tools#
+A nifty feature of our agents is that since they inherit from BaseQueryEngine, you can easily define other agents as tools through our QueryEngineTool.
+
+
+from llama_index.core.tools import QueryEngineTool
+
+query_engine_tools = [
+    QueryEngineTool(
+        query_engine=sql_agent,
+        metadata=ToolMetadata(
+            name="sql_agent", description="Agent that can execute SQL queries."
+        ),
+    ),
+    QueryEngineTool(
+        query_engine=gmail_agent,
+        metadata=ToolMetadata(
+            name="gmail_agent",
+            description="Tool that can send emails on Gmail.",
+        ),
+    ),
+]
+
+outer_agent = ReActAgent.from_tools(query_engine_tools, llm=llm, verbose=True)
+Agent With Planning#
+Breaking down an initial task into easier-to-digest sub-tasks is a powerful pattern.
+
+LlamaIndex provides an agent planning module that does just this:
+
+
+from llama_index.agent.openai import OpenAIAgentWorker
+from llama_index.core.agent import (
+    StructuredPlannerAgent,
+    FunctionCallingAgentWorker,
+)
+
+worker = FunctionCallingAgentWorker.from_tools(tools, llm=llm)
+agent = StructuredPlannerAgent(worker)
+In general, this agent may take longer to respond compared to the basic AgentRunner class, but the outputs will often be more complete. Another tradeoff to consider is that planning often requires a very capable LLM (for context, gpt-3.5-turbo is sometimes flakey for planning, while gpt-4-turbo does much better.)
+
+See more in the complete guide
+
+Lower-Level API#
+The OpenAIAgent and ReActAgent are simple wrappers on top of an AgentRunner interacting with an AgentWorker.
+
+All agents can be defined this manner. For example for the OpenAIAgent:
+
+
+from llama_index.core.agent import AgentRunner
+from llama_index.agent.openai import OpenAIAgentWorker
+
+# construct OpenAIAgent from tools
+openai_step_engine = OpenAIAgentWorker.from_tools(tools, llm=llm, verbose=True)
+agent = AgentRunner(openai_step_engine)
+This is also the preferred format for custom agents.
+
+Check out the lower-level agent guide for more details.
+
+Customizing your Agent#
+If you wish to define a custom agent, the easiest way to do so is to just define a stateful function and wrap it with a FnAgentWorker.
+
+The state variable passed in and out of the function can contain anything you want it to, whether it's tools or arbitrary variables. It also contains task and output objects.
+
+
+## This is an example showing a trivial function that multiplies an input number by 2 each time.
+## Pass this into an agent
+def multiply_agent_fn(state: dict) -> Tuple[Dict[str, Any], bool]:
+    """Mock agent input function."""
+    if "max_count" not in state:
+        raise ValueError("max_count must be specified.")
+
+    # __output__ is a special key indicating the final output of the agent
+    # __task__ is a special key representing the Task object passed by the agent to the function.
+    # `task.input` is the input string passed
+    if "__output__" not in state:
+        state["__output__"] = int(state["__task__"].input)
+        state["count"] = 0
+    else:
+        state["__output__"] = state["__output__"] * 2
+        state["count"] += 1
+
+    is_done = state["count"] >= state["max_count"]
+
+    # the output of this function should be a tuple of the state variable and is_done
+    return state, is_done
+
+
+from llama_index.core.agent import FnAgentWorker
+
+agent = FnAgentWorker(
+    fn=multiply_agent_fn, initial_state={"max_count": 5}
+).as_agent()
+agent.query("5")
+Check out our Custom Agent Notebook Guide for more details.
+
+Advanced Concepts (for OpenAIAgent, in beta)#
+You can also use agents in more advanced settings. For instance, being able to retrieve tools from an index during query-time, and being able to perform query planning over an existing set of Tools.
+
+These are largely implemented with our OpenAIAgent classes (which depend on the OpenAI Function API). Support for our more general ReActAgent is something we're actively investigating.
+
+NOTE: these are largely still in beta. The abstractions may change and become more general over time.
+
+Function Retrieval Agents#
+If the set of Tools is very large, you can create an ObjectIndex to index the tools, and then pass in an ObjectRetriever to the agent during query-time, to first dynamically retrieve the relevant tools before having the agent pick from the candidate tools.
+
+We first build an ObjectIndex over an existing set of Tools.
+
+
+# define an "object" index over these tools
+from llama_index.core import VectorStoreIndex
+from llama_index.core.objects import ObjectIndex
+
+obj_index = ObjectIndex.from_objects(
+    all_tools,
+    index_cls=VectorStoreIndex,
+)
+We then define our OpenAIAgent:
+
+
+from llama_index.agent.openai import OpenAIAgent
+
+agent = OpenAIAgent.from_tools(
+    tool_retriever=obj_index.as_retriever(similarity_top_k=2), verbose=True
+)
+You can find more details on the object index in the full guide.
+
+Context Retrieval Agents#
+Our context-augmented OpenAI Agent will always perform retrieval before calling any tools.
+
+This helps to provide additional context that can help the agent better pick Tools, versus just trying to make a decision without any context.
+
+
+from llama_index.core import Document
+from llama_index.agent.openai_legacy import ContextRetrieverOpenAIAgent
+
+
+# toy index - stores a list of Abbreviations
+texts = [
+    "Abbreviation: X = Revenue",
+    "Abbreviation: YZ = Risk Factors",
+    "Abbreviation: Z = Costs",
+]
+docs = [Document(text=t) for t in texts]
+context_index = VectorStoreIndex.from_documents(docs)
+
+# add context agent
+context_agent = ContextRetrieverOpenAIAgent.from_tools_and_retriever(
+    query_engine_tools,
+    context_index.as_retriever(similarity_top_k=1),
+    verbose=True,
+)
+response = context_agent.chat("What is the YZ of March 2022?")
+Query Planning#
+OpenAI Function Agents can be capable of advanced query planning. The trick is to provide the agent with a QueryPlanTool - if the agent calls the QueryPlanTool, it is forced to infer a full Pydantic schema representing a query plan over a set of subtools.
+
+
+# define query plan tool
+from llama_index.core.tools import QueryPlanTool
+from llama_index.core import get_response_synthesizer
+
+response_synthesizer = get_response_synthesizer(
+    service_context=service_context
+)
+query_plan_tool = QueryPlanTool.from_defaults(
+    query_engine_tools=[query_tool_sept, query_tool_june, query_tool_march],
+    response_synthesizer=response_synthesizer,
+)
+
+# initialize agent
+agent = OpenAIAgent.from_tools(
+    [query_plan_tool],
+    max_function_calls=10,
+    llm=OpenAI(temperature=0, model="gpt-4-0613"),
+    verbose=True,
+)
+
+# should output a query plan to call march, june, and september tools
+response = agent.query(
+    "Analyze Uber revenue growth in March, June, and September"
+)
+
+https://docs.llamaindex.ai/en/stable/examples/agent/custom_agent/
+
+
+Building a Custom Agent
+In this cookbook we show you how to build a custom agent using LlamaIndex.
+
+The easiest way to build a custom agent is to simply define a stateful function and plug it into FnAgentWorker.
+[Optional] Another approach that allows you to peek into our agent abstractions a bit more is to subclass CustomSimpleAgentWorker and implement a few required functions. You have complete flexibility in defining the agent step-wise logic.
+This lets you add arbitrarily complex reasoning logic on top of your RAG pipeline.
+
+We show you how to build a simple agent that adds a retry layer on top of a RouterQueryEngine, allowing it to retry queries until the task is complete. We build this on top of both a SQL tool and a vector index query tool. Even if the tool makes an error or only answers part of the question, the agent can continue retrying the question until the task is complete.
+
+NOTE: Any Text-to-SQL application should be aware that executing arbitrary SQL queries can be a security risk. It is recommended to take precautions as needed, such as using restricted roles, read-only databases, sandboxing, etc.
+
+%pip install llama-index-readers-wikipedia
+%pip install llama-index-llms-openai
+Setup Data and Tools
+We setup both a SQL Tool as well as vector index tools for each city.
+
+from llama_index.llms.openai import OpenAI
+
+llm = OpenAI(model="gpt-4o")
+from llama_index.core.tools import QueryEngineTool
+Setup SQL DB + Tool
+from sqlalchemy import (
+    create_engine,
+    MetaData,
+    Table,
+    Column,
+    String,
+    Integer,
+    select,
+    column,
+)
+from llama_index.core import SQLDatabase
+
+engine = create_engine("sqlite:///:memory:", future=True)
+metadata_obj = MetaData()
+# create city SQL table
+table_name = "city_stats"
+city_stats_table = Table(
+    table_name,
+    metadata_obj,
+    Column("city_name", String(16), primary_key=True),
+    Column("population", Integer),
+    Column("country", String(16), nullable=False),
+)
+
+metadata_obj.create_all(engine)
+from sqlalchemy import insert
+
+rows = [
+    {"city_name": "Toronto", "population": 2930000, "country": "Canada"},
+    {"city_name": "Tokyo", "population": 13960000, "country": "Japan"},
+    {"city_name": "Berlin", "population": 3645000, "country": "Germany"},
+]
+for row in rows:
+    stmt = insert(city_stats_table).values(**row)
+    with engine.begin() as connection:
+        cursor = connection.execute(stmt)
+from llama_index.core.query_engine import NLSQLTableQueryEngine
+
+sql_database = SQLDatabase(engine, include_tables=["city_stats"])
+sql_query_engine = NLSQLTableQueryEngine(
+    sql_database=sql_database, tables=["city_stats"], verbose=True, llm=llm
+)
+sql_tool = QueryEngineTool.from_defaults(
+    query_engine=sql_query_engine,
+    description=(
+        "Useful for translating a natural language query into a SQL query over"
+        " a table containing: city_stats, containing the population/country of"
+        " each city"
+    ),
+)
+Setup Vector Tools
+from llama_index.readers.wikipedia import WikipediaReader
+from llama_index.core import VectorStoreIndex
+cities = ["Toronto", "Berlin", "Tokyo"]
+wiki_docs = WikipediaReader().load_data(pages=cities)
+# build a separate vector index per city
+# You could also choose to define a single vector index across all docs, and annotate each chunk by metadata
+vector_tools = []
+for city, wiki_doc in zip(cities, wiki_docs):
+    vector_index = VectorStoreIndex.from_documents([wiki_doc])
+    vector_query_engine = vector_index.as_query_engine()
+    vector_tool = QueryEngineTool.from_defaults(
+        query_engine=vector_query_engine,
+        description=f"Useful for answering semantic questions about {city}",
+    )
+    vector_tools.append(vector_tool)
+Setup the Custom Agent
+Here we setup the custom agent. There are two ways to setup a custom agent.
+
+In the first approach, you just define a custom function, whereas in the second approach, you learn a bit more about using some of the low-level agent components that LlamaIndex has to offer, giving you a more structured approach to handle validation, run things step-wise, and modify the output.
+
+Basic Setup
+Here we define some common functions used for both implementations.
+
+from typing import Dict, Any, List, Tuple, Optional
+from llama_index.core.tools import QueryEngineTool
+from llama_index.core.program import FunctionCallingProgram
+from llama_index.core.query_engine import RouterQueryEngine
+from llama_index.core import ChatPromptTemplate
+from llama_index.core.selectors import PydanticSingleSelector
+from llama_index.core.bridge.pydantic import Field, BaseModel
+Here we define some helper variables and methods. E.g. the prompt template to use to detect errors as well as the response format in Pydantic.
+
+from llama_index.core.llms import ChatMessage, MessageRole
+
+DEFAULT_PROMPT_STR = """
+Given previous question/response pairs, please determine if an error has occurred in the response, and suggest \
+    a modified question that will not trigger the error.
+
+Examples of modified questions:
+- The question itself is modified to elicit a non-erroneous response
+- The question is augmented with context that will help the downstream system better answer the question.
+- The question is augmented with examples of negative responses, or other negative questions.
+
+An error means that either an exception has triggered, or the response is completely irrelevant to the question.
+
+Please return the evaluation of the response in the following JSON format.
+
+"""
+
+
+def get_chat_prompt_template(
+    system_prompt: str, current_reasoning: Tuple[str, str]
+) -> ChatPromptTemplate:
+    system_msg = ChatMessage(role=MessageRole.SYSTEM, content=system_prompt)
+    messages = [system_msg]
+    for raw_msg in current_reasoning:
+        if raw_msg[0] == "user":
+            messages.append(
+                ChatMessage(role=MessageRole.USER, content=raw_msg[1])
+            )
+        else:
+            messages.append(
+                ChatMessage(role=MessageRole.ASSISTANT, content=raw_msg[1])
+            )
+    return ChatPromptTemplate(message_templates=messages)
+
+
+class ResponseEval(BaseModel):
+    """Evaluation of whether the response has an error."""
+
+    has_error: bool = Field(
+        ..., description="Whether the response has an error."
+    )
+    new_question: str = Field(..., description="The suggested new question.")
+    explanation: str = Field(
+        ...,
+        description=(
+            "The explanation for the error as well as for the new question."
+            "Can include the direct stack trace as well."
+        ),
+    )
+Define Agent State Function
+Here we define a simple Python function that modifies the state variable and executes a single step. It returns a Tuple of the state dictionary and whether or not the agent has completed execution.
+
+We wrap it with a FnAgentWorker that can give us an agent that can run this function multiple steps.
+
+Notes:
+
+The state dictionary passed to the Python function can access a special __task__ variable that the FnAgentWorker injects during execution, representing the task object maintained by the agent throughout execution.
+The output of the agent is defined by the __output__ variable in the state dictionary. When is_done is True, make sure __output__ is defined as well.
+You can customize the key names of both the input and output variables through customizing task_input_key and output_key in the FnAgentWorker.
+You can also inject any variables you want during initialization through the initial_state parameter in the FnAgentWorker initialization.
+from llama_index.core.bridge.pydantic import PrivateAttr
+
+
+def retry_agent_fn(state: Dict[str, Any]) -> Tuple[Dict[str, Any], bool]:
+    """Retry agent.
+
+    Runs a single step.
+
+    Returns:
+        Tuple of (agent_response, is_done)
+
+    """
+    task, router_query_engine = state["__task__"], state["router_query_engine"]
+    llm, prompt_str = state["llm"], state["prompt_str"]
+    verbose = state.get("verbose", False)
+
+    if "new_input" not in state:
+        new_input = task.input
+    else:
+        new_input = state["new_input"]
+
+    # first run router query engine
+    response = router_query_engine.query(new_input)
+
+    # append to current reasoning
+    state["current_reasoning"].extend(
+        [("user", new_input), ("assistant", str(response))]
+    )
+
+    # Then, check for errors
+    # dynamically create pydantic program for structured output extraction based on template
+    chat_prompt_tmpl = get_chat_prompt_template(
+        prompt_str, state["current_reasoning"]
+    )
+    llm_program = FunctionCallingProgram.from_defaults(
+        output_cls=ResponseEval,
+        prompt=chat_prompt_tmpl,
+        llm=llm,
+    )
+    # run program, look at the result
+    response_eval = llm_program(
+        query_str=new_input, response_str=str(response)
+    )
+    if not response_eval.has_error:
+        is_done = True
+    else:
+        is_done = False
+    state["new_input"] = response_eval.new_question
+
+    if verbose:
+        print(f"> Question: {new_input}")
+        print(f"> Response: {response}")
+        print(f"> Response eval: {response_eval.dict()}")
+
+    # set output
+    state["__output__"] = str(response)
+
+    # return response
+    return state, is_done
+from llama_index.llms.openai import OpenAI
+from llama_index.core.agent import FnAgentWorker
+
+llm = OpenAI(model="gpt-4o")
+router_query_engine = RouterQueryEngine(
+    selector=PydanticSingleSelector.from_defaults(llm=llm),
+    query_engine_tools=[sql_tool] + vector_tools,
+    verbose=True,
+)
+agent = FnAgentWorker(
+    fn=retry_agent_fn,
+    initial_state={
+        "prompt_str": DEFAULT_PROMPT_STR,
+        "llm": llm,
+        "router_query_engine": router_query_engine,
+        "current_reasoning": [],
+        "verbose": True,
+    },
+).as_agent()
+Try Out Some Queries
+Now that we've defined the agent, you can try out some queries.
+
+response = agent.chat("Which countries are each city from?")
+print(str(response))
+
+response = sql_query_engine.query(
+    "What are the top modes of transporation fo the city with the lowest population?"
+)
+print(str(response.metadata["sql_query"]))
+print(str(response))
+
+[Optional] Build a Custom Agent through Subclassing
+If you'd like, you can also choose to build a custom agent through subclassing the CustomSimpleAgentWorker. This is if you want to more heavily customize the mechanisms of our agent interfaces, such as the Task and AgentChatResponse objects and step-wise execution.
+
+NOTE: You probably don't need to read this section for most custom agent flows.
+
+Refresher
+An agent in LlamaIndex consists of both an agent runner + agent worker. An agent runner is an orchestrator that stores state like memory, whereas an agent worker controls the step-wise execution of a Task. Agent runners include sequential, parallel execution. More details can be found in our lower level API guide.
+
+Most core agent logic (e.g. ReAct, function calling loops), can be executed in the agent worker. Therefore we've made it easy to subclass an agent worker, letting you plug it into any agent runner.
+
+Creating a Custom Agent Worker Subclass
+As mentioned above we subclass CustomSimpleAgentWorker. This is a class that already sets up some scaffolding for you. This includes being able to take in tools, callbacks, LLM, and also ensures that the state/steps are properly formatted. In the meantime you mostly have to implement the following functions:
+
+_initialize_state
+_run_step
+_finalize_task
+Some additional notes:
+
+You can implement _arun_step as well if you want to support async chat in the agent.
+You can choose to override __init__ as long as you pass all remaining args, kwargs to super()
+CustomSimpleAgentWorker is implemented as a Pydantic BaseModel meaning that you can define your own custom properties as well.
+Here are the full set of base properties on each CustomSimpleAgentWorker (that you need to/can pass in when constructing your custom agent):
+
+tools: Sequence[BaseTool]
+tool_retriever: Optional[ObjectRetriever[BaseTool]]
+llm: LLM
+callback_manager: CallbackManager
+verbose: bool
+Note that tools and tool_retriever are mutually exclusive, you can only pass in one or the either (e.g. define a static list of tools or define a callable function that returns relevant tools given a user message). You can call get_tools(message: str) to return relevant tools given a message.
+
+All of these properties are accessible via self when defining your custom agent.
+
+from llama_index.core.agent import (
+    CustomSimpleAgentWorker,
+    Task,
+    AgentChatResponse,
+)
+from typing import Dict, Any, List, Tuple, Optional
+from llama_index.core.tools import BaseTool, QueryEngineTool
+from llama_index.core.program import LLMTextCompletionProgram
+from llama_index.core.output_parsers import PydanticOutputParser
+from llama_index.core.query_engine import RouterQueryEngine
+from llama_index.core import ChatPromptTemplate, PromptTemplate
+from llama_index.core.selectors import PydanticSingleSelector
+from llama_index.core.bridge.pydantic import Field, BaseModel
+from llama_index.core.bridge.pydantic import PrivateAttr
+
+
+class RetryAgentWorker(CustomSimpleAgentWorker):
+    """Agent worker that adds a retry layer on top of a router.
+
+    Continues iterating until there's no errors / task is done.
+
+    """
+
+    prompt_str: str = Field(default=DEFAULT_PROMPT_STR)
+    max_iterations: int = Field(default=10)
+
+    _router_query_engine: RouterQueryEngine = PrivateAttr()
+
+    def __init__(self, tools: List[BaseTool], **kwargs: Any) -> None:
+        """Init params."""
+        # validate that all tools are query engine tools
+        for tool in tools:
+            if not isinstance(tool, QueryEngineTool):
+                raise ValueError(
+                    f"Tool {tool.metadata.name} is not a query engine tool."
+                )
+        self._router_query_engine = RouterQueryEngine(
+            selector=PydanticSingleSelector.from_defaults(),
+            query_engine_tools=tools,
+            verbose=kwargs.get("verbose", False),
+        )
+        super().__init__(
+            tools=tools,
+            **kwargs,
+        )
+
+    def _initialize_state(self, task: Task, **kwargs: Any) -> Dict[str, Any]:
+        """Initialize state."""
+        return {"count": 0, "current_reasoning": []}
+
+    def _run_step(
+        self, state: Dict[str, Any], task: Task, input: Optional[str] = None
+    ) -> Tuple[AgentChatResponse, bool]:
+        """Run step.
+
+        Returns:
+            Tuple of (agent_response, is_done)
+
+        """
+        if "new_input" not in state:
+            new_input = task.input
+        else:
+            new_input = state["new_input"]
+
+        # first run router query engine
+        response = self._router_query_engine.query(new_input)
+
+        # append to current reasoning
+        state["current_reasoning"].extend(
+            [("user", new_input), ("assistant", str(response))]
+        )
+
+        # Then, check for errors
+        # dynamically create pydantic program for structured output extraction based on template
+        chat_prompt_tmpl = get_chat_prompt_template(
+            self.prompt_str, state["current_reasoning"]
+        )
+        llm_program = LLMTextCompletionProgram.from_defaults(
+            output_parser=PydanticOutputParser(output_cls=ResponseEval),
+            prompt=chat_prompt_tmpl,
+            llm=self.llm,
+        )
+        # run program, look at the result
+        response_eval = llm_program(
+            query_str=new_input, response_str=str(response)
+        )
+        if not response_eval.has_error:
+            is_done = True
+        else:
+            is_done = False
+        state["new_input"] = response_eval.new_question
+
+        if self.verbose:
+            print(f"> Question: {new_input}")
+            print(f"> Response: {response}")
+            print(f"> Response eval: {response_eval.dict()}")
+
+        # return response
+        return AgentChatResponse(response=str(response)), is_done
+
+    def _finalize_task(self, state: Dict[str, Any], **kwargs) -> None:
+        """Finalize task."""
+        # nothing to finalize here
+        # this is usually if you want to modify any sort of
+        # internal state beyond what is set in `_initialize_state`
+        pass
+Define Custom Agent
+from llama_index.llms.openai import OpenAI
+llm = OpenAI(model="gpt-4")
+callback_manager = llm.callback_manager
+
+query_engine_tools = [sql_tool] + vector_tools
+agent_worker = RetryAgentWorker.from_tools(
+    query_engine_tools,
+    llm=llm,
+    verbose=True,
+    callback_manager=callback_manager,
+)
+agent = agent_worker.as_agent(callback_manager=callback_manager)
+
+https://docs.llamaindex.ai/en/stable/module_guides/deploying/agents/agent_runner/
+
+Lower-Level Agent API#
+We offer a lower-level agent API that offers a host of capabilities beyond simply executing a user query end-to-end.
+
+These capabilities let you step through and control the agent in a much more granular fashion. The end goal is that you can create reliable agentic software systems over your data.
+
+We took inspiration from the Agent Protocol, the OpenAI Assistants API, and of course a host of agent research papers.
+
+NOTE: This is still under development, so interfaces may change. In fact, we'd love to get your feedback on how to make this better.
+
+High-Level Agent Architecture#
+Our "agents" are composed of AgentRunner objects that interact with AgentWorkers:
+
+AgentRunners are orchestrators that store state (including conversational memory), create and maintain tasks, run steps through each task, and offer the user-facing, high-level interface for users to interact with.
+AgentWorkers control the step-wise execution of a Task. Given an input step, an agent worker is responsible for generating the next step. They can be initialized with parameters and act upon state passed down from the Task/TaskStep objects, but do not inherently store state themselves. The outer AgentRunner is responsible for calling an AgentWorker and collecting/aggregating the results.
+Some auxiliary classes:
+
+Task: high-level task, takes in a user query + passes along other info like memory
+TaskStep: represents a single step. Feed this in as input to AgentWorker, get back a TaskStepOutput. Completing a Task can involve multiple TaskStep.
+TaskStepOutput: Output from a given step execution. Outputs whether or not a task is done.
+
+
+Benefits#
+Here are some key benefits to using this lower-level API:
+
+Decouple task creation from execution - control when you want to execute a given task.
+Get greater debuggability into the execution of each step.
+Get greater visibility: view completed steps and next steps.
+[Coming Soon] Steerability: directly control/modify intermediate steps by injecting human feedback
+Abandon task: give up if a task has derailed throughout the course of execution, without affecting the core agent memory.
+[Coming Soon] Undoing a step.
+Easier Customization: it's easy to subclass/implement new agent algorithms (incl. ReAct, OpenAI, but also plan+solve, LLMCompiler) by implementing an AgentWorker.
+Usage Pattern#
+You can either use an OpenAIAgent or ReActAgent, or create your own via the AgentRunner and AgentWorker:
+
+
+from llama_index.core.agent import AgentRunner
+from llama_index.agent.openai import OpenAIAgentWorker
+
+# construct OpenAIAgent from tools
+openai_step_engine = OpenAIAgentWorker.from_tools(tools, llm=llm, verbose=True)
+agent = AgentRunner(openai_step_engine)
+
+# create task
+task = agent.create_task("What is (121 * 3) + 42?")
+
+# execute step
+step_output = agent.run_step(task)
+
+# if step_output is done, finalize response
+if step_output.is_last:
+    response = agent.finalize_response(task.task_id)
+
+# list tasks
+task.list_tasks()
+
+# get completed steps
+task.get_completed_steps(task.task_id)
+
+print(str(response))
+NOTE: The older legacy implementations of OpenAIAgent and ReActAgent (which did not allow for step-wise execution) are still available via:
+
+
+from llama_index.core.agent import OldOpenAIAgent, OldReActAgent
+Additional Module Guides#
+Check out our lower-level agent module guides for more details!
+
+https://docs.llamaindex.ai/en/stable/module_guides/deploying/agents/modules/
+
+https://docs.llamaindex.ai/en/stable/module_guides/deploying/agents/tools/
+
+Tools#
+Concept#
+Having proper tool abstractions is at the core of building data agents. Defining a set of Tools is similar to defining any API interface, with the exception that these Tools are meant for agent rather than human use. We allow users to define both a Tool as well as a ToolSpec containing a series of functions under the hood.
+
+When using an agent or LLM with function calling, the tool selected (and the arguments written for that tool) rely strongly on the tool name and description of the tools purpose and arguments. Spending time tuning these parameters can result in larges changes in how the LLM calls these tools.
+
+A Tool implements a very generic interface - simply define __call__ and also return some basic metadata (name, description, function schema).
+
+We offer a few different types of Tools:
+
+FunctionTool: A function tool allows users to easily convert any user-defined function into a Tool. It can also auto-infer the function schema.
+QueryEngineTool: A tool that wraps an existing query engine. Note: since our agent abstractions inherit from BaseQueryEngine, these tools can also wrap other agents.
+Community contributed ToolSpecs that define one or more tools around a single service (like Gmail)
+Utility tools for wrapping other tools to handle returning large amounts of data from a tool
+FunctionTool#
+A function tool is a simple wrapper around any existing function (both sync and async are supported!).
+
+
+from llama_index.core.tools import FunctionTool
+
+
+def get_weather(location: str) -> str:
+    """Usfeful for getting the weather for a given location."""
+    ...
+
+
+tool = FunctionTool.from_defaults(
+    get_weather,
+    # async_fn=aget_weather,  # optional!
+)
+
+agent = ReActAgent.from_tools(tools, llm=llm, verbose=True)
+For a better function definition, you can also leverage pydantic for the function arguments.
+
+
+from pydantic import Field
+
+
+def get_weather(
+    location: str = Field(
+        description="A city name and state, formatted like '<name>, <state>'"
+    ),
+) -> str:
+    """Usfeful for getting the weather for a given location."""
+    ...
+
+
+tool = FunctionTool.from_defaults(get_weather)
+By default, the tool name will be the function name, and the docstring will be the tool description. But you can also override this.
+
+
+tool = FunctionTool.from_defaults(get_weather, name="...", description="...")
+QueryEngineTool#
+Any query engine can be turned into a tool, using QueryEngineTool:
+
+
+from llama_index.core.tools import QueryEngineTool
+
+tool = QueryEngineTool.from_defaults(
+    query_engine, name="...", description="..."
+)
+Tool Specs#
+We also offer a rich set of Tools and Tool Specs through LlamaHub 🦙.
+
+You can think of tool specs like bundles of tools meant to be used together. Usually these cover useful tools across a single interface/service, like Gmail.
+
+To use with an agent, you can install the specific tool spec integration:
+
+
+pip install llama-index-tools-google
+And then use it:
+
+
+from llama_index.agent.openai import OpenAIAgent
+from llama_index.tools.google import GmailToolSpec
+
+tool_spec = GmailToolSpec()
+agent = OpenAIAgent.from_tools(tool_spec.to_tool_list(), verbose=True)
+See LlamaHub for a full list of community contributed tool specs.
+
+Utility Tools#
+Oftentimes, directly querying an API can return a massive volume of data, which on its own may overflow the context window of the LLM (or at the very least unnecessarily increase the number of tokens that you are using).
+
+To tackle this, we’ve provided an initial set of “utility tools” in LlamaHub Tools - utility tools are not conceptually tied to a given service (e.g. Gmail, Notion), but rather can augment the capabilities of existing Tools. In this particular case, utility tools help to abstract away common patterns of needing to cache/index and query data that’s returned from any API request.
+
+Let’s walk through our two main utility tools below.
+
+OnDemandLoaderTool#
+This tool turns any existing LlamaIndex data loader ( BaseReader class) into a tool that an agent can use. The tool can be called with all the parameters needed to trigger load_data from the data loader, along with a natural language query string. During execution, we first load data from the data loader, index it (for instance with a vector store), and then query it “on-demand”. All three of these steps happen in a single tool call.
+
+Oftentimes this can be preferable to figuring out how to load and index API data yourself. While this may allow for data reusability, oftentimes users just need an ad-hoc index to abstract away prompt window limitations for any API call.
+
+A usage example is given below:
+
+
+from llama_index.readers.wikipedia import WikipediaReader
+from llama_index.core.tools.ondemand_loader_tool import OnDemandLoaderTool
+
+tool = OnDemandLoaderTool.from_defaults(
+    reader,
+    name="Wikipedia Tool",
+    description="A tool for loading data and querying articles from Wikipedia",
+)
+LoadAndSearchToolSpec#
+The LoadAndSearchToolSpec takes in any existing Tool as input. As a tool spec, it implements to_tool_list , and when that function is called, two tools are returned: a load tool and then a search tool.
+
+The load Tool execution would call the underlying Tool, and the index the output (by default with a vector index). The search Tool execution would take in a query string as input and call the underlying index.
+
+This is helpful for any API endpoint that will by default return large volumes of data - for instance our WikipediaToolSpec will by default return entire Wikipedia pages, which will easily overflow most LLM context windows.
+
+Example usage is shown below:
+
+
+from llama_index.tools.wikipedia import WikipediaToolSpec
+from llama_index.core.tools.tool_spec.load_and_search import (
+    LoadAndSearchToolSpec,
+)
+
+wiki_spec = WikipediaToolSpec()
+# Get the search wikipedia tool
+tool = wiki_spec.to_tool_list()[1]
+
+# Create the Agent with load/search tools
+agent = OpenAIAgent.from_tools(
+    LoadAndSearchToolSpec.from_defaults(tool).to_tool_list(), verbose=True
+)
+Return Direct#
+You'll notice the option return_direct in the tool class constructor. If this is set to True, the response from an agent is returned directly, without being interpreted and rewritten by the agent. This can be helpful for decreasing runtime, or designing/specifying tools that will end the agent reasoning loop.
+
+For example, say you specify a tool:
+
+
+tool = QueryEngineTool.from_defaults(
+    query_engine,
+    name="<name>",
+    description="<description>",
+    return_direct=True,
+)
+
+agent = OpenAIAgent.from_tools([tool])
+
+response = agent.chat("<question that invokes tool>")
+In the above example, the query engine tool would be invoked, and the response from that tool would be directly returned as the response, and the execution loop would end.
+
+If return_direct=False was used, then the agent would rewrite the response using the context of the chat history, or even make another tool call.
+
+We have also provided an example notebook of using return_direct.
+
+Debugging Tools#
+Often, it can be useful to debug what exactly the tool definition is that is being sent to APIs.
+
+You can get a good peek at this by using the underlying function to get the current tool schema, which is levereged in APIs like OpenAI and Anthropic.
+
+
+schema = tool.metadata.get_parameters_dict()
+print(schema)
+
+https://docs.llamaindex.ai/en/stable/examples/agent/openai_agent/
+
+Build your own OpenAI Agent
+With the new OpenAI API that supports function calling, it's never been easier to build your own agent!
+
+In this notebook tutorial, we showcase how to write your own OpenAI agent in under 50 lines of code! It is minimal, yet feature complete (with ability to carry on a conversation and use tools).
+
+Initial Setup
+Let's start by importing some simple building blocks.
+
+The main thing we need is:
+
+the OpenAI API (using our own llama_index LLM class)
+a place to keep conversation history
+a definition for tools that our agent can use.
+If you're opening this Notebook on colab, you will probably need to install LlamaIndex 🦙.
+
+%pip install llama-index-agent-openai
+%pip install llama-index-llms-openai
+!pip install llama-index
+import json
+from typing import Sequence, List
+
+from llama_index.llms.openai import OpenAI
+from llama_index.core.llms import ChatMessage
+from llama_index.core.tools import BaseTool, FunctionTool
+from openai.types.chat import ChatCompletionMessageToolCall
+
+import nest_asyncio
+
+nest_asyncio.apply()
+Let's define some very simple calculator tools for our agent.
+
+def multiply(a: int, b: int) -> int:
+    """Multiple two integers and returns the result integer"""
+    return a * b
+
+
+multiply_tool = FunctionTool.from_defaults(fn=multiply)
+def add(a: int, b: int) -> int:
+    """Add two integers and returns the result integer"""
+    return a + b
+
+
+add_tool = FunctionTool.from_defaults(fn=add)
+Agent Definition
+Now, we define our agent that's capable of holding a conversation and calling tools in under 50 lines of code.
+
+The meat of the agent logic is in the chat method. At a high-level, there are 3 steps:
+
+Call OpenAI to decide which tool (if any) to call and with what arguments.
+Call the tool with the arguments to obtain an output
+Call OpenAI to synthesize a response from the conversation context and the tool output.
+The reset method simply resets the conversation context, so we can start another conversation.
+
+class YourOpenAIAgent:
+    def __init__(
+        self,
+        tools: Sequence[BaseTool] = [],
+        llm: OpenAI = OpenAI(temperature=0, model="gpt-3.5-turbo-0613"),
+        chat_history: List[ChatMessage] = [],
+    ) -> None:
+        self._llm = llm
+        self._tools = {tool.metadata.name: tool for tool in tools}
+        self._chat_history = chat_history
+
+    def reset(self) -> None:
+        self._chat_history = []
+
+    def chat(self, message: str) -> str:
+        chat_history = self._chat_history
+        chat_history.append(ChatMessage(role="user", content=message))
+        tools = [
+            tool.metadata.to_openai_tool() for _, tool in self._tools.items()
+        ]
+
+        ai_message = self._llm.chat(chat_history, tools=tools).message
+        additional_kwargs = ai_message.additional_kwargs
+        chat_history.append(ai_message)
+
+        tool_calls = additional_kwargs.get("tool_calls", None)
+        # parallel function calling is now supported
+        if tool_calls is not None:
+            for tool_call in tool_calls:
+                function_message = self._call_function(tool_call)
+                chat_history.append(function_message)
+                ai_message = self._llm.chat(chat_history).message
+                chat_history.append(ai_message)
+
+        return ai_message.content
+
+    def _call_function(
+        self, tool_call: ChatCompletionMessageToolCall
+    ) -> ChatMessage:
+        id_ = tool_call.id
+        function_call = tool_call.function
+        tool = self._tools[function_call.name]
+        output = tool(**json.loads(function_call.arguments))
+        return ChatMessage(
+            name=function_call.name,
+            content=str(output),
+            role="tool",
+            additional_kwargs={
+                "tool_call_id": id_,
+                "name": function_call.name,
+            },
+        )
+Let's Try It Out!
+agent = YourOpenAIAgent(tools=[multiply_tool, add_tool])
+agent.chat("Hi")
+'Hello! How can I assist you today?'
+agent.chat("What is 2123 * 215123")
+'The product of 2123 multiplied by 215123 is 456,706,129.'
+Our (Slightly Better) OpenAIAgent Implementation
+We provide a (slightly better) OpenAIAgent implementation in LlamaIndex, which you can directly use as follows.
+
+In comparison to the simplified version above:
+
+it implements the BaseChatEngine and BaseQueryEngine interface, so you can more seamlessly use it in the LlamaIndex framework.
+it supports multiple function calls per conversation turn
+it supports streaming
+it supports async endpoints
+it supports callback and tracing
+from llama_index.agent.openai import OpenAIAgent
+from llama_index.llms.openai import OpenAI
+llm = OpenAI(model="gpt-3.5-turbo-0613")
+agent = OpenAIAgent.from_tools(
+    [multiply_tool, add_tool], llm=llm, verbose=True
+)
+Chat
+response = agent.chat("What is (121 * 3) + 42?")
+print(str(response))
+
+Async Chat
+response = await agent.achat("What is 121 * 3?")
+print(str(response))
+
+Streaming Chat
+Here, every LLM response is returned as a generator. You can stream every incremental step, or only the last response.
+
+response = agent.stream_chat(
+    "What is 121 * 2? Once you have the answer, use that number to write a"
+    " story about a group of mice."
+)
+
+response_gen = response.response_gen
+
+for token in response_gen:
+    print(token, end="")
+
+Async Streaming Chat
+response = await agent.astream_chat(
+    "What is 121 + 8? Once you have the answer, use that number to write a"
+    " story about a group of mice."
+)
+
+response_gen = response.response_gen
+
+async for token in response.async_response_gen():
+    print(token, end="")
+
+Agent with Personality
+You can specify a system prompt to give the agent additional instruction or personality.
+
+from llama_index.agent.openai import OpenAIAgent
+from llama_index.llms.openai import OpenAI
+from llama_index.core.prompts.system import SHAKESPEARE_WRITING_ASSISTANT
+llm = OpenAI(model="gpt-3.5-turbo-0613")
+
+agent = OpenAIAgent.from_tools(
+    [multiply_tool, add_tool],
+    llm=llm,
+    verbose=True,
+    system_prompt=SHAKESPEARE_WRITING_ASSISTANT,
+)
+response = agent.chat("Hi")
+print(response)
+
+https://docs.llamaindex.ai/en/stable/examples/agent/openai_agent_with_query_engine/
+
+OpenAI Agent with Query Engine Tools
+Build Query Engine Tools
+If you're opening this Notebook on colab, you will probably need to install LlamaIndex 🦙.
+
+%pip install llama-index-agent-openai
+!pip install llama-index
+from llama_index.core import (
+    SimpleDirectoryReader,
+    VectorStoreIndex,
+    StorageContext,
+    load_index_from_storage,
+)
+
+from llama_index.core.tools import QueryEngineTool, ToolMetadata
+try:
+    storage_context = StorageContext.from_defaults(
+        persist_dir="./storage/lyft"
+    )
+    lyft_index = load_index_from_storage(storage_context)
+
+    storage_context = StorageContext.from_defaults(
+        persist_dir="./storage/uber"
+    )
+    uber_index = load_index_from_storage(storage_context)
+
+    index_loaded = True
+except:
+    index_loaded = False
+Download Data
+
+!mkdir -p 'data/10k/'
+!wget 'https://raw.githubusercontent.com/run-llama/llama_index/main/docs/docs/examples/data/10k/uber_2021.pdf' -O 'data/10k/uber_2021.pdf'
+!wget 'https://raw.githubusercontent.com/run-llama/llama_index/main/docs/docs/examples/data/10k/lyft_2021.pdf' -O 'data/10k/lyft_2021.pdf'
+if not index_loaded:
+    # load data
+    lyft_docs = SimpleDirectoryReader(
+        input_files=["./data/10k/lyft_2021.pdf"]
+    ).load_data()
+    uber_docs = SimpleDirectoryReader(
+        input_files=["./data/10k/uber_2021.pdf"]
+    ).load_data()
+
+    # build index
+    lyft_index = VectorStoreIndex.from_documents(lyft_docs)
+    uber_index = VectorStoreIndex.from_documents(uber_docs)
+
+    # persist index
+    lyft_index.storage_context.persist(persist_dir="./storage/lyft")
+    uber_index.storage_context.persist(persist_dir="./storage/uber")
+lyft_engine = lyft_index.as_query_engine(similarity_top_k=3)
+uber_engine = uber_index.as_query_engine(similarity_top_k=3)
+query_engine_tools = [
+    QueryEngineTool(
+        query_engine=lyft_engine,
+        metadata=ToolMetadata(
+            name="lyft_10k",
+            description=(
+                "Provides information about Lyft financials for year 2021. "
+                "Use a detailed plain text question as input to the tool."
+            ),
+        ),
+    ),
+    QueryEngineTool(
+        query_engine=uber_engine,
+        metadata=ToolMetadata(
+            name="uber_10k",
+            description=(
+                "Provides information about Uber financials for year 2021. "
+                "Use a detailed plain text question as input to the tool."
+            ),
+        ),
+    ),
+]
+Setup OpenAI Agent
+from llama_index.agent.openai import OpenAIAgent
+agent = OpenAIAgent.from_tools(query_engine_tools, verbose=True)
+Let's Try It Out!
+agent.chat_repl()
+
+Retrieval-Augmented OpenAI Agent
+In this tutorial, we show you how to use our OpenAIAgent implementation with a tool retriever, to build an agent on top of OpenAI's function API and store/index an arbitrary number of tools. Our indexing/retrieval modules help to remove the complexity of having too many functions to fit in the prompt.
+
+Initial Setup
+Let's start by importing some simple building blocks.
+
+The main thing we need is:
+
+the OpenAI API
+a place to keep conversation history
+a definition for tools that our agent can use.
+If you're opening this Notebook on colab, you will probably need to install LlamaIndex 🦙.
+
+%pip install llama-index-agent-openai-legacy
+!pip install llama-index
+import json
+from typing import Sequence
+
+from llama_index.core.tools import BaseTool, FunctionTool
+/Users/suo/miniconda3/envs/llama/lib/python3.9/site-packages/deeplake/util/check_latest_version.py:32: UserWarning: A newer version of deeplake (3.6.7) is available. It's recommended that you update to the latest version using `pip install -U deeplake`.
+  warnings.warn(
+Let's define some very simple calculator tools for our agent.
+
+def multiply(a: int, b: int) -> int:
+    """Multiply two integers and returns the result integer"""
+    return a * b
+
+
+def add(a: int, b: int) -> int:
+    """Add two integers and returns the result integer"""
+    return a + b
+
+
+def useless(a: int, b: int) -> int:
+    """Toy useless function."""
+    pass
+
+
+multiply_tool = FunctionTool.from_defaults(fn=multiply, name="multiply")
+useless_tools = [
+    FunctionTool.from_defaults(fn=useless, name=f"useless_{str(idx)}")
+    for idx in range(28)
+]
+add_tool = FunctionTool.from_defaults(fn=add, name="add")
+
+all_tools = [multiply_tool] + [add_tool] + useless_tools
+all_tools_map = {t.metadata.name: t for t in all_tools}
+Building an Object Index
+We have an ObjectIndex construct in LlamaIndex that allows the user to use our index data structures over arbitrary objects. The ObjectIndex will handle serialiation to/from the object, and use an underying index (e.g. VectorStoreIndex, SummaryIndex, KeywordTableIndex) as the storage mechanism.
+
+In this case, we have a large collection of Tool objects, and we'd want to define an ObjectIndex over these Tools.
+
+The index comes bundled with a retrieval mechanism, an ObjectRetriever.
+
+This can be passed in to our agent so that it can perform Tool retrieval during query-time.
+
+# define an "object" index over these tools
+from llama_index.core import VectorStoreIndex
+from llama_index.core.objects import ObjectIndex
+
+obj_index = ObjectIndex.from_objects(
+    all_tools,
+    index_cls=VectorStoreIndex,
+)
+OpenAIAgent w/ Tool Retrieval
+We provide a OpenAIAgent implementation in LlamaIndex, which can take in an ObjectRetriever over a set of BaseTool objects.
+
+During query-time, we would first use the ObjectRetriever to retrieve a set of relevant Tools. These tools would then be passed into the agent; more specifically, their function signatures would be passed into the OpenAI Function calling API.
+
+from llama_index.agent.openai import OpenAIAgent
+agent = OpenAIAgent.from_tools(
+    tool_retriever=obj_index.as_retriever(similarity_top_k=2), verbose=True
+)
+agent.chat("What's 212 multiplied by 122? Make sure to use Tools")
+=== Calling Function ===
+Calling function: multiply with args: {
+  "a": 212,
+  "b": 122
+}
+Got output: 25864
+========================
+Response(response='212 multiplied by 122 is 25,864.', source_nodes=[], metadata=None)
+agent.chat("What's 212 added to 122 ? Make sure to use Tools")
+=== Calling Function ===
+Calling function: add with args: {
+  "a": 212,
+  "b": 122
+}
+Got output: 334
+========================
+Response(response='212 added to 122 is 334.', source_nodes=[], metadata=None)
+
+https://docs.llamaindex.ai/en/stable/examples/agent/openai_agent_query_cookbook/
+
+OpenAI Agent + Query Engine Experimental Cookbook
+In this notebook, we try out the OpenAIAgent across a variety of query engine tools and datasets. We explore how OpenAIAgent can compare/replace existing workflows solved by our retrievers/query engines.
+
+Auto retrieval
+Joint SQL and vector search
+NOTE: Any Text-to-SQL application should be aware that executing arbitrary SQL queries can be a security risk. It is recommended to take precautions as needed, such as using restricted roles, read-only databases, sandboxing, etc.
+
+AutoRetrieval from a Vector Database
+Our existing "auto-retrieval" capabilities (in VectorIndexAutoRetriever) allow an LLM to infer the right query parameters for a vector database - including both the query string and metadata filter.
+
+Since the OpenAI Function API can infer function parameters, we explore its capabilities in performing auto-retrieval here.
+
+If you're opening this Notebook on colab, you will probably need to install LlamaIndex 🦙.
+
+%pip install llama-index-agent-openai
+%pip install llama-index-llms-openai
+%pip install llama-index-readers-wikipedia
+%pip install llama-index-vector-stores-pinecone
+!pip install llama-index
+import pinecone
+import os
+
+api_key = os.environ["PINECONE_API_KEY"]
+pinecone.init(api_key=api_key, environment="us-west4-gcp-free")
+import os
+import getpass
+
+# os.environ["OPENAI_API_KEY"] = getpass.getpass("OpenAI API Key:")
+import openai
+
+openai.api_key = "sk-<your-key>"
+# dimensions are for text-embedding-ada-002
+try:
+    pinecone.create_index(
+        "quickstart-index", dimension=1536, metric="euclidean", pod_type="p1"
+    )
+except Exception:
+    # most likely index already exists
+    pass
+pinecone_index = pinecone.Index("quickstart-index")
+# Optional: delete data in your pinecone index
+pinecone_index.delete(deleteAll=True, namespace="test")
+{}
+from llama_index.core import VectorStoreIndex, StorageContext
+from llama_index.vector_stores.pinecone import PineconeVectorStore
+from llama_index.core.schema import TextNode
+
+nodes = [
+    TextNode(
+        text=(
+            "Michael Jordan is a retired professional basketball player,"
+            " widely regarded as one of the greatest basketball players of all"
+            " time."
+        ),
+        metadata={
+            "category": "Sports",
+            "country": "United States",
+            "gender": "male",
+            "born": 1963,
+        },
+    ),
+    TextNode(
+        text=(
+            "Angelina Jolie is an American actress, filmmaker, and"
+            " humanitarian. She has received numerous awards for her acting"
+            " and is known for her philanthropic work."
+        ),
+        metadata={
+            "category": "Entertainment",
+            "country": "United States",
+            "gender": "female",
+            "born": 1975,
+        },
+    ),
+    TextNode(
+        text=(
+            "Elon Musk is a business magnate, industrial designer, and"
+            " engineer. He is the founder, CEO, and lead designer of SpaceX,"
+            " Tesla, Inc., Neuralink, and The Boring Company."
+        ),
+        metadata={
+            "category": "Business",
+            "country": "United States",
+            "gender": "male",
+            "born": 1971,
+        },
+    ),
+    TextNode(
+        text=(
+            "Rihanna is a Barbadian singer, actress, and businesswoman. She"
+            " has achieved significant success in the music industry and is"
+            " known for her versatile musical style."
+        ),
+        metadata={
+            "category": "Music",
+            "country": "Barbados",
+            "gender": "female",
+            "born": 1988,
+        },
+    ),
+    TextNode(
+        text=(
+            "Cristiano Ronaldo is a Portuguese professional footballer who is"
+            " considered one of the greatest football players of all time. He"
+            " has won numerous awards and set multiple records during his"
+            " career."
+        ),
+        metadata={
+            "category": "Sports",
+            "country": "Portugal",
+            "gender": "male",
+            "born": 1985,
+        },
+    ),
+]
+vector_store = PineconeVectorStore(
+    pinecone_index=pinecone_index, namespace="test"
+)
+storage_context = StorageContext.from_defaults(vector_store=vector_store)
+index = VectorStoreIndex(nodes, storage_context=storage_context)
+Upserted vectors: 100%|██████████| 5/5 [00:00<00:00,  5.79it/s]
+Define Function Tool
+Here we define the function interface, which is passed to OpenAI to perform auto-retrieval.
+
+We were not able to get OpenAI to work with nested pydantic objects or tuples as arguments, so we converted the metadata filter keys and values into lists for the function API to work with.
+
+# define function tool
+from llama_index.core.tools import FunctionTool
+from llama_index.core.vector_stores import (
+    VectorStoreInfo,
+    MetadataInfo,
+    MetadataFilter,
+    MetadataFilters,
+    FilterCondition,
+    FilterOperator,
+)
+from llama_index.core.retrievers import VectorIndexRetriever
+from llama_index.core.query_engine import RetrieverQueryEngine
+
+from typing import List, Tuple, Any
+from pydantic import BaseModel, Field
+
+# hardcode top k for now
+top_k = 3
+
+# define vector store info describing schema of vector store
+vector_store_info = VectorStoreInfo(
+    content_info="brief biography of celebrities",
+    metadata_info=[
+        MetadataInfo(
+            name="category",
+            type="str",
+            description=(
+                "Category of the celebrity, one of [Sports, Entertainment,"
+                " Business, Music]"
+            ),
+        ),
+        MetadataInfo(
+            name="country",
+            type="str",
+            description=(
+                "Country of the celebrity, one of [United States, Barbados,"
+                " Portugal]"
+            ),
+        ),
+        MetadataInfo(
+            name="gender",
+            type="str",
+            description=("Gender of the celebrity, one of [male, female]"),
+        ),
+        MetadataInfo(
+            name="born",
+            type="int",
+            description=("Born year of the celebrity, could be any integer"),
+        ),
+    ],
+)
+# define pydantic model for auto-retrieval function
+class AutoRetrieveModel(BaseModel):
+    query: str = Field(..., description="natural language query string")
+    filter_key_list: List[str] = Field(
+        ..., description="List of metadata filter field names"
+    )
+    filter_value_list: List[Any] = Field(
+        ...,
+        description=(
+            "List of metadata filter field values (corresponding to names"
+            " specified in filter_key_list)"
+        ),
+    )
+    filter_operator_list: List[str] = Field(
+        ...,
+        description=(
+            "Metadata filters conditions (could be one of <, <=, >, >=, ==, !=)"
+        ),
+    )
+    filter_condition: str = Field(
+        ...,
+        description=("Metadata filters condition values (could be AND or OR)"),
+    )
+
+
+description = f"""\
+Use this tool to look up biographical information about celebrities.
+The vector database schema is given below:
+{vector_store_info.json()}
+"""
+Define AutoRetrieve Functions
+
+def auto_retrieve_fn(
+    query: str,
+    filter_key_list: List[str],
+    filter_value_list: List[any],
+    filter_operator_list: List[str],
+    filter_condition: str,
+):
+    """Auto retrieval function.
+
+    Performs auto-retrieval from a vector database, and then applies a set of filters.
+
+    """
+    query = query or "Query"
+
+    metadata_filters = [
+        MetadataFilter(key=k, value=v, operator=op)
+        for k, v, op in zip(
+            filter_key_list, filter_value_list, filter_operator_list
+        )
+    ]
+    retriever = VectorIndexRetriever(
+        index,
+        filters=MetadataFilters(
+            filters=metadata_filters, condition=filter_condition
+        ),
+        top_k=top_k,
+    )
+    query_engine = RetrieverQueryEngine.from_args(retriever)
+
+    response = query_engine.query(query)
+    return str(response)
+
+
+auto_retrieve_tool = FunctionTool.from_defaults(
+    fn=auto_retrieve_fn,
+    name="celebrity_bios",
+    description=description,
+    fn_schema=AutoRetrieveModel,
+)
+Initialize Agent
+from llama_index.agent.openai import OpenAIAgent
+from llama_index.llms.openai import OpenAI
+
+agent = OpenAIAgent.from_tools(
+    [auto_retrieve_tool],
+    llm=OpenAI(temperature=0, model="gpt-4-0613"),
+    verbose=True,
+)
+response = agent.chat("Tell me about two celebrities from the United States. ")
+print(str(response))
+
+Joint Text-to-SQL and Semantic Search
+This is currently handled by our SQLAutoVectorQueryEngine.
+
+Let's try implementing this by giving our OpenAIAgent access to two query tools: SQL and Vector
+
+NOTE: Any Text-to-SQL application should be aware that executing arbitrary SQL queries can be a security risk. It is recommended to take precautions as needed, such as using restricted roles, read-only databases, sandboxing, etc.
+
+Load and Index Structured Data
+We load sample structured datapoints into a SQL db and index it.
+
+from sqlalchemy import (
+    create_engine,
+    MetaData,
+    Table,
+    Column,
+    String,
+    Integer,
+    select,
+    column,
+)
+from llama_index.core import SQLDatabase
+from llama_index.core.indices import SQLStructStoreIndex
+
+engine = create_engine("sqlite:///:memory:", future=True)
+metadata_obj = MetaData()
+# create city SQL table
+table_name = "city_stats"
+city_stats_table = Table(
+    table_name,
+    metadata_obj,
+    Column("city_name", String(16), primary_key=True),
+    Column("population", Integer),
+    Column("country", String(16), nullable=False),
+)
+
+metadata_obj.create_all(engine)
+# print tables
+metadata_obj.tables.keys()
+dict_keys(['city_stats'])
+from sqlalchemy import insert
+
+rows = [
+    {"city_name": "Toronto", "population": 2930000, "country": "Canada"},
+    {"city_name": "Tokyo", "population": 13960000, "country": "Japan"},
+    {"city_name": "Berlin", "population": 3645000, "country": "Germany"},
+]
+for row in rows:
+    stmt = insert(city_stats_table).values(**row)
+    with engine.begin() as connection:
+        cursor = connection.execute(stmt)
+with engine.connect() as connection:
+    cursor = connection.exec_driver_sql("SELECT * FROM city_stats")
+    print(cursor.fetchall())
+[('Toronto', 2930000, 'Canada'), ('Tokyo', 13960000, 'Japan'), ('Berlin', 3645000, 'Germany')]
+sql_database = SQLDatabase(engine, include_tables=["city_stats"])
+from llama_index.core.query_engine import NLSQLTableQueryEngine
+query_engine = NLSQLTableQueryEngine(
+    sql_database=sql_database,
+    tables=["city_stats"],
+)
+Load and Index Unstructured Data
+We load unstructured data into a vector index backed by Pinecone
+
+# install wikipedia python package
+!pip install wikipedia
+
+from llama_index.readers.wikipedia import WikipediaReader
+from llama_index.core import SimpleDirectoryReader, VectorStoreIndex
+cities = ["Toronto", "Berlin", "Tokyo"]
+wiki_docs = WikipediaReader().load_data(pages=cities)
+# define pinecone index
+import pinecone
+import os
+
+api_key = os.environ["PINECONE_API_KEY"]
+pinecone.init(api_key=api_key, environment="us-west1-gcp")
+
+# dimensions are for text-embedding-ada-002
+# pinecone.create_index("quickstart", dimension=1536, metric="euclidean", pod_type="p1")
+pinecone_index = pinecone.Index("quickstart")
+# OPTIONAL: delete all
+pinecone_index.delete(deleteAll=True)
+{}
+from llama_index.core import Settings
+from llama_index.core import StorageContext
+from llama_index.vector_stores.pinecone import PineconeVectorStore
+from llama_index.core.node_parser import TokenTextSplitter
+from llama_index.llms.openai import OpenAI
+
+# define node parser and LLM
+Settings.llm = OpenAI(temperature=0, model="gpt-4")
+Settings.node_parser = TokenTextSplitter(chunk_size=1024)
+
+# define pinecone vector index
+vector_store = PineconeVectorStore(
+    pinecone_index=pinecone_index, namespace="wiki_cities"
+)
+storage_context = StorageContext.from_defaults(vector_store=vector_store)
+vector_index = VectorStoreIndex([], storage_context=storage_context)
+# Insert documents into vector index
+# Each document has metadata of the city attached
+for city, wiki_doc in zip(cities, wiki_docs):
+    nodes = Settings.node_parser.get_nodes_from_documents([wiki_doc])
+    # add metadata to each node
+    for node in nodes:
+        node.metadata = {"title": city}
+    vector_index.insert_nodes(nodes)
+
+Define Query Engines / Tools
+from llama_index.core.retrievers import VectorIndexAutoRetriever
+from llama_index.core.vector_stores import MetadataInfo, VectorStoreInfo
+from llama_index.core.query_engine import RetrieverQueryEngine
+from llama_index.core.tools import QueryEngineTool
+
+
+vector_store_info = VectorStoreInfo(
+    content_info="articles about different cities",
+    metadata_info=[
+        MetadataInfo(
+            name="title", type="str", description="The name of the city"
+        ),
+    ],
+)
+vector_auto_retriever = VectorIndexAutoRetriever(
+    vector_index, vector_store_info=vector_store_info
+)
+
+retriever_query_engine = RetrieverQueryEngine.from_args(
+    vector_auto_retriever,
+)
+sql_tool = QueryEngineTool.from_defaults(
+    query_engine=query_engine,
+    name="sql_tool",
+    description=(
+        "Useful for translating a natural language query into a SQL query over"
+        " a table containing: city_stats, containing the population/country of"
+        " each city"
+    ),
+)
+vector_tool = QueryEngineTool.from_defaults(
+    query_engine=retriever_query_engine,
+    name="vector_tool",
+    description=(
+        f"Useful for answering semantic questions about different cities"
+    ),
+)
+Initialize Agent
+from llama_index.agent.openai import OpenAIAgent
+from llama_index.llms.openai import OpenAI
+
+agent = OpenAIAgent.from_tools(
+    [sql_tool, vector_tool],
+    llm=OpenAI(temperature=0, model="gpt-4-0613"),
+    verbose=True,
+)
+# NOTE: gpt-3.5 gives the wrong answer, but gpt-4 is able to reason over both loops
+response = agent.chat(
+    "Tell me about the arts and culture of the city with the highest"
+    " population"
+)
+print(str(response))
+
+https://docs.llamaindex.ai/en/stable/examples/agent/openai_agent_query_plan/
+
+OpenAI Agent Query Planning
+In this demo, we explore adding a QueryPlanTool to an OpenAIAgent. This effectively enables the agent to do advanced query planning, all through a single tool!
+
+The QueryPlanTool is designed to work well with the OpenAI Function API. The tool takes in a set of other tools as input. The tool function signature contains of a QueryPlan Pydantic object, which can in turn contain a DAG of QueryNode objects defining a compute graph. The agent is responsible for defining this graph through the function signature when calling the tool. The tool itself executes the DAG over any corresponding tools.
+
+In this setting we use a familiar example: Uber 10Q filings in March, June, and September of 2022.
+
+If you're opening this Notebook on colab, you will probably need to install LlamaIndex 🦙.
+
+%pip install llama-index-agent-openai
+%pip install llama-index-llms-openai
+!pip install llama-index
+# # uncomment to turn on logging
+# import logging
+# import sys
+
+# logging.basicConfig(stream=sys.stdout, level=logging.INFO)
+# logging.getLogger().addHandler(logging.StreamHandler(stream=sys.stdout))
+%load_ext autoreload
+%autoreload 2
+from llama_index.core import SimpleDirectoryReader, VectorStoreIndex
+from llama_index.core.response.pprint_utils import pprint_response
+from llama_index.llms.openai import OpenAI
+llm = OpenAI(temperature=0, model="gpt-4")
+
+Load data
+march_2022 = SimpleDirectoryReader(
+    input_files=["./data/10q/uber_10q_march_2022.pdf"]
+).load_data()
+june_2022 = SimpleDirectoryReader(
+    input_files=["./data/10q/uber_10q_june_2022.pdf"]
+).load_data()
+sept_2022 = SimpleDirectoryReader(
+    input_files=["./data/10q/uber_10q_sept_2022.pdf"]
+).load_data()
+Build indices
+We build a vector index / query engine over each of the documents (March, June, September).
+
+march_index = VectorStoreIndex.from_documents(march_2022)
+june_index = VectorStoreIndex.from_documents(june_2022)
+sept_index = VectorStoreIndex.from_documents(sept_2022)
+march_engine = march_index.as_query_engine(similarity_top_k=3, llm=llm)
+june_engine = june_index.as_query_engine(similarity_top_k=3, llm=llm)
+sept_engine = sept_index.as_query_engine(similarity_top_k=3, llm=llm)
+OpenAI Function Agent with a Query Plan Tool
+Use OpenAIAgent, built on top of the OpenAI tool use interface.
+
+Feed it our QueryPlanTool, which is a Tool that takes in other tools. And the agent to generate a query plan DAG over these tools.
+
+from llama_index.core.tools import QueryEngineTool
+
+
+query_tool_sept = QueryEngineTool.from_defaults(
+    query_engine=sept_engine,
+    name="sept_2022",
+    description=(
+        f"Provides information about Uber quarterly financials ending"
+        f" September 2022"
+    ),
+)
+query_tool_june = QueryEngineTool.from_defaults(
+    query_engine=june_engine,
+    name="june_2022",
+    description=(
+        f"Provides information about Uber quarterly financials ending June"
+        f" 2022"
+    ),
+)
+query_tool_march = QueryEngineTool.from_defaults(
+    query_engine=march_engine,
+    name="march_2022",
+    description=(
+        f"Provides information about Uber quarterly financials ending March"
+        f" 2022"
+    ),
+)
+# define query plan tool
+from llama_index.core.tools import QueryPlanTool
+from llama_index.core import get_response_synthesizer
+
+response_synthesizer = get_response_synthesizer()
+query_plan_tool = QueryPlanTool.from_defaults(
+    query_engine_tools=[query_tool_sept, query_tool_june, query_tool_march],
+    response_synthesizer=response_synthesizer,
+)
+query_plan_tool.metadata.to_openai_tool()  # to_openai_function() deprecated
+
+from llama_index.agent.openai import OpenAIAgent
+from llama_index.llms.openai import OpenAI
+
+
+agent = OpenAIAgent.from_tools(
+    [query_plan_tool],
+    max_function_calls=10,
+    llm=OpenAI(temperature=0, model="gpt-4-0613"),
+    verbose=True,
+)
+response = agent.query("What were the risk factors in sept 2022?")
+from llama_index.core.tools.query_plan import QueryPlan, QueryNode
+
+query_plan = QueryPlan(
+    nodes=[
+        QueryNode(
+            id=1,
+            query_str="risk factors",
+            tool_name="sept_2022",
+            dependencies=[],
+        )
+    ]
+)
+QueryPlan.schema()
+
+response = agent.query(
+    "Analyze Uber revenue growth in March, June, and September"
+)
+
+https://docs.llamaindex.ai/en/stable/examples/agent/openai_agent_context_retrieval/
+
+Context-Augmented OpenAI Agent
+In this tutorial, we show you how to use our ContextRetrieverOpenAIAgent implementation to build an agent on top of OpenAI's function API and store/index an arbitrary number of tools. Our indexing/retrieval modules help to remove the complexity of having too many functions to fit in the prompt.
+
+Initial Setup
+Here we setup a ContextRetrieverOpenAIAgent. This agent will perform retrieval first before calling any tools. This can help ground the agent's tool picking and answering capabilities in context.
+
+If you're opening this Notebook on colab, you will probably need to install LlamaIndex 🦙.
+
+%pip install llama-index-agent-openai-legacy
+!pip install llama-index
+import json
+from typing import Sequence
+
+from llama_index.core import (
+    SimpleDirectoryReader,
+    VectorStoreIndex,
+    StorageContext,
+    load_index_from_storage,
+)
+from llama_index.core.tools import QueryEngineTool, ToolMetadata
+try:
+    storage_context = StorageContext.from_defaults(
+        persist_dir="./storage/march"
+    )
+    march_index = load_index_from_storage(storage_context)
+
+    storage_context = StorageContext.from_defaults(
+        persist_dir="./storage/june"
+    )
+    june_index = load_index_from_storage(storage_context)
+
+    storage_context = StorageContext.from_defaults(
+        persist_dir="./storage/sept"
+    )
+    sept_index = load_index_from_storage(storage_context)
+
+    index_loaded = True
+except:
+    index_loaded = False
+Download Data
+
+!mkdir -p 'data/10q/'
+!wget 'https://raw.githubusercontent.com/run-llama/llama_index/main/docs/docs/examples/data/10q/uber_10q_march_2022.pdf' -O 'data/10q/uber_10q_march_2022.pdf'
+!wget 'https://raw.githubusercontent.com/run-llama/llama_index/main/docs/docs/examples/data/10q/uber_10q_june_2022.pdf' -O 'data/10q/uber_10q_june_2022.pdf'
+!wget 'https://raw.githubusercontent.com/run-llama/llama_index/main/docs/docs/examples/data/10q/uber_10q_sept_2022.pdf' -O 'data/10q/uber_10q_sept_2022.pdf'
+# build indexes across the three data sources
+
+if not index_loaded:
+    # load data
+    march_docs = SimpleDirectoryReader(
+        input_files=["./data/10q/uber_10q_march_2022.pdf"]
+    ).load_data()
+    june_docs = SimpleDirectoryReader(
+        input_files=["./data/10q/uber_10q_june_2022.pdf"]
+    ).load_data()
+    sept_docs = SimpleDirectoryReader(
+        input_files=["./data/10q/uber_10q_sept_2022.pdf"]
+    ).load_data()
+
+    # build index
+    march_index = VectorStoreIndex.from_documents(march_docs)
+    june_index = VectorStoreIndex.from_documents(june_docs)
+    sept_index = VectorStoreIndex.from_documents(sept_docs)
+
+    # persist index
+    march_index.storage_context.persist(persist_dir="./storage/march")
+    june_index.storage_context.persist(persist_dir="./storage/june")
+    sept_index.storage_context.persist(persist_dir="./storage/sept")
+march_engine = march_index.as_query_engine(similarity_top_k=3)
+june_engine = june_index.as_query_engine(similarity_top_k=3)
+sept_engine = sept_index.as_query_engine(similarity_top_k=3)
+query_engine_tools = [
+    QueryEngineTool(
+        query_engine=march_engine,
+        metadata=ToolMetadata(
+            name="uber_march_10q",
+            description=(
+                "Provides information about Uber 10Q filings for March 2022. "
+                "Use a detailed plain text question as input to the tool."
+            ),
+        ),
+    ),
+    QueryEngineTool(
+        query_engine=june_engine,
+        metadata=ToolMetadata(
+            name="uber_june_10q",
+            description=(
+                "Provides information about Uber financials for June 2021. "
+                "Use a detailed plain text question as input to the tool."
+            ),
+        ),
+    ),
+    QueryEngineTool(
+        query_engine=sept_engine,
+        metadata=ToolMetadata(
+            name="uber_sept_10q",
+            description=(
+                "Provides information about Uber financials for Sept 2021. "
+                "Use a detailed plain text question as input to the tool."
+            ),
+        ),
+    ),
+]
+Try Context-Augmented Agent
+Here we augment our agent with context in different settings:
+
+toy context: we define some abbreviations that map to financial terms (e.g. R=Revenue). We supply this as context to the agent
+from llama_index.core import Document
+from llama_index.agent.openai_legacy import ContextRetrieverOpenAIAgent
+# toy index - stores a list of abbreviations
+texts = [
+    "Abbreviation: X = Revenue",
+    "Abbreviation: YZ = Risk Factors",
+    "Abbreviation: Z = Costs",
+]
+docs = [Document(text=t) for t in texts]
+context_index = VectorStoreIndex.from_documents(docs)
+context_agent = ContextRetrieverOpenAIAgent.from_tools_and_retriever(
+    query_engine_tools,
+    context_index.as_retriever(similarity_top_k=1),
+    verbose=True,
+)
+response = context_agent.chat("What is the YZ of March 2022?")
+
+context_agent.chat("What is the X and Z in September 2022?")
+Use Uber 10-Q as context, use Calculator as Tool
+from llama_index.core.tools import BaseTool, FunctionTool
+
+
+def magic_formula(revenue: int, cost: int) -> int:
+    """Runs MAGIC_FORMULA on revenue and cost."""
+    return revenue - cost
+
+
+magic_tool = FunctionTool.from_defaults(fn=magic_formula, name="magic_formula")
+context_agent = ContextRetrieverOpenAIAgent.from_tools_and_retriever(
+    [magic_tool], sept_index.as_retriever(similarity_top_k=3), verbose=True
+)
+response = context_agent.chat(
+    "Can you run MAGIC_FORMULA on Uber's revenue and cost?"
+)
+
+https://docs.llamaindex.ai/en/stable/examples/query_engine/recursive_retriever_agents/
+
+Recursive Retriever + Document Agents
+This guide shows how to combine recursive retrieval and "document agents" for advanced decision making over heterogeneous documents.
+
+There are two motivating factors that lead to solutions for better retrieval:
+
+Decoupling retrieval embeddings from chunk-based synthesis. Oftentimes fetching documents by their summaries will return more relevant context to queries rather than raw chunks. This is something that recursive retrieval directly allows.
+Within a document, users may need to dynamically perform tasks beyond fact-based question-answering. We introduce the concept of "document agents" - agents that have access to both vector search and summary tools for a given document.
+Setup and Download Data
+In this section, we'll define imports and then download Wikipedia articles about different cities. Each article is stored separately.
+
+If you're opening this Notebook on colab, you will probably need to install LlamaIndex 🦙.
+
+%pip install llama-index-llms-openai
+%pip install llama-index-agent-openai
+!pip install llama-index
+from llama_index.core import VectorStoreIndex, SimpleDirectoryReader
+from llama_index.core import SummaryIndex
+from llama_index.core.schema import IndexNode
+from llama_index.core.tools import QueryEngineTool, ToolMetadata
+from llama_index.llms.openai import OpenAI
+wiki_titles = ["Toronto", "Seattle", "Chicago", "Boston", "Houston"]
+from pathlib import Path
+
+import requests
+
+for title in wiki_titles:
+    response = requests.get(
+        "https://en.wikipedia.org/w/api.php",
+        params={
+            "action": "query",
+            "format": "json",
+            "titles": title,
+            "prop": "extracts",
+            # 'exintro': True,
+            "explaintext": True,
+        },
+    ).json()
+    page = next(iter(response["query"]["pages"].values()))
+    wiki_text = page["extract"]
+
+    data_path = Path("data")
+    if not data_path.exists():
+        Path.mkdir(data_path)
+
+    with open(data_path / f"{title}.txt", "w") as fp:
+        fp.write(wiki_text)
+# Load all wiki documents
+city_docs = {}
+for wiki_title in wiki_titles:
+    city_docs[wiki_title] = SimpleDirectoryReader(
+        input_files=[f"data/{wiki_title}.txt"]
+    ).load_data()
+Define LLM + Service Context + Callback Manager
+
+import os
+
+os.environ["OPENAI_API_KEY"] = "sk-..."
+from llama_index.core import Settings
+
+Settings.llm = OpenAI(temperature=0, model="gpt-3.5-turbo")
+Build Document Agent for each Document
+In this section we define "document agents" for each document.
+
+First we define both a vector index (for semantic search) and summary index (for summarization) for each document. The two query engines are then converted into tools that are passed to an OpenAI function calling agent.
+
+This document agent can dynamically choose to perform semantic search or summarization within a given document.
+
+We create a separate document agent for each city.
+
+from llama_index.agent.openai import OpenAIAgent
+
+# Build agents dictionary
+agents = {}
+
+for wiki_title in wiki_titles:
+    # build vector index
+    vector_index = VectorStoreIndex.from_documents(
+        city_docs[wiki_title],
+    )
+    # build summary index
+    summary_index = SummaryIndex.from_documents(
+        city_docs[wiki_title],
+    )
+    # define query engines
+    vector_query_engine = vector_index.as_query_engine()
+    list_query_engine = summary_index.as_query_engine()
+
+    # define tools
+    query_engine_tools = [
+        QueryEngineTool(
+            query_engine=vector_query_engine,
+            metadata=ToolMetadata(
+                name="vector_tool",
+                description=(
+                    f"Useful for retrieving specific context from {wiki_title}"
+                ),
+            ),
+        ),
+        QueryEngineTool(
+            query_engine=list_query_engine,
+            metadata=ToolMetadata(
+                name="summary_tool",
+                description=(
+                    "Useful for summarization questions related to"
+                    f" {wiki_title}"
+                ),
+            ),
+        ),
+    ]
+
+    # build agent
+    function_llm = OpenAI(model="gpt-3.5-turbo-0613")
+    agent = OpenAIAgent.from_tools(
+        query_engine_tools,
+        llm=function_llm,
+        verbose=True,
+    )
+
+    agents[wiki_title] = agent
+Build Composable Retriever over these Agents
+Now we define a set of summary nodes, where each node links to the corresponding Wikipedia city article. We then define a composable retriever + query engine on top of these Nodes to route queries down to a given node, which will in turn route it to the relevant document agent.
+
+# define top-level nodes
+objects = []
+for wiki_title in wiki_titles:
+    # define index node that links to these agents
+    wiki_summary = (
+        f"This content contains Wikipedia articles about {wiki_title}. Use"
+        " this index if you need to lookup specific facts about"
+        f" {wiki_title}.\nDo not use this index if you want to analyze"
+        " multiple cities."
+    )
+    node = IndexNode(
+        text=wiki_summary, index_id=wiki_title, obj=agents[wiki_title]
+    )
+    objects.append(node)
+# define top-level retriever
+vector_index = VectorStoreIndex(
+    objects=objects,
+)
+query_engine = vector_index.as_query_engine(similarity_top_k=1, verbose=True)
+Running Example Queries
+# should use Boston agent -> vector tool
+response = query_engine.query("Tell me about the sports teams in Boston")
+Retrieval entering Boston: OpenAIAgent
+Retrieving from object OpenAIAgent with query Tell me about the sports teams in Boston
+Added user message to memory: Tell me about the sports teams in Boston
+print(response)
+
+https://docs.llamaindex.ai/en/stable/examples/agent/multi_document_agents/
+
+Multi-Document Agents
+In this guide, you learn towards setting up an agent that can effectively answer different types of questions over a larger set of documents.
+
+These questions include the following
+
+QA over a specific doc
+QA comparing different docs
+Summaries over a specific doc
+Comparing summaries between different docs
+We do this with the following architecture:
+
+setup a "document agent" over each Document: each doc agent can do QA/summarization within its doc
+setup a top-level agent over this set of document agents. Do tool retrieval and then do CoT over the set of tools to answer a question.
+Setup and Download Data
+In this section, we'll define imports and then download Wikipedia articles about different cities. Each article is stored separately.
+
+We load in 18 cities - this is not quite at the level of "hundreds" of documents but its still large enough to warrant some top-level document retrieval!
+
+If you're opening this Notebook on colab, you will probably need to install LlamaIndex 🦙.
+
+%pip install llama-index-agent-openai
+%pip install llama-index-embeddings-openai
+%pip install llama-index-llms-openai
+!pip install llama-index
+from llama_index.core import (
+    VectorStoreIndex,
+    SimpleKeywordTableIndex,
+    SimpleDirectoryReader,
+)
+from llama_index.core import SummaryIndex
+from llama_index.core.schema import IndexNode
+from llama_index.core.tools import QueryEngineTool, ToolMetadata
+from llama_index.llms.openai import OpenAI
+from llama_index.core.callbacks import CallbackManager
+wiki_titles = [
+    "Toronto",
+    "Seattle",
+    "Chicago",
+    "Boston",
+    "Houston",
+    "Tokyo",
+    "Berlin",
+    "Lisbon",
+    "Paris",
+    "London",
+    "Atlanta",
+    "Munich",
+    "Shanghai",
+    "Beijing",
+    "Copenhagen",
+    "Moscow",
+    "Cairo",
+    "Karachi",
+]
+from pathlib import Path
+
+import requests
+
+for title in wiki_titles:
+    response = requests.get(
+        "https://en.wikipedia.org/w/api.php",
+        params={
+            "action": "query",
+            "format": "json",
+            "titles": title,
+            "prop": "extracts",
+            # 'exintro': True,
+            "explaintext": True,
+        },
+    ).json()
+    page = next(iter(response["query"]["pages"].values()))
+    wiki_text = page["extract"]
+
+    data_path = Path("data")
+    if not data_path.exists():
+        Path.mkdir(data_path)
+
+    with open(data_path / f"{title}.txt", "w") as fp:
+        fp.write(wiki_text)
+# Load all wiki documents
+city_docs = {}
+for wiki_title in wiki_titles:
+    city_docs[wiki_title] = SimpleDirectoryReader(
+        input_files=[f"data/{wiki_title}.txt"]
+    ).load_data()
+Define Global LLM and Embeddings
+
+import os
+
+os.environ["OPENAI_API_KEY"] = "sk-..."
+from llama_index.llms.openai import OpenAI
+from llama_index.embeddings.openai import OpenAIEmbedding
+from llama_index.core import Settings
+
+Settings.llm = OpenAI(temperature=0, model="gpt-3.5-turbo")
+Settings.embed_model = OpenAIEmbedding(model="text-embedding-ada-002")
+Building Multi-Document Agents
+In this section we show you how to construct the multi-document agent. We first build a document agent for each document, and then define the top-level parent agent with an object index.
+
+Build Document Agent for each Document
+In this section we define "document agents" for each document.
+
+We define both a vector index (for semantic search) and summary index (for summarization) for each document. The two query engines are then converted into tools that are passed to an OpenAI function calling agent.
+
+This document agent can dynamically choose to perform semantic search or summarization within a given document.
+
+We create a separate document agent for each city.
+
+from llama_index.agent.openai import OpenAIAgent
+from llama_index.core import load_index_from_storage, StorageContext
+from llama_index.core.node_parser import SentenceSplitter
+import os
+
+node_parser = SentenceSplitter()
+
+# Build agents dictionary
+agents = {}
+query_engines = {}
+
+# this is for the baseline
+all_nodes = []
+
+for idx, wiki_title in enumerate(wiki_titles):
+    nodes = node_parser.get_nodes_from_documents(city_docs[wiki_title])
+    all_nodes.extend(nodes)
+
+    if not os.path.exists(f"./data/{wiki_title}"):
+        # build vector index
+        vector_index = VectorStoreIndex(nodes)
+        vector_index.storage_context.persist(
+            persist_dir=f"./data/{wiki_title}"
+        )
+    else:
+        vector_index = load_index_from_storage(
+            StorageContext.from_defaults(persist_dir=f"./data/{wiki_title}"),
+        )
+
+    # build summary index
+    summary_index = SummaryIndex(nodes)
+    # define query engines
+    vector_query_engine = vector_index.as_query_engine(llm=Settings.llm)
+    summary_query_engine = summary_index.as_query_engine(llm=Settings.llm)
+
+    # define tools
+    query_engine_tools = [
+        QueryEngineTool(
+            query_engine=vector_query_engine,
+            metadata=ToolMetadata(
+                name="vector_tool",
+                description=(
+                    "Useful for questions related to specific aspects of"
+                    f" {wiki_title} (e.g. the history, arts and culture,"
+                    " sports, demographics, or more)."
+                ),
+            ),
+        ),
+        QueryEngineTool(
+            query_engine=summary_query_engine,
+            metadata=ToolMetadata(
+                name="summary_tool",
+                description=(
+                    "Useful for any requests that require a holistic summary"
+                    f" of EVERYTHING about {wiki_title}. For questions about"
+                    " more specific sections, please use the vector_tool."
+                ),
+            ),
+        ),
+    ]
+
+    # build agent
+    function_llm = OpenAI(model="gpt-4")
+    agent = OpenAIAgent.from_tools(
+        query_engine_tools,
+        llm=function_llm,
+        verbose=True,
+        system_prompt=f"""\
+You are a specialized agent designed to answer queries about {wiki_title}.
+You must ALWAYS use at least one of the tools provided when answering a question; do NOT rely on prior knowledge.\
+""",
+    )
+
+    agents[wiki_title] = agent
+    query_engines[wiki_title] = vector_index.as_query_engine(
+        similarity_top_k=2
+    )
+Build Retriever-Enabled OpenAI Agent
+We build a top-level agent that can orchestrate across the different document agents to answer any user query.
+
+This agent takes in all document agents as tools. This specific agent RetrieverOpenAIAgent performs tool retrieval before tool use (unlike a default agent that tries to put all tools in the prompt).
+
+Here we use a top-k retriever, but we encourage you to customize the tool retriever method!
+
+# define tool for each document agent
+all_tools = []
+for wiki_title in wiki_titles:
+    wiki_summary = (
+        f"This content contains Wikipedia articles about {wiki_title}. Use"
+        f" this tool if you want to answer any questions about {wiki_title}.\n"
+    )
+    doc_tool = QueryEngineTool(
+        query_engine=agents[wiki_title],
+        metadata=ToolMetadata(
+            name=f"tool_{wiki_title}",
+            description=wiki_summary,
+        ),
+    )
+    all_tools.append(doc_tool)
+# define an "object" index and retriever over these tools
+from llama_index.core import VectorStoreIndex
+from llama_index.core.objects import ObjectIndex
+
+obj_index = ObjectIndex.from_objects(
+    all_tools,
+    index_cls=VectorStoreIndex,
+)
+from llama_index.agent.openai import OpenAIAgent
+
+top_agent = OpenAIAgent.from_tools(
+    tool_retriever=obj_index.as_retriever(similarity_top_k=3),
+    system_prompt=""" \
+You are an agent designed to answer queries about a set of given cities.
+Please always use the tools provided to answer a question. Do not rely on prior knowledge.\
+
+""",
+    verbose=True,
+)
+Define Baseline Vector Store Index
+As a point of comparison, we define a "naive" RAG pipeline which dumps all docs into a single vector index collection.
+
+We set the top_k = 4
+
+base_index = VectorStoreIndex(all_nodes)
+base_query_engine = base_index.as_query_engine(similarity_top_k=4)
+Running Example Queries
+Let's run some example queries, ranging from QA / summaries over a single document to QA / summarization over multiple documents.
+
+# should use Boston agent -> vector tool
+response = top_agent.query("Tell me about the arts and culture in Boston")
+
+# baseline
+response = base_query_engine.query(
+  "Tell me about the arts and culture in Boston"
+)
+print(str(response))
+
+https://docs.llamaindex.ai/en/stable/examples/agent/agent_builder/
+
+GPT Builder Demo
+Open In Colab
+
+Inspired by GPTs interface, presented at OpenAI Dev Day 2023. Construct an agent with natural language.
+
+Here you can build your own agent...with another agent!
+
+%pip install llama-index-agent-openai
+%pip install llama-index-embeddings-openai
+%pip install llama-index-llms-openai
+import os
+
+os.environ["OPENAI_API_KEY"] = "sk-..."
+from llama_index.embeddings.openai import OpenAIEmbedding
+from llama_index.llms.openai import OpenAI
+from llama_index.core import Settings
+
+llm = OpenAI(model="gpt-4")
+Settings.llm = llm
+Settings.embed_model = OpenAIEmbedding(model="text-embedding-3-small")
+Define Candidate Tools
+We also define a tool retriever to retrieve candidate tools.
+
+In this setting we define tools as different Wikipedia pages.
+
+from llama_index.core import SimpleDirectoryReader
+wiki_titles = ["Toronto", "Seattle", "Chicago", "Boston", "Houston"]
+from pathlib import Path
+
+import requests
+
+for title in wiki_titles:
+    response = requests.get(
+        "https://en.wikipedia.org/w/api.php",
+        params={
+            "action": "query",
+            "format": "json",
+            "titles": title,
+            "prop": "extracts",
+            # 'exintro': True,
+            "explaintext": True,
+        },
+    ).json()
+    page = next(iter(response["query"]["pages"].values()))
+    wiki_text = page["extract"]
+
+    data_path = Path("data")
+    if not data_path.exists():
+        Path.mkdir(data_path)
+
+    with open(data_path / f"{title}.txt", "w") as fp:
+        fp.write(wiki_text)
+# Load all wiki documents
+city_docs = {}
+for wiki_title in wiki_titles:
+    city_docs[wiki_title] = SimpleDirectoryReader(
+        input_files=[f"data/{wiki_title}.txt"]
+    ).load_data()
+Build Query Tool for Each Document
+from llama_index.core import VectorStoreIndex
+from llama_index.agent.openai import OpenAIAgent
+from llama_index.core.tools import QueryEngineTool, ToolMetadata
+from llama_index.core import VectorStoreIndex
+
+# Build tool dictionary
+tool_dict = {}
+
+for wiki_title in wiki_titles:
+    # build vector index
+    vector_index = VectorStoreIndex.from_documents(
+        city_docs[wiki_title],
+    )
+    # define query engines
+    vector_query_engine = vector_index.as_query_engine(llm=llm)
+
+    # define tools
+    vector_tool = QueryEngineTool(
+        query_engine=vector_query_engine,
+        metadata=ToolMetadata(
+            name=wiki_title,
+            description=("Useful for questions related to" f" {wiki_title}"),
+        ),
+    )
+    tool_dict[wiki_title] = vector_tool
+Define Tool Retriever
+# define an "object" index and retriever over these tools
+from llama_index.core import VectorStoreIndex
+from llama_index.core.objects import ObjectIndex
+
+tool_index = ObjectIndex.from_objects(
+    list(tool_dict.values()),
+    index_cls=VectorStoreIndex,
+)
+tool_retriever = tool_index.as_retriever(similarity_top_k=1)
+Load Data
+Here we load wikipedia pages from different cities.
+
+Define Meta-Tools for GPT Builder
+from llama_index.core.llms import ChatMessage
+from llama_index.core import ChatPromptTemplate
+from typing import List
+
+GEN_SYS_PROMPT_STR = """\
+Task information is given below. 
+
+Given the task, please generate a system prompt for an OpenAI-powered bot to solve this task: 
+{task} \
+"""
+
+gen_sys_prompt_messages = [
+    ChatMessage(
+        role="system",
+        content="You are helping to build a system prompt for another bot.",
+    ),
+    ChatMessage(role="user", content=GEN_SYS_PROMPT_STR),
+]
+
+GEN_SYS_PROMPT_TMPL = ChatPromptTemplate(gen_sys_prompt_messages)
+
+
+agent_cache = {}
+
+
+def create_system_prompt(task: str):
+    """Create system prompt for another agent given an input task."""
+    llm = OpenAI(llm="gpt-4")
+    fmt_messages = GEN_SYS_PROMPT_TMPL.format_messages(task=task)
+    response = llm.chat(fmt_messages)
+    return response.message.content
+
+
+def get_tools(task: str):
+    """Get the set of relevant tools to use given an input task."""
+    subset_tools = tool_retriever.retrieve(task)
+    return [t.metadata.name for t in subset_tools]
+
+
+def create_agent(system_prompt: str, tool_names: List[str]):
+    """Create an agent given a system prompt and an input set of tools."""
+    llm = OpenAI(model="gpt-4")
+    try:
+        # get the list of tools
+        input_tools = [tool_dict[tn] for tn in tool_names]
+
+        agent = OpenAIAgent.from_tools(input_tools, llm=llm, verbose=True)
+        agent_cache["agent"] = agent
+        return_msg = "Agent created successfully."
+    except Exception as e:
+        return_msg = f"An error occurred when building an agent. Here is the error: {repr(e)}"
+    return return_msg
+from llama_index.core.tools import FunctionTool
+
+system_prompt_tool = FunctionTool.from_defaults(fn=create_system_prompt)
+get_tools_tool = FunctionTool.from_defaults(fn=get_tools)
+create_agent_tool = FunctionTool.from_defaults(fn=create_agent)
+GPT_BUILDER_SYS_STR = """\
+You are helping to construct an agent given a user-specified task. You should generally use the tools in this order to build the agent.
+
+1) Create system prompt tool: to create the system prompt for the agent.
+2) Get tools tool: to fetch the candidate set of tools to use.
+3) Create agent tool: to create the final agent.
+"""
+
+prefix_msgs = [ChatMessage(role="system", content=GPT_BUILDER_SYS_STR)]
+
+
+builder_agent = OpenAIAgent.from_tools(
+    tools=[system_prompt_tool, get_tools_tool, create_agent_tool],
+    prefix_messages=prefix_msgs,
+    verbose=True,
+)
+builder_agent.query("Build an agent that can tell me about Toronto.")
+
+https://docs.llamaindex.ai/en/stable/examples/agent/openai_agent_parallel_function_calling/
+
+Single-Turn Multi-Function Calling OpenAI Agents
+Open In Colab
+
+With the latest OpenAI API (v. 1.1.0+), users can now execute multiple function calls within a single turn of User and Agent dialogue. We've updated our library to enable this new feature as well, and in this notebook we'll show you how it all works!
+
+NOTE: OpenAI refers to this as "Parallel" function calling, but the current implementation doesn't invoke parallel computations of the multiple function calls. So, it's "parallelizable" function calling in terms of our current implementation.
+
+%pip install llama-index-agent-openai
+%pip install llama-index-llms-openai
+from llama_index.agent.openai import OpenAIAgent
+from llama_index.llms.openai import OpenAI
+from llama_index.core.tools import BaseTool, FunctionTool
+Setup
+If you've seen any of our previous notebooks on OpenAI Agents, then you're already familiar with the cookbook recipe that we have to follow here. But if not, or if you fancy a refresher then all we need to do (at a high level) are the following steps:
+
+Define a set of tools (we'll use FunctionTool) since Agents work with tools
+Define the LLM for the Agent
+Define a OpenAIAgent
+def multiply(a: int, b: int) -> int:
+    """Multiple two integers and returns the result integer"""
+    return a * b
+
+
+multiply_tool = FunctionTool.from_defaults(fn=multiply)
+def add(a: int, b: int) -> int:
+    """Add two integers and returns the result integer"""
+    return a + b
+
+
+add_tool = FunctionTool.from_defaults(fn=add)
+llm = OpenAI(model="gpt-3.5-turbo-1106")
+agent = OpenAIAgent.from_tools(
+    [multiply_tool, add_tool], llm=llm, verbose=True
+)
+Sync mode
+response = agent.chat("What is (121 * 3) + 42?")
+print(str(response))
+
+Async mode
+import nest_asyncio
+
+nest_asyncio.apply()
+response = await agent.achat("What is (121 * 3) + 42?")
+print(str(response))
+
+response = await agent.astream_chat("What is (121 * 3) + 42?")
+
+response_gen = response.response_gen
+
+async for token in response.async_response_gen():
+    print(token, end="")
+
+Example from OpenAI docs
+Here's an example straight from the OpenAI docs on Parallel function calling. (Their example gets this done in 76 lines of code, whereas with the llama_index library you can get that down to about 18 lines.)
+
+import json
+
+
+# Example dummy function hard coded to return the same weather
+# In production, this could be your backend API or an external API
+def get_current_weather(location, unit="fahrenheit"):
+    """Get the current weather in a given location"""
+    if "tokyo" in location.lower():
+        return json.dumps(
+            {"location": location, "temperature": "10", "unit": "celsius"}
+        )
+    elif "san francisco" in location.lower():
+        return json.dumps(
+            {"location": location, "temperature": "72", "unit": "fahrenheit"}
+        )
+    else:
+        return json.dumps(
+            {"location": location, "temperature": "22", "unit": "celsius"}
+        )
+
+
+weather_tool = FunctionTool.from_defaults(fn=get_current_weather)
+llm = OpenAI(model="gpt-3.5-turbo-1106")
+agent = OpenAIAgent.from_tools([weather_tool], llm=llm, verbose=True)
+response = agent.chat(
+    "What's the weather like in San Francisco, Tokyo, and Paris?"
+)
+
+
+All of the above function calls that the Agent has done above were in a single turn of dialogue between the Assistant and the User. What's interesting is that an older version of GPT-3.5 is not quite advanced enough compared to is successor — it will do the above task in 3 separate turns. For the sake of demonstration, here it is below.
+
+llm = OpenAI(model="gpt-3.5-turbo-0613")
+agent = OpenAIAgent.from_tools([weather_tool], llm=llm, verbose=True)
+response = agent.chat(
+    "What's the weather like in San Francisco, Tokyo, and Paris?"
+)
+
+https://docs.llamaindex.ai/en/stable/examples/agent/structured_planner/
+
+
+Structured Planning Agent
+A key pattern in agents is the ability to plan. ReAct for example, uses a structured approach to decompose an input into a set of function calls and thoughts, in order to reason about a final response.
+
+However, breaking down the initial input/task into several sub-tasks can make the ReAct loop (or other reasoning loops) easier to execute.
+
+The StructuredPlanningAgnet in LlamaIndex wraps any agent worker (ReAct, Function Calling, Chain-of-Abstraction, etc.) and decomposes an initial input into several sub-tasks. Each sub-task is represented by an input, expected outcome, and any dependendant sub-tasks that should be completed first.
+
+This notebook walks through both the high-level and low-level usage of this agent.
+
+NOTE: This agent leverages both structured outputs and agentic reasoning. Because of this, we would recommend a capable LLM (OpenAI, Anthropic, etc.), and open-source LLMs may struggle to plan without prompt engineering or fine-tuning.
+
+Setup
+In order to create plans, we need a set of tools to create plans on top of. Here, we use some classic 10k examples.
+
+!mkdir -p 'data/10k/'
+!wget 'https://raw.githubusercontent.com/run-llama/llama_index/main/docs/docs/examples/data/10k/uber_2021.pdf' -O 'data/10k/uber_2021.pdf'
+!wget 'https://raw.githubusercontent.com/run-llama/llama_index/main/docs/docs/examples/data/10k/lyft_2021.pdf' -O 'data/10k/lyft_2021.pdf'
+import os
+
+os.environ["OPENAI_API_KEY"] = "sk-..."
+from llama_index.core import Settings
+from llama_index.llms.openai import OpenAI
+from llama_index.embeddings.openai import OpenAIEmbedding
+
+# Use ollama in JSON mode
+Settings.llm = OpenAI(
+    model="gpt-4-turbo",
+    temperature=0.1,
+)
+Settings.embed_model = OpenAIEmbedding(model_name="text-embedding-3-small")
+from llama_index.core import VectorStoreIndex, SimpleDirectoryReader
+from llama_index.core.tools import QueryEngineTool
+
+# Load documents, create tools
+lyft_documents = SimpleDirectoryReader(
+    input_files=["./data/10k/lyft_2021.pdf"]
+).load_data()
+uber_documents = SimpleDirectoryReader(
+    input_files=["./data/10k/uber_2021.pdf"]
+).load_data()
+
+lyft_index = VectorStoreIndex.from_documents(lyft_documents)
+uber_index = VectorStoreIndex.from_documents(uber_documents)
+
+lyft_tool = QueryEngineTool.from_defaults(
+    lyft_index.as_query_engine(),
+    name="lyft_2021",
+    description="Useful for asking questions about Lyft's 2021 10-K filling.",
+)
+
+uber_tool = QueryEngineTool.from_defaults(
+    uber_index.as_query_engine(),
+    name="uber_2021",
+    description="Useful for asking questions about Uber's 2021 10-K filling.",
+)
+High Level API
+In this section, we cover the high-level API for creating with and chatting with a structured planning agent.
+
+Create the Agent
+from llama_index.core.agent import (
+    StructuredPlannerAgent,
+    FunctionCallingAgentWorker,
+    ReActAgentWorker,
+)
+
+# create the function calling worker for reasoning
+worker = FunctionCallingAgentWorker.from_tools(
+    [lyft_tool, uber_tool], verbose=True
+)
+
+# wrap the worker in the top-level planner
+agent = StructuredPlannerAgent(
+    worker, tools=[lyft_tool, uber_tool], verbose=True
+)
+Give the agent a complex task
+import nest_asyncio
+
+nest_asyncio.apply()
+response = agent.chat(
+    "Summarize the key risk factors for Lyft and Uber in their 2021 10-K filings."
+)
+
+Changing Prompts
+The StructuredPlanningAgent has two key prompts:
+
+The initial planning prompt
+The plan refinement prompt
+Below, we show how to configure these prompts, using the defaults as an example.
+
+DEFAULT_INITIAL_PLAN_PROMPT = """\
+Think step-by-step. Given a task and a set of tools, create a comprehesive, end-to-end plan to accomplish the task.
+Keep in mind not every task needs to be decomposed into multiple sub-tasks if it is simple enough.
+The plan should end with a sub-task that satisfies the overall task.
+
+The tools available are:
+{tools_str}
+
+Overall Task: {task}
+"""
+
+DEFAULT_PLAN_REFINE_PROMPT = """\
+Think step-by-step. Given an overall task, a set of tools, and completed sub-tasks, update (if needed) the remaining sub-tasks so that the overall task can still be completed.
+The plan should end with a sub-task that satisfies the overall task.
+If the remaining sub-tasks are sufficient, you can skip this step.
+
+The tools available are:
+{tools_str}
+
+Overall Task:
+{task}
+
+Completed Sub-Tasks + Outputs:
+{completed_outputs}
+
+Remaining Sub-Tasks:
+{remaining_sub_tasks}
+"""
+agent = StructuredPlannerAgent(
+    worker,
+    tools=[lyft_tool, uber_tool],
+    initial_plan_prompt=DEFAULT_INITIAL_PLAN_PROMPT,
+    plan_refine_prompt=DEFAULT_PLAN_REFINE_PROMPT,
+    verbose=True,
+)
+Low-level API [Advanced]
+In this section, we use the same agent, but expose the lower-level steps that are happening under the hood.
+
+This is useful for when you want to expose the underlying plan, tasks, etc. to a human to modify them on the fly, or for debugging and running things step-by-step.
+
+Create the Agent
+from llama_index.core.agent import (
+    StructuredPlannerAgent,
+    FunctionCallingAgentWorker,
+    ReActAgentWorker,
+)
+
+# create the react worker for reasoning
+worker = FunctionCallingAgentWorker.from_tools(
+    [lyft_tool, uber_tool], verbose=True
+)
+
+# wrap the worker in the top-level planner
+agent = StructuredPlannerAgent(
+    worker, tools=[lyft_tool, uber_tool], verbose=True
+)
+Create the initial tasks and plan
+plan_id = agent.create_plan(
+    "Summarize the key risk factors for Lyft and Uber in their 2021 10-K filings."
+)
+
+Inspect the initial tasks and plan
+plan = agent.state.plan_dict[plan_id]
+
+for sub_task in plan.sub_tasks:
+    print(f"===== Sub Task {sub_task.name} =====")
+    print("Expected output: ", sub_task.expected_output)
+    print("Dependencies: ", sub_task.dependencies)
+
+Execute the first set of tasks¶
+Here, we execute the first set of tasks with their dependencies met.
+
+next_tasks = agent.state.get_next_sub_tasks(plan_id)
+
+for sub_task in next_tasks:
+    print(f"===== Sub Task {sub_task.name} =====")
+    print("Expected output: ", sub_task.expected_output)
+    print("Dependencies: ", sub_task.dependencies)
+
+
+for sub_task in next_tasks:
+    response = agent.run_task(sub_task.name)
+    agent.mark_task_complete(plan_id, sub_task.name)
+
+Check if we are done
+If there are no remaining tasks, then we can stop. Otherwise, we can refine the current plan and continue
+
+next_tasks = agent.get_next_tasks(plan_id)
+print(len(next_tasks))
+1
+for sub_task in next_tasks:
+    print(f"===== Sub Task {sub_task} =====")
+===== Sub Task Summarize Risk Factors =====
+Refine the plan
+Since we have tasks remaining, lets refine our plan to make sure we are on track.
+
+# refine the plan
+agent.refine_plan(
+    "Summarize the key risk factors for Lyft and Uber in their 2021 10-K filings.",
+    plan_id,
+)
+
+plan = agent.state.plan_dict[plan_id]
+
+for sub_task in plan.sub_tasks:
+    print(f"===== Sub Task {sub_task.name} =====")
+    print("Expected output: ", sub_task.expected_output)
+    print("Dependencies: ", sub_task.dependencies)
+
+Loop until done
+With our plan refined, we can repeat this process until we have no more tasks to run.
+
+import asyncio
+
+while True:
+    # are we done?
+    next_tasks = agent.get_next_tasks(plan_id)
+    if len(next_tasks) == 0:
+        break
+
+    # run concurrently for better performance
+    responses = await asyncio.gather(
+        *[agent.arun_task(task_id) for task_id in next_tasks]
+    )
+    for task_id in next_tasks:
+        agent.mark_task_complete(plan_id, task_id)
+
+    # refine the plan
+    await agent.arefine_plan(
+        "Summarize the key risk factors for Lyft and Uber in their 2021 10-K filings.",
+        plan_id,
+    )
+
+https://docs.llamaindex.ai/en/stable/examples/agent/mistral_agent/
+
+Function Calling Mistral Agent
+This notebook shows you how to use our Mistral agent, powered by function calling capabilities.
+
+Initial Setup
+Let's start by importing some simple building blocks.
+
+The main thing we need is:
+
+the OpenAI API (using our own llama_index LLM class)
+a place to keep conversation history
+a definition for tools that our agent can use.
+If you're opening this Notebook on colab, you will probably need to install LlamaIndex 🦙.
+
+%pip install llama-index-llms-mistralai
+%pip install llama-index-embeddings-mistralai
+!pip install llama-index
+import json
+from typing import Sequence, List
+
+from llama_index.llms.mistralai import MistralAI
+from llama_index.core.llms import ChatMessage
+from llama_index.core.tools import BaseTool, FunctionTool
+
+import nest_asyncio
+
+nest_asyncio.apply()
+Let's define some very simple calculator tools for our agent.
+
+def multiply(a: int, b: int) -> int:
+    """Multiple two integers and returns the result integer"""
+    return a * b
+
+
+multiply_tool = FunctionTool.from_defaults(fn=multiply)
+def add(a: int, b: int) -> int:
+    """Add two integers and returns the result integer"""
+    return a + b
+
+
+add_tool = FunctionTool.from_defaults(fn=add)
+Make sure your MISTRAL_API_KEY is set. Otherwise explicitly specify the api_key parameter.
+
+llm = MistralAI(model="mistral-large-latest")
+Initialize Mistral Agent
+Here we initialize a simple Mistral agent with calculator functions.
+
+from llama_index.core.agent import FunctionCallingAgent
+
+agent = FunctionCallingAgent.from_tools(
+    [multiply_tool, add_tool],
+    llm=llm,
+    verbose=True,
+    allow_parallel_tool_calls=False,
+)
+Chat
+response = agent.chat("What is (121 + 2) * 5?")
+print(str(response))
+
+Async Chat
+Also let's re-enable parallel function calling so that we can call two multiply operations simultaneously.
+
+# enable parallel function calling
+agent = FunctionCallingAgent.from_tools(
+    [multiply_tool, add_tool],
+    llm=llm,
+    verbose=True,
+    allow_parallel_tool_calls=True,
+)
+
+response = await agent.achat("What is (121 * 3) + (5 * 8)?")
+print(str(response))
+
+Mistral Agent over RAG Pipeline
+Build a Mistral agent over a simple 10K document. We use both Mistral embeddings and mistral-medium to construct the RAG pipeline, and pass it to the Mistral agent as a tool.
+
+from llama_index.core.tools import QueryEngineTool, ToolMetadata
+from llama_index.core import SimpleDirectoryReader, VectorStoreIndex
+from llama_index.embeddings.mistralai import MistralAIEmbedding
+from llama_index.llms.mistralai import MistralAI
+
+embed_model = MistralAIEmbedding()
+query_llm = MistralAI(model="mistral-medium")
+
+# load data
+uber_docs = SimpleDirectoryReader(
+    input_files=["./data/10k/uber_2021.pdf"]
+).load_data()
+# build index
+uber_index = VectorStoreIndex.from_documents(
+    uber_docs, embed_model=embed_model
+)
+uber_engine = uber_index.as_query_engine(similarity_top_k=3, llm=query_llm)
+query_engine_tool = QueryEngineTool(
+    query_engine=uber_engine,
+    metadata=ToolMetadata(
+        name="uber_10k",
+        description=(
+            "Provides information about Uber financials for year 2021. "
+            "Use a detailed plain text question as input to the tool."
+        ),
+    ),
+)
+from llama_index.core.agent import FunctionCallingAgent
+
+agent = FunctionCallingAgent.from_tools(
+    [query_engine_tool], llm=llm, verbose=True
+)
+response = agent.chat(
+    "Tell me both the risk factors and tailwinds for Uber? Do two parallel tool calls."
+)
+print(str(response))
+
+
+https://docs.llamaindex.ai/en/stable/examples/agent/react_agent/
+
+ReAct Agent - A Simple Intro with Calculator Tools
+This is a notebook that showcases the ReAct agent over very simple calculator tools (no fancy RAG pipelines or API calls).
+
+We show how it can reason step-by-step over different tools to achieve the end goal.
+
+If you're opening this Notebook on colab, you will probably need to install LlamaIndex 🦙.
+
+%pip install llama-index-llms-openai
+!pip install llama-index
+from llama_index.core.agent import ReActAgent
+from llama_index.llms.openai import OpenAI
+from llama_index.core.llms import ChatMessage
+from llama_index.core.tools import BaseTool, FunctionTool
+
+Define Function Tools
+We setup some trivial multiply and add tools. Note that you can define arbitrary functions and pass it to the FunctionTool (which will process the docstring and parameter signature).
+
+def multiply(a: int, b: int) -> int:
+    """Multiply two integers and returns the result integer"""
+    return a * b
+
+
+multiply_tool = FunctionTool.from_defaults(fn=multiply)
+def add(a: int, b: int) -> int:
+    """Add two integers and returns the result integer"""
+    return a + b
+
+
+add_tool = FunctionTool.from_defaults(fn=add)
+Run Some Queries
+gpt-3.5-turbo
+llm = OpenAI(model="gpt-3.5-turbo-instruct")
+agent = ReActAgent.from_tools([multiply_tool, add_tool], llm=llm, verbose=True)
+
+View Prompts
+Let's take a look at the core system prompt powering the ReAct agent!
+
+Within the agent, the current conversation history is dumped below this line.
+
+llm = OpenAI(model="gpt-4")
+agent = ReActAgent.from_tools([multiply_tool, add_tool], llm=llm, verbose=True)
+prompt_dict = agent.get_prompts()
+for k, v in prompt_dict.items():
+    print(f"Prompt: {k}\n\nValue: {v.template}")
+
+Customizing the Prompt
+For fun, let's try instructing the agent to output the answer along with reasoning in bullet points. See "## Additional Rules" section.
+
+from llama_index.core import PromptTemplate
+
+react_system_header_str = """\
+
+You are designed to help with a variety of tasks, from answering questions \
+    to providing summaries to other types of analyses.
+
+## Tools
+You have access to a wide variety of tools. You are responsible for using
+the tools in any sequence you deem appropriate to complete the task at hand.
+This may require breaking the task into subtasks and using different tools
+to complete each subtask.
+
+You have access to the following tools:
+{tool_desc}
+
+## Output Format
+To answer the question, please use the following format.
+
+```
+Thought: I need to use a tool to help me answer the question.
+Action: tool name (one of {tool_names}) if using a tool.
+Action Input: the input to the tool, in a JSON format representing the kwargs (e.g. {{"input": "hello world", "num_beams": 5}})
+```
+
+Please ALWAYS start with a Thought.
+
+Please use a valid JSON format for the Action Input. Do NOT do this {{'input': 'hello world', 'num_beams': 5}}.
+
+If this format is used, the user will respond in the following format:
+
+```
+Observation: tool response
+```
+
+You should keep repeating the above format until you have enough information
+to answer the question without using any more tools. At that point, you MUST respond
+in the one of the following two formats:
+
+```
+Thought: I can answer without using any more tools.
+Answer: [your answer here]
+```
+
+```
+Thought: I cannot answer the question with the provided tools.
+Answer: Sorry, I cannot answer your query.
+```
+
+## Additional Rules
+- The answer MUST contain a sequence of bullet points that explain how you arrived at the answer. This can include aspects of the previous conversation history.
+- You MUST obey the function signature of each tool. Do NOT pass in no arguments if the function expects arguments.
+
+## Current Conversation
+Below is the current conversation consisting of interleaving human and assistant messages.
+
+"""
+react_system_prompt = PromptTemplate(react_system_header_str)
+agent.get_prompts()
+
+
+agent.update_prompts({"agent_worker:system_prompt": react_system_prompt})
+agent.reset()
+response = agent.chat("What is 5+3+2")
+print(response)
+
+https://docs.llamaindex.ai/en/stable/examples/agent/react_agent_with_query_engine/
+
+ReAct Agent with Query Engine (RAG) Tools
+In this section, we show how to setup an agent powered by the ReAct loop for financial analysis.
+
+The agent has access to two "tools": one to query the 2021 Lyft 10-K and the other to query the 2021 Uber 10-K.
+
+We try two different LLMs:
+
+gpt-3.5-turbo
+gpt-3.5-turbo-instruct
+Note that you can plug in any LLM that exposes a text completion endpoint.
+
+Build Query Engine Tools
+%pip install llama-index-llms-openai
+from llama_index.core import (
+    SimpleDirectoryReader,
+    VectorStoreIndex,
+    StorageContext,
+    load_index_from_storage,
+)
+
+from llama_index.core.tools import QueryEngineTool, ToolMetadata
+try:
+    storage_context = StorageContext.from_defaults(
+        persist_dir="./storage/lyft"
+    )
+    lyft_index = load_index_from_storage(storage_context)
+
+    storage_context = StorageContext.from_defaults(
+        persist_dir="./storage/uber"
+    )
+    uber_index = load_index_from_storage(storage_context)
+
+    index_loaded = True
+except:
+    index_loaded = False
+Download Data
+
+!mkdir -p 'data/10k/'
+!wget 'https://raw.githubusercontent.com/run-llama/llama_index/main/docs/docs/examples/data/10k/uber_2021.pdf' -O 'data/10k/uber_2021.pdf'
+!wget 'https://raw.githubusercontent.com/run-llama/llama_index/main/docs/docs/examples/data/10k/lyft_2021.pdf' -O 'data/10k/lyft_2021.pdf'
+if not index_loaded:
+    # load data
+    lyft_docs = SimpleDirectoryReader(
+        input_files=["./data/10k/lyft_2021.pdf"]
+    ).load_data()
+    uber_docs = SimpleDirectoryReader(
+        input_files=["./data/10k/uber_2021.pdf"]
+    ).load_data()
+
+    # build index
+    lyft_index = VectorStoreIndex.from_documents(lyft_docs)
+    uber_index = VectorStoreIndex.from_documents(uber_docs)
+
+    # persist index
+    lyft_index.storage_context.persist(persist_dir="./storage/lyft")
+    uber_index.storage_context.persist(persist_dir="./storage/uber")
+lyft_engine = lyft_index.as_query_engine(similarity_top_k=3)
+uber_engine = uber_index.as_query_engine(similarity_top_k=3)
+query_engine_tools = [
+    QueryEngineTool(
+        query_engine=lyft_engine,
+        metadata=ToolMetadata(
+            name="lyft_10k",
+            description=(
+                "Provides information about Lyft financials for year 2021. "
+                "Use a detailed plain text question as input to the tool."
+            ),
+        ),
+    ),
+    QueryEngineTool(
+        query_engine=uber_engine,
+        metadata=ToolMetadata(
+            name="uber_10k",
+            description=(
+                "Provides information about Uber financials for year 2021. "
+                "Use a detailed plain text question as input to the tool."
+            ),
+        ),
+    ),
+]
+Setup ReAct Agent
+Here we setup two ReAct agents: one powered by standard gpt-3.5-turbo, and the other powered by gpt-3.5-turbo-instruct.
+
+You can optionally specify context which will be added to the core ReAct system prompt.
+
+from llama_index.core.agent import ReActAgent
+from llama_index.llms.openai import OpenAI
+# [Optional] Add Context
+# context = """\
+# You are a stock market sorcerer who is an expert on the companies Lyft and Uber.\
+#     You will answer questions about Uber and Lyft as in the persona of a sorcerer \
+#     and veteran stock market investor.
+# """
+llm = OpenAI(model="gpt-3.5-turbo-0613")
+
+agent = ReActAgent.from_tools(
+    query_engine_tools,
+    llm=llm,
+    verbose=True,
+    # context=context
+)
+response = agent.chat("What was Lyft's revenue growth in 2021?")
+print(str(response))
+
+Run Some Example Queries
+We run some example queries using the agent, showcasing some of the agent's abilities to do chain-of-thought-reasoning and tool use to synthesize the right answer.
+
+We also show queries.
+
+response = agent.chat(
+    "Compare and contrast the revenue growth of Uber and Lyft in 2021, then"
+    " give an analysis"
+)
+print(str(response))
+
+Async execution: Here we try another query with async execution
+
+# Try another query with async execution
+
+import nest_asyncio
+
+nest_asyncio.apply()
+
+response = await agent.achat(
+    "Compare and contrast the risks of Uber and Lyft in 2021, then give an"
+    " analysis"
+)
+print(str(response))
+Compare gpt-3.5-turbo vs. gpt-3.5-turbo-instruct
+We compare the performance of the two agents in being able to answer some complex queries.
+
+Taking a look at a turbo-instruct agent
+llm_instruct = OpenAI(model="gpt-3.5-turbo-instruct")
+agent_instruct = ReActAgent.from_tools(
+    query_engine_tools, llm=llm_instruct, verbose=True
+)
+response = agent_instruct.chat("What was Lyft's revenue growth in 2021?")
+print(str(response))
+
+Try more complex queries
+We compare gpt-3.5-turbo with gpt-3.5-turbo-instruct agents on more complex queries.
+
+response = agent.chat(
+    "Compare and contrast the revenue growth of Uber and Lyft in 2021, then"
+    " give an analysis"
+)
+print(str(response))
+
+response = agent_instruct.chat(
+  "Compare and contrast the revenue growth of Uber and Lyft in 2021, then"
+  " give an analysis"
+)
+print(str(response))
+
+https://docs.llamaindex.ai/en/stable/examples/agent/custom_agent/
+
+Building a Custom Agent
+In this cookbook we show you how to build a custom agent using LlamaIndex.
+
+The easiest way to build a custom agent is to simply define a stateful function and plug it into FnAgentWorker.
+[Optional] Another approach that allows you to peek into our agent abstractions a bit more is to subclass CustomSimpleAgentWorker and implement a few required functions. You have complete flexibility in defining the agent step-wise logic.
+This lets you add arbitrarily complex reasoning logic on top of your RAG pipeline.
+
+We show you how to build a simple agent that adds a retry layer on top of a RouterQueryEngine, allowing it to retry queries until the task is complete. We build this on top of both a SQL tool and a vector index query tool. Even if the tool makes an error or only answers part of the question, the agent can continue retrying the question until the task is complete.
+
+NOTE: Any Text-to-SQL application should be aware that executing arbitrary SQL queries can be a security risk. It is recommended to take precautions as needed, such as using restricted roles, read-only databases, sandboxing, etc.
+
+%pip install llama-index-readers-wikipedia
+%pip install llama-index-llms-openai
+Setup Data and Tools
+We setup both a SQL Tool as well as vector index tools for each city.
+
+from llama_index.llms.openai import OpenAI
+
+llm = OpenAI(model="gpt-4o")
+from llama_index.core.tools import QueryEngineTool
+Setup SQL DB + Tool
+from sqlalchemy import (
+    create_engine,
+    MetaData,
+    Table,
+    Column,
+    String,
+    Integer,
+    select,
+    column,
+)
+from llama_index.core import SQLDatabase
+
+engine = create_engine("sqlite:///:memory:", future=True)
+metadata_obj = MetaData()
+# create city SQL table
+table_name = "city_stats"
+city_stats_table = Table(
+    table_name,
+    metadata_obj,
+    Column("city_name", String(16), primary_key=True),
+    Column("population", Integer),
+    Column("country", String(16), nullable=False),
+)
+
+metadata_obj.create_all(engine)
+from sqlalchemy import insert
+
+rows = [
+    {"city_name": "Toronto", "population": 2930000, "country": "Canada"},
+    {"city_name": "Tokyo", "population": 13960000, "country": "Japan"},
+    {"city_name": "Berlin", "population": 3645000, "country": "Germany"},
+]
+for row in rows:
+    stmt = insert(city_stats_table).values(**row)
+    with engine.begin() as connection:
+        cursor = connection.execute(stmt)
+from llama_index.core.query_engine import NLSQLTableQueryEngine
+
+sql_database = SQLDatabase(engine, include_tables=["city_stats"])
+sql_query_engine = NLSQLTableQueryEngine(
+    sql_database=sql_database, tables=["city_stats"], verbose=True, llm=llm
+)
+sql_tool = QueryEngineTool.from_defaults(
+    query_engine=sql_query_engine,
+    description=(
+        "Useful for translating a natural language query into a SQL query over"
+        " a table containing: city_stats, containing the population/country of"
+        " each city"
+    ),
+)
+Setup Vector Tools
+from llama_index.readers.wikipedia import WikipediaReader
+from llama_index.core import VectorStoreIndex
+cities = ["Toronto", "Berlin", "Tokyo"]
+wiki_docs = WikipediaReader().load_data(pages=cities)
+# build a separate vector index per city
+# You could also choose to define a single vector index across all docs, and annotate each chunk by metadata
+vector_tools = []
+for city, wiki_doc in zip(cities, wiki_docs):
+    vector_index = VectorStoreIndex.from_documents([wiki_doc])
+    vector_query_engine = vector_index.as_query_engine()
+    vector_tool = QueryEngineTool.from_defaults(
+        query_engine=vector_query_engine,
+        description=f"Useful for answering semantic questions about {city}",
+    )
+    vector_tools.append(vector_tool)
+Setup the Custom Agent
+Here we setup the custom agent. There are two ways to setup a custom agent.
+
+In the first approach, you just define a custom function, whereas in the second approach, you learn a bit more about using some of the low-level agent components that LlamaIndex has to offer, giving you a more structured approach to handle validation, run things step-wise, and modify the output.
+
+Basic Setup
+Here we define some common functions used for both implementations.
+
+from typing import Dict, Any, List, Tuple, Optional
+from llama_index.core.tools import QueryEngineTool
+from llama_index.core.program import FunctionCallingProgram
+from llama_index.core.query_engine import RouterQueryEngine
+from llama_index.core import ChatPromptTemplate
+from llama_index.core.selectors import PydanticSingleSelector
+from llama_index.core.bridge.pydantic import Field, BaseModel
+Here we define some helper variables and methods. E.g. the prompt template to use to detect errors as well as the response format in Pydantic.
+
+from llama_index.core.llms import ChatMessage, MessageRole
+
+DEFAULT_PROMPT_STR = """
+Given previous question/response pairs, please determine if an error has occurred in the response, and suggest \
+    a modified question that will not trigger the error.
+
+Examples of modified questions:
+- The question itself is modified to elicit a non-erroneous response
+- The question is augmented with context that will help the downstream system better answer the question.
+- The question is augmented with examples of negative responses, or other negative questions.
+
+An error means that either an exception has triggered, or the response is completely irrelevant to the question.
+
+Please return the evaluation of the response in the following JSON format.
+
+"""
+
+
+def get_chat_prompt_template(
+    system_prompt: str, current_reasoning: Tuple[str, str]
+) -> ChatPromptTemplate:
+    system_msg = ChatMessage(role=MessageRole.SYSTEM, content=system_prompt)
+    messages = [system_msg]
+    for raw_msg in current_reasoning:
+        if raw_msg[0] == "user":
+            messages.append(
+                ChatMessage(role=MessageRole.USER, content=raw_msg[1])
+            )
+        else:
+            messages.append(
+                ChatMessage(role=MessageRole.ASSISTANT, content=raw_msg[1])
+            )
+    return ChatPromptTemplate(message_templates=messages)
+
+
+class ResponseEval(BaseModel):
+    """Evaluation of whether the response has an error."""
+
+    has_error: bool = Field(
+        ..., description="Whether the response has an error."
+    )
+    new_question: str = Field(..., description="The suggested new question.")
+    explanation: str = Field(
+        ...,
+        description=(
+            "The explanation for the error as well as for the new question."
+            "Can include the direct stack trace as well."
+        ),
+    )
+Define Agent State Function
+Here we define a simple Python function that modifies the state variable and executes a single step. It returns a Tuple of the state dictionary and whether or not the agent has completed execution.
+
+We wrap it with a FnAgentWorker that can give us an agent that can run this function multiple steps.
+
+Notes:
+
+The state dictionary passed to the Python function can access a special __task__ variable that the FnAgentWorker injects during execution, representing the task object maintained by the agent throughout execution.
+The output of the agent is defined by the __output__ variable in the state dictionary. When is_done is True, make sure __output__ is defined as well.
+You can customize the key names of both the input and output variables through customizing task_input_key and output_key in the FnAgentWorker.
+You can also inject any variables you want during initialization through the initial_state parameter in the FnAgentWorker initialization.
+from llama_index.core.bridge.pydantic import PrivateAttr
+
+
+def retry_agent_fn(state: Dict[str, Any]) -> Tuple[Dict[str, Any], bool]:
+    """Retry agent.
+
+    Runs a single step.
+
+    Returns:
+        Tuple of (agent_response, is_done)
+
+    """
+    task, router_query_engine = state["__task__"], state["router_query_engine"]
+    llm, prompt_str = state["llm"], state["prompt_str"]
+    verbose = state.get("verbose", False)
+
+    if "new_input" not in state:
+        new_input = task.input
+    else:
+        new_input = state["new_input"]
+
+    # first run router query engine
+    response = router_query_engine.query(new_input)
+
+    # append to current reasoning
+    state["current_reasoning"].extend(
+        [("user", new_input), ("assistant", str(response))]
+    )
+
+    # Then, check for errors
+    # dynamically create pydantic program for structured output extraction based on template
+    chat_prompt_tmpl = get_chat_prompt_template(
+        prompt_str, state["current_reasoning"]
+    )
+    llm_program = FunctionCallingProgram.from_defaults(
+        output_cls=ResponseEval,
+        prompt=chat_prompt_tmpl,
+        llm=llm,
+    )
+    # run program, look at the result
+    response_eval = llm_program(
+        query_str=new_input, response_str=str(response)
+    )
+    if not response_eval.has_error:
+        is_done = True
+    else:
+        is_done = False
+    state["new_input"] = response_eval.new_question
+
+    if verbose:
+        print(f"> Question: {new_input}")
+        print(f"> Response: {response}")
+        print(f"> Response eval: {response_eval.dict()}")
+
+    # set output
+    state["__output__"] = str(response)
+
+    # return response
+    return state, is_done
+from llama_index.llms.openai import OpenAI
+from llama_index.core.agent import FnAgentWorker
+
+llm = OpenAI(model="gpt-4o")
+router_query_engine = RouterQueryEngine(
+    selector=PydanticSingleSelector.from_defaults(llm=llm),
+    query_engine_tools=[sql_tool] + vector_tools,
+    verbose=True,
+)
+agent = FnAgentWorker(
+    fn=retry_agent_fn,
+    initial_state={
+        "prompt_str": DEFAULT_PROMPT_STR,
+        "llm": llm,
+        "router_query_engine": router_query_engine,
+        "current_reasoning": [],
+        "verbose": True,
+    },
+).as_agent()
+Try Out Some Queries
+Now that we've defined the agent, you can try out some queries.
+
+response = agent.chat("Which countries are each city from?")
+print(str(response))
+
+response = sql_query_engine.query(
+    "What are the top modes of transporation fo the city with the lowest population?"
+)
+print(str(response.metadata["sql_query"]))
+print(str(response))
+
+
+[Optional] Build a Custom Agent through Subclassing
+If you'd like, you can also choose to build a custom agent through subclassing the CustomSimpleAgentWorker. This is if you want to more heavily customize the mechanisms of our agent interfaces, such as the Task and AgentChatResponse objects and step-wise execution.
+
+NOTE: You probably don't need to read this section for most custom agent flows.
+
+Refresher
+An agent in LlamaIndex consists of both an agent runner + agent worker. An agent runner is an orchestrator that stores state like memory, whereas an agent worker controls the step-wise execution of a Task. Agent runners include sequential, parallel execution. More details can be found in our lower level API guide.
+
+Most core agent logic (e.g. ReAct, function calling loops), can be executed in the agent worker. Therefore we've made it easy to subclass an agent worker, letting you plug it into any agent runner.
+
+Creating a Custom Agent Worker Subclass
+As mentioned above we subclass CustomSimpleAgentWorker. This is a class that already sets up some scaffolding for you. This includes being able to take in tools, callbacks, LLM, and also ensures that the state/steps are properly formatted. In the meantime you mostly have to implement the following functions:
+
+_initialize_state
+_run_step
+_finalize_task
+Some additional notes:
+
+You can implement _arun_step as well if you want to support async chat in the agent.
+You can choose to override __init__ as long as you pass all remaining args, kwargs to super()
+CustomSimpleAgentWorker is implemented as a Pydantic BaseModel meaning that you can define your own custom properties as well.
+Here are the full set of base properties on each CustomSimpleAgentWorker (that you need to/can pass in when constructing your custom agent):
+
+tools: Sequence[BaseTool]
+tool_retriever: Optional[ObjectRetriever[BaseTool]]
+llm: LLM
+callback_manager: CallbackManager
+verbose: bool
+Note that tools and tool_retriever are mutually exclusive, you can only pass in one or the either (e.g. define a static list of tools or define a callable function that returns relevant tools given a user message). You can call get_tools(message: str) to return relevant tools given a message.
+
+All of these properties are accessible via self when defining your custom agent.
+
+from llama_index.core.agent import (
+    CustomSimpleAgentWorker,
+    Task,
+    AgentChatResponse,
+)
+from typing import Dict, Any, List, Tuple, Optional
+from llama_index.core.tools import BaseTool, QueryEngineTool
+from llama_index.core.program import LLMTextCompletionProgram
+from llama_index.core.output_parsers import PydanticOutputParser
+from llama_index.core.query_engine import RouterQueryEngine
+from llama_index.core import ChatPromptTemplate, PromptTemplate
+from llama_index.core.selectors import PydanticSingleSelector
+from llama_index.core.bridge.pydantic import Field, BaseModel
+from llama_index.core.bridge.pydantic import PrivateAttr
+
+
+class RetryAgentWorker(CustomSimpleAgentWorker):
+    """Agent worker that adds a retry layer on top of a router.
+
+    Continues iterating until there's no errors / task is done.
+
+    """
+
+    prompt_str: str = Field(default=DEFAULT_PROMPT_STR)
+    max_iterations: int = Field(default=10)
+
+    _router_query_engine: RouterQueryEngine = PrivateAttr()
+
+    def __init__(self, tools: List[BaseTool], **kwargs: Any) -> None:
+        """Init params."""
+        # validate that all tools are query engine tools
+        for tool in tools:
+            if not isinstance(tool, QueryEngineTool):
+                raise ValueError(
+                    f"Tool {tool.metadata.name} is not a query engine tool."
+                )
+        self._router_query_engine = RouterQueryEngine(
+            selector=PydanticSingleSelector.from_defaults(),
+            query_engine_tools=tools,
+            verbose=kwargs.get("verbose", False),
+        )
+        super().__init__(
+            tools=tools,
+            **kwargs,
+        )
+
+    def _initialize_state(self, task: Task, **kwargs: Any) -> Dict[str, Any]:
+        """Initialize state."""
+        return {"count": 0, "current_reasoning": []}
+
+    def _run_step(
+        self, state: Dict[str, Any], task: Task, input: Optional[str] = None
+    ) -> Tuple[AgentChatResponse, bool]:
+        """Run step.
+
+        Returns:
+            Tuple of (agent_response, is_done)
+
+        """
+        if "new_input" not in state:
+            new_input = task.input
+        else:
+            new_input = state["new_input"]
+
+        # first run router query engine
+        response = self._router_query_engine.query(new_input)
+
+        # append to current reasoning
+        state["current_reasoning"].extend(
+            [("user", new_input), ("assistant", str(response))]
+        )
+
+        # Then, check for errors
+        # dynamically create pydantic program for structured output extraction based on template
+        chat_prompt_tmpl = get_chat_prompt_template(
+            self.prompt_str, state["current_reasoning"]
+        )
+        llm_program = LLMTextCompletionProgram.from_defaults(
+            output_parser=PydanticOutputParser(output_cls=ResponseEval),
+            prompt=chat_prompt_tmpl,
+            llm=self.llm,
+        )
+        # run program, look at the result
+        response_eval = llm_program(
+            query_str=new_input, response_str=str(response)
+        )
+        if not response_eval.has_error:
+            is_done = True
+        else:
+            is_done = False
+        state["new_input"] = response_eval.new_question
+
+        if self.verbose:
+            print(f"> Question: {new_input}")
+            print(f"> Response: {response}")
+            print(f"> Response eval: {response_eval.dict()}")
+
+        # return response
+        return AgentChatResponse(response=str(response)), is_done
+
+    def _finalize_task(self, state: Dict[str, Any], **kwargs) -> None:
+        """Finalize task."""
+        # nothing to finalize here
+        # this is usually if you want to modify any sort of
+        # internal state beyond what is set in `_initialize_state`
+        pass
+Define Custom Agent
+from llama_index.llms.openai import OpenAI
+llm = OpenAI(model="gpt-4")
+callback_manager = llm.callback_manager
+
+query_engine_tools = [sql_tool] + vector_tools
+agent_worker = RetryAgentWorker.from_tools(
+    query_engine_tools,
+    llm=llm,
+    verbose=True,
+    callback_manager=callback_manager,
+)
+agent = agent_worker.as_agent(callback_manager=callback_manager)
+
+https://docs.llamaindex.ai/en/stable/examples/agent/agent_runner/query_pipeline_agent/
+
+Building an Agent around a Query Pipeline
+Open In Colab
+
+In this cookbook we show you how to build an agent around a query pipeline.
+
+Agents offer the ability to do complex, sequential reasoning on top of any query DAG that you have setup. Conceptually this is also one of the ways you can add a "loop" to the graph.
+
+We show you two examples of agents you can implement:
+
+a full ReAct agent that can do tool picking
+a "simple" agent that adds a retry layer around a text-to-sql query engine.
+NOTE: Any Text-to-SQL application should be aware that executing arbitrary SQL queries can be a security risk. It is recommended to take precautions as needed, such as using restricted roles, read-only databases, sandboxing, etc.
+
+from llama_index.core import SQLDatabase
+from sqlalchemy import (
+    create_engine,
+    MetaData,
+    Table,
+    Column,
+    String,
+    Integer,
+    select,
+    column,
+)
+
+engine = create_engine("sqlite:///chinook.db")
+sql_database = SQLDatabase(engine)
+from llama_index.core.query_pipeline import QueryPipeline
+Setup
+Setup Data
+We use the chinook database as sample data. Source.
+
+%pip install llama-index-llms-openai
+!curl "https://www.sqlitetutorial.net/wp-content/uploads/2018/03/chinook.zip" -O ./chinook.zip
+!unzip ./chinook.zip
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100  298k  100  298k    0     0  3751k      0 --:--:-- --:--:-- --:--:-- 3926k
+curl: (6) Could not resolve host: .
+Archive:  ./chinook.zip
+  inflating: chinook.db              
+Setup Observability
+!python -m pip install --upgrade \
+    openinference-instrumentation-llama-index \
+    opentelemetry-sdk \
+    opentelemetry-exporter-otlp \
+    "opentelemetry-proto>=1.12.0"
+# setup Arize Phoenix for logging/observability
+import phoenix as px
+import llama_index.core
+
+px.launch_app()
+llama_index.core.set_global_handler("arize_phoenix")
+Setup Text-to-SQL Query Engine / Tool
+Now we setup a simple text-to-SQL tool: given a query, translate text to SQL, execute against database, and get back a result.
+
+from llama_index.core.query_engine import NLSQLTableQueryEngine
+from llama_index.core.tools import QueryEngineTool
+
+sql_query_engine = NLSQLTableQueryEngine(
+    sql_database=sql_database,
+    tables=["albums", "tracks", "artists"],
+    verbose=True,
+)
+sql_tool = QueryEngineTool.from_defaults(
+    query_engine=sql_query_engine,
+    name="sql_tool",
+    description=(
+        "Useful for translating a natural language query into a SQL query"
+    ),
+)
+Setup ReAct Agent Pipeline
+We now setup a ReAct pipeline for a single step using our Query Pipeline syntax. This is a multi-part process that does the following:
+
+Takes in agent inputs
+Calls ReAct prompt using LLM to generate next action/tool (or returns a response).
+If tool/action is selected, call tool pipeline to execute tool + collect response.
+If response is generated, get response.
+Throughout this we'll build a stateful agent pipeline. It contains the following components:
+
+A FnAgentWorker - this is the agent that runs a stateful function. Within this stateful function we'll run a stateful query pipeline.
+A StatefulFnComponent - these are present in the query pipeline. They track global state over query pipeline executions. They track the agent task and step_state as special keys by default.
+from llama_index.core.query_pipeline import QueryPipeline as QP
+
+qp = QP(verbose=True)
+Define Agent Input Component
+Here we define the agent input component, called at the beginning of every agent step. Besides passing along the input, we also do initialization/state modification.
+
+from llama_index.core.agent.react.types import (
+    ActionReasoningStep,
+    ObservationReasoningStep,
+    ResponseReasoningStep,
+)
+from llama_index.core.agent import Task, AgentChatResponse
+from llama_index.core.query_pipeline import (
+    StatefulFnComponent,
+    QueryComponent,
+    ToolRunnerComponent,
+)
+from llama_index.core.llms import MessageRole
+from typing import Dict, Any, Optional, Tuple, List, cast
+
+
+# Input Component
+## This is the component that produces agent inputs to the rest of the components
+## Can also put initialization logic here.
+def agent_input_fn(state: Dict[str, Any]) -> str:
+    """Agent input function.
+
+    Returns:
+        A Dictionary of output keys and values. If you are specifying
+        src_key when defining links between this component and other
+        components, make sure the src_key matches the specified output_key.
+
+    """
+    task = state["task"]
+    if len(state["current_reasoning"]) == 0:
+        reasoning_step = ObservationReasoningStep(observation=task.input)
+        state["current_reasoning"].append(reasoning_step)
+    return task.input
+
+
+agent_input_component = StatefulFnComponent(fn=agent_input_fn)
+Define Agent Prompt
+Here we define the agent component that generates a ReAct prompt, and after the output is generated from the LLM, parses into a structured object.
+
+from llama_index.core.agent import ReActChatFormatter
+from llama_index.core.query_pipeline import InputComponent, Link
+from llama_index.core.llms import ChatMessage
+from llama_index.core.tools import BaseTool
+
+
+## define prompt function
+def react_prompt_fn(
+    state: Dict[str, Any], input: str, tools: List[BaseTool]
+) -> List[ChatMessage]:
+    task = state["task"]
+    # Add input to reasoning
+    chat_formatter = ReActChatFormatter()
+    cur_prompt = chat_formatter.format(
+        tools,
+        chat_history=task.memory.get(),
+        current_reasoning=state["current_reasoning"],
+    )
+    return cur_prompt
+
+
+react_prompt_component = StatefulFnComponent(
+    fn=react_prompt_fn, partial_dict={"tools": [sql_tool]}
+)
+Define Agent Output Parser + Tool Pipeline
+Once the LLM gives an output, we have a decision tree:
+
+If an answer is given, then we're done. Process the output
+If an action is given, we need to execute the specified tool with the specified args, and then process the output.
+Tool calling can be done via the ToolRunnerComponent module. This is a simple wrapper module that takes in a list of tools, and can be "executed" with the specified tool name (every tool has a name) and tool action.
+
+We implement this overall module OutputAgentComponent that subclasses CustomAgentComponent.
+
+Note: we also implement sub_query_components to pass through higher-level callback managers to the tool runner submodule.
+
+from typing import Set, Optional
+from llama_index.core.agent.react.output_parser import ReActOutputParser
+from llama_index.core.llms import ChatResponse
+from llama_index.core.agent.types import Task
+
+
+def parse_react_output_fn(state: Dict[str, Any], chat_response: ChatResponse):
+    """Parse ReAct output into a reasoning step."""
+    output_parser = ReActOutputParser()
+    reasoning_step = output_parser.parse(chat_response.message.content)
+    return {"done": reasoning_step.is_done, "reasoning_step": reasoning_step}
+
+
+parse_react_output = StatefulFnComponent(fn=parse_react_output_fn)
+
+
+def run_tool_fn(state: Dict[str, Any], reasoning_step: ActionReasoningStep):
+    """Run tool and process tool output."""
+    task = state["task"]
+    tool_runner_component = ToolRunnerComponent(
+        [sql_tool], callback_manager=task.callback_manager
+    )
+    tool_output = tool_runner_component.run_component(
+        tool_name=reasoning_step.action,
+        tool_input=reasoning_step.action_input,
+    )
+    observation_step = ObservationReasoningStep(observation=str(tool_output))
+    state["current_reasoning"].append(observation_step)
+    # TODO: get output
+
+    # return tuple of current output and False for is_done
+    return observation_step.get_content(), False
+
+
+run_tool = StatefulFnComponent(fn=run_tool_fn)
+
+
+def process_response_fn(
+    state: Dict[str, Any], response_step: ResponseReasoningStep
+):
+    """Process response."""
+    state["current_reasoning"].append(response_step)
+    return response_step.response, True
+
+
+process_response = StatefulFnComponent(fn=process_response_fn)
+Stitch together Agent Query Pipeline
+We can now stitch together the top-level agent pipeline: agent_input -> react_prompt -> llm -> react_output.
+
+The last component is the if-else component that calls sub-components.
+
+from llama_index.core.query_pipeline import QueryPipeline as QP
+from llama_index.llms.openai import OpenAI
+
+qp.add_modules(
+    {
+        "agent_input": agent_input_component,
+        "react_prompt": react_prompt_component,
+        "llm": OpenAI(model="gpt-4-1106-preview"),
+        "react_output_parser": parse_react_output,
+        "run_tool": run_tool,
+        "process_response": process_response,
+    }
+)
+# link input to react prompt to parsed out response (either tool action/input or observation)
+qp.add_chain(["agent_input", "react_prompt", "llm", "react_output_parser"])
+
+# add conditional link from react output to tool call (if not done)
+qp.add_link(
+    "react_output_parser",
+    "run_tool",
+    condition_fn=lambda x: not x["done"],
+    input_fn=lambda x: x["reasoning_step"],
+)
+# add conditional link from react output to final response processing (if done)
+qp.add_link(
+    "react_output_parser",
+    "process_response",
+    condition_fn=lambda x: x["done"],
+    input_fn=lambda x: x["reasoning_step"],
+)
+Visualize Query Pipeline
+from pyvis.network import Network
+
+net = Network(notebook=True, cdn_resources="in_line", directed=True)
+net.from_nx(qp.clean_dag)
+net.show("agent_dag.html")
+agent_dag.html
+
+Setup Agent Worker around Text-to-SQL Query Pipeline
+Now that you've setup a query pipeline that can run the ReAct loop, let's put it inside a custom agent!
+
+Our custom agent implementation is implemented using a simple Python function plugged into a FnAgentWorker. This Python function will seed the query pipeline with the right state at a given step, and run it.
+
+Once a task is done, the agent also commits the input/response to its memory in the task module.
+
+from llama_index.core.agent import FnAgentWorker
+from typing import Dict, Tuple, Any
+
+
+def run_agent_fn(state: Dict[str, Any]) -> Tuple[Dict[str, Any], bool]:
+    """Run agent function."""
+    task, qp = state["__task__"], state["query_pipeline"]
+    # if first run, then set query pipeline state to initial variables
+    if state["is_first"]:
+        qp.set_state(
+            {
+                "task": task,
+                "current_reasoning": [],
+            }
+        )
+        state["is_first"] = False
+
+    # no explicit input here, just run root node
+    response_str, is_done = qp.run()
+    # if done, store output and log to memory
+    # a core memory module is available in the `task` variable. Of course you can log
+    # and store your own memory as well
+    state["__output__"] = response_str
+    if is_done:
+        task.memory.put_messages(
+            [
+                ChatMessage(content=task.input, role=MessageRole.USER),
+                ChatMessage(content=response_str, role=MessageRole.ASSISTANT),
+            ]
+        )
+    return state, is_done
+
+
+agent = FnAgentWorker(
+    fn=run_agent_fn,
+    initial_state={"query_pipeline": qp, "is_first": True},
+).as_agent()
+Run the Agent
+Let's try the agent on some sample queries.
+
+# start task
+task = agent.create_task(
+    "What are some tracks from the artist AC/DC? Limit it to 3"
+)
+step_output = agent.run_step(task.task_id)
+
+step_output.is_last
+True
+response = agent.finalize_response(task.task_id)
+print(str(response))
+The top 3 tracks by AC/DC are "For Those About To Rock (We Salute You)", "Put The Finger On You", and "Let's Get It Up".
+# run this e2e
+agent.reset()
+response = agent.chat(
+    "What are some tracks from the artist AC/DC? Limit it to 3"
+)
+
+Setup Simple Retry Agent Pipeline for Text-to-SQL
+Instead of the full ReAct pipeline that does tool picking, let's try a much simpler agent pipeline that only does text-to-SQL, with retry-logic.
+
+We try a simple text-based "retry" prompt where given the user input and previous conversation history, can generate a modified query that outputs the right result.
+
+Define Core Modules
+agent input
+retry prompt
+output processor (including a validation prompt)
+from llama_index.llms.openai import OpenAI
+
+llm = OpenAI(model="gpt-4o")
+from llama_index.core.agent import Task, AgentChatResponse
+from typing import Dict, Any
+from llama_index.core.query_pipeline import StatefulFnComponent
+
+
+def agent_input_fn(state: Dict[str, Any]) -> Dict:
+    """Agent input function."""
+    task = state["task"]
+    state["convo_history"].append(f"User: {task.input}")
+    convo_history_str = "\n".join(state["convo_history"]) or "None"
+    return {"input": task.input, "convo_history": convo_history_str}
+
+
+agent_input_component = StatefulFnComponent(fn=agent_input_fn)
+from llama_index.core import PromptTemplate
+
+retry_prompt_str = """\
+You are trying to generate a proper natural language query given a user input.
+
+This query will then be interpreted by a downstream text-to-SQL agent which
+will convert the query to a SQL statement. If the agent triggers an error,
+then that will be reflected in the current conversation history (see below).
+
+If the conversation history is None, use the user input. If its not None,
+generate a new SQL query that avoids the problems of the previous SQL query.
+
+Input: {input}
+Convo history (failed attempts): 
+{convo_history}
+
+New input: """
+retry_prompt = PromptTemplate(retry_prompt_str)
+from llama_index.core import Response
+from typing import Tuple
+
+validate_prompt_str = """\
+Given the user query, validate whether the inferred SQL query and response from executing the query is correct and answers the query.
+
+Answer with YES or NO.
+
+Query: {input}
+Inferred SQL query: {sql_query}
+SQL Response: {sql_response}
+
+Result: """
+validate_prompt = PromptTemplate(validate_prompt_str)
+
+MAX_ITER = 3
+
+
+def agent_output_fn(
+    state: Dict[str, Any], output: Response
+) -> Tuple[AgentChatResponse, bool]:
+    """Agent output component."""
+    task = state["task"]
+    print(f"> Inferred SQL Query: {output.metadata['sql_query']}")
+    print(f"> SQL Response: {str(output)}")
+    state["convo_history"].append(
+        f"Assistant (inferred SQL query): {output.metadata['sql_query']}"
+    )
+    state["convo_history"].append(f"Assistant (response): {str(output)}")
+
+    # run a mini chain to get response
+    validate_prompt_partial = validate_prompt.as_query_component(
+        partial={
+            "sql_query": output.metadata["sql_query"],
+            "sql_response": str(output),
+        }
+    )
+    qp = QP(chain=[validate_prompt_partial, llm])
+    validate_output = qp.run(input=task.input)
+
+    state["count"] += 1
+    is_done = False
+    if state["count"] >= MAX_ITER:
+        is_done = True
+    if "YES" in validate_output.message.content:
+        is_done = True
+
+    return str(output), is_done
+
+
+agent_output_component = StatefulFnComponent(fn=agent_output_fn)
+from llama_index.core.query_pipeline import (
+    QueryPipeline as QP,
+    Link,
+    InputComponent,
+)
+
+qp = QP(
+    modules={
+        "input": agent_input_component,
+        "retry_prompt": retry_prompt,
+        "llm": llm,
+        "sql_query_engine": sql_query_engine,
+        "output_component": agent_output_component,
+    },
+    verbose=True,
+)
+qp.add_link(
+    "input", "retry_prompt", dest_key="input", input_fn=lambda x: x["input"]
+)
+qp.add_link(
+    "input",
+    "retry_prompt",
+    dest_key="convo_history",
+    input_fn=lambda x: x["convo_history"],
+)
+qp.add_chain(["retry_prompt", "llm", "sql_query_engine", "output_component"])
+Visualize Query Pipeline
+# from pyvis.network import Network
+
+# net = Network(notebook=True, cdn_resources="in_line", directed=True)
+# net.from_nx(qp.dag)
+# net.show("agent_dag.html")
+Define Agent Worker
+from llama_index.core.agent import FnAgentWorker
+
+
+def run_agent_fn(state: Dict[str, Any]) -> Tuple[Dict[str, Any], bool]:
+    """Run agent function."""
+    task, qp = state["__task__"], state["query_pipeline"]
+    # if first run, then set query pipeline state to initial variables
+    if state["is_first"]:
+        qp.set_state({"task": task, "convo_history": [], "count": 0})
+        state["is_first"] = False
+
+    # run the pipeline, get response
+    response_str, is_done = qp.run()
+    if is_done:
+        state["__output__"] = response_str
+    return state, is_done
+
+
+agent = FnAgentWorker(
+    fn=run_agent_fn,
+    initial_state={"query_pipeline": qp, "is_first": True},
+).as_agent()
+response = agent.chat(
+    "How many albums did the artist who wrote 'Restless and Wild' release? (answer should be non-zero)?"
+)
+print(str(response))
+
+https://docs.llamaindex.ai/en/stable/examples/agent/agent_runner/agent_runner/
+
+Step-wise, Controllable Agents
+This notebook shows you how to use our brand-new lower-level agent API, which supports a host of functionalities beyond simply executing a user query to help you create tasks, iterate through steps, and control the inputs for each step.
+
+High-Level Agent Architecture
+Our "agents" are composed of AgentRunner objects that interact with AgentWorkers. AgentRunners are orchestrators that store state (including conversational memory), create and maintain tasks, run steps through each task, and offer the user-facing, high-level interface for users to interact with.
+
+AgentWorkers control the step-wise execution of a Task. Given an input step, an agent worker is responsible for generating the next step. They can be initialized with parameters and act upon state passed down from the Task/TaskStep objects, but do not inherently store state themselves. The outer AgentRunner is responsible for calling an AgentWorker and collecting/aggregating the results.
+
+If you are building your own agent, you will likely want to create your own AgentWorker. See below for an example!
+
+Notebook Walkthrough
+This notebook shows you how to run step-wise execution and full-execution with agents.
+
+We show you how to do execution with OpenAIAgent (function calling)
+We show you how to do execution with ReActAgent
+%pip install llama-index-agent-openai
+%pip install llama-index-llms-openai
+!pip install llama-index
+import json
+from typing import Sequence, List
+
+from llama_index.llms.openai import OpenAI
+from llama_index.core.llms import ChatMessage
+from llama_index.core.tools import BaseTool, FunctionTool
+
+import nest_asyncio
+
+nest_asyncio.apply()
+def multiply(a: int, b: int) -> int:
+    """Multiple two integers and returns the result integer"""
+    return a * b
+
+
+multiply_tool = FunctionTool.from_defaults(fn=multiply)
+
+
+def add(a: int, b: int) -> int:
+    """Add two integers and returns the result integer"""
+    return a + b
+
+
+add_tool = FunctionTool.from_defaults(fn=add)
+
+tools = [multiply_tool, add_tool]
+llm = OpenAI(model="gpt-3.5-turbo")
+Test OpenAI Agent
+There's two main ways to initialize the agent.
+
+Option 1: Initialize OpenAIAgent. This is a simple subclass of AgentRunner that bundles the OpenAIAgentWorker under the hood.
+Option 2: Initialize AgentRunner with OpenAIAgentWorker. Here you import the modules and compose your own agent.
+NOTE: The old OpenAIAgent can still be imported via from llama_index.agent import OldOpenAIAgent.
+
+from llama_index.core.agent import AgentRunner
+from llama_index.agent.openai import OpenAIAgentWorker, OpenAIAgent
+
+# Option 1: Initialize OpenAIAgent
+agent = OpenAIAgent.from_tools(tools, llm=llm, verbose=True)
+
+
+# # Option 2: Initialize AgentRunner with OpenAIAgentWorker
+# openai_step_engine = OpenAIAgentWorker.from_tools(tools, llm=llm, verbose=True)
+# agent = AgentRunner(openai_step_engine)
+Test E2E Chat
+Here we re-demonstrate the end-to-end execution of a user task through the chat() function.
+
+This will iterate step-wise until the agent is done with the current task.
+
+agent.chat("Hi")
+AgentChatResponse(response='Hello! How can I assist you today?', sources=[], source_nodes=[])
+response = agent.chat("What is (121 * 3) + 42?")
+
+Test Step-Wise Execution
+Now let's show the lower-level API in action. We do the same thing, but break this down into steps.
+
+# start task
+task = agent.create_task("What is (121 * 3) + 42?")
+step_output = agent.run_step(task.task_id)
+
+step_output = agent.run_step(task.task_id)
+# display final response
+print(step_output.is_last)
+True
+# now that the step execution is done, we can finalize response
+response = agent.finalize_response(task.task_id)
+print(str(response))
+The result of (121 * 3) + 42 is 405.
+Test ReAct Agent
+We do the same experiments, but with ReAct.
+
+llm = OpenAI(model="gpt-4-1106-preview")
+from llama_index.core.agent import AgentRunner, ReActAgentWorker, ReActAgent
+# Option 1: Initialize OpenAIAgent
+agent = ReActAgent.from_tools(tools, llm=llm, verbose=True)
+
+# # Option 2: Initialize AgentRunner with ReActAgentWorker
+# react_step_engine = ReActAgentWorker.from_tools(tools, llm=llm, verbose=True)
+# agent = AgentRunner(react_step_engine)
+agent.chat("Hi")
+
+# start task
+task = agent.create_task("What is (121 * 3) + 42?")
+step_output = agent.run_step(task.task_id)
+
+List Out Tasks
+There are 3 tasks, corresponding to the three runs above.
+
+tasks = agent.list_tasks()
+print(len(tasks))
+3
+
+for idx in range(len(completed_steps)):
+    print(f"Step {idx}")
+    print(f"Response: {completed_steps[idx].output.response}")
+    print(f"Sources: {completed_steps[idx].output.sources}")
+
+https://docs.llamaindex.ai/en/stable/examples/agent/structured_planner/
+
+
+Structured Planning Agent
+A key pattern in agents is the ability to plan. ReAct for example, uses a structured approach to decompose an input into a set of function calls and thoughts, in order to reason about a final response.
+
+However, breaking down the initial input/task into several sub-tasks can make the ReAct loop (or other reasoning loops) easier to execute.
+
+The StructuredPlanningAgnet in LlamaIndex wraps any agent worker (ReAct, Function Calling, Chain-of-Abstraction, etc.) and decomposes an initial input into several sub-tasks. Each sub-task is represented by an input, expected outcome, and any dependendant sub-tasks that should be completed first.
+
+This notebook walks through both the high-level and low-level usage of this agent.
+
+NOTE: This agent leverages both structured outputs and agentic reasoning. Because of this, we would recommend a capable LLM (OpenAI, Anthropic, etc.), and open-source LLMs may struggle to plan without prompt engineering or fine-tuning.
+
+Setup
+In order to create plans, we need a set of tools to create plans on top of. Here, we use some classic 10k examples.
+
+!mkdir -p 'data/10k/'
+!wget 'https://raw.githubusercontent.com/run-llama/llama_index/main/docs/docs/examples/data/10k/uber_2021.pdf' -O 'data/10k/uber_2021.pdf'
+!wget 'https://raw.githubusercontent.com/run-llama/llama_index/main/docs/docs/examples/data/10k/lyft_2021.pdf' -O 'data/10k/lyft_2021.pdf'
+import os
+
+os.environ["OPENAI_API_KEY"] = "sk-..."
+from llama_index.core import Settings
+from llama_index.llms.openai import OpenAI
+from llama_index.embeddings.openai import OpenAIEmbedding
+
+# Use ollama in JSON mode
+Settings.llm = OpenAI(
+    model="gpt-4-turbo",
+    temperature=0.1,
+)
+Settings.embed_model = OpenAIEmbedding(model_name="text-embedding-3-small")
+from llama_index.core import VectorStoreIndex, SimpleDirectoryReader
+from llama_index.core.tools import QueryEngineTool
+
+# Load documents, create tools
+lyft_documents = SimpleDirectoryReader(
+    input_files=["./data/10k/lyft_2021.pdf"]
+).load_data()
+uber_documents = SimpleDirectoryReader(
+    input_files=["./data/10k/uber_2021.pdf"]
+).load_data()
+
+lyft_index = VectorStoreIndex.from_documents(lyft_documents)
+uber_index = VectorStoreIndex.from_documents(uber_documents)
+
+lyft_tool = QueryEngineTool.from_defaults(
+    lyft_index.as_query_engine(),
+    name="lyft_2021",
+    description="Useful for asking questions about Lyft's 2021 10-K filling.",
+)
+
+uber_tool = QueryEngineTool.from_defaults(
+    uber_index.as_query_engine(),
+    name="uber_2021",
+    description="Useful for asking questions about Uber's 2021 10-K filling.",
+)
+High Level API
+In this section, we cover the high-level API for creating with and chatting with a structured planning agent.
+
+Create the Agent
+from llama_index.core.agent import (
+    StructuredPlannerAgent,
+    FunctionCallingAgentWorker,
+    ReActAgentWorker,
+)
+
+# create the function calling worker for reasoning
+worker = FunctionCallingAgentWorker.from_tools(
+    [lyft_tool, uber_tool], verbose=True
+)
+
+# wrap the worker in the top-level planner
+agent = StructuredPlannerAgent(
+    worker, tools=[lyft_tool, uber_tool], verbose=True
+)
+Give the agent a complex task
+import nest_asyncio
+
+nest_asyncio.apply()
+response = agent.chat(
+    "Summarize the key risk factors for Lyft and Uber in their 2021 10-K filings."
+)
+
+Changing Prompts
+The StructuredPlanningAgent has two key prompts:
+
+The initial planning prompt
+The plan refinement prompt
+Below, we show how to configure these prompts, using the defaults as an example.
+
+DEFAULT_INITIAL_PLAN_PROMPT = """\
+Think step-by-step. Given a task and a set of tools, create a comprehesive, end-to-end plan to accomplish the task.
+Keep in mind not every task needs to be decomposed into multiple sub-tasks if it is simple enough.
+The plan should end with a sub-task that satisfies the overall task.
+
+The tools available are:
+{tools_str}
+
+Overall Task: {task}
+"""
+
+DEFAULT_PLAN_REFINE_PROMPT = """\
+Think step-by-step. Given an overall task, a set of tools, and completed sub-tasks, update (if needed) the remaining sub-tasks so that the overall task can still be completed.
+The plan should end with a sub-task that satisfies the overall task.
+If the remaining sub-tasks are sufficient, you can skip this step.
+
+The tools available are:
+{tools_str}
+
+Overall Task:
+{task}
+
+Completed Sub-Tasks + Outputs:
+{completed_outputs}
+
+Remaining Sub-Tasks:
+{remaining_sub_tasks}
+"""
+agent = StructuredPlannerAgent(
+    worker,
+    tools=[lyft_tool, uber_tool],
+    initial_plan_prompt=DEFAULT_INITIAL_PLAN_PROMPT,
+    plan_refine_prompt=DEFAULT_PLAN_REFINE_PROMPT,
+    verbose=True,
+)
+Low-level API [Advanced]
+In this section, we use the same agent, but expose the lower-level steps that are happening under the hood.
+
+This is useful for when you want to expose the underlying plan, tasks, etc. to a human to modify them on the fly, or for debugging and running things step-by-step.
+
+Create the Agent
+from llama_index.core.agent import (
+    StructuredPlannerAgent,
+    FunctionCallingAgentWorker,
+    ReActAgentWorker,
+)
+
+# create the react worker for reasoning
+worker = FunctionCallingAgentWorker.from_tools(
+    [lyft_tool, uber_tool], verbose=True
+)
+
+# wrap the worker in the top-level planner
+agent = StructuredPlannerAgent(
+    worker, tools=[lyft_tool, uber_tool], verbose=True
+)
+Create the initial tasks and plan
+plan_id = agent.create_plan(
+    "Summarize the key risk factors for Lyft and Uber in their 2021 10-K filings."
+)
+
+Inspect the initial tasks and plan
+plan = agent.state.plan_dict[plan_id]
+
+for sub_task in plan.sub_tasks:
+    print(f"===== Sub Task {sub_task.name} =====")
+    print("Expected output: ", sub_task.expected_output)
+    print("Dependencies: ", sub_task.dependencies)
+
+Execute the first set of tasks
+Here, we execute the first set of tasks with their dependencies met.
+
+next_tasks = agent.state.get_next_sub_tasks(plan_id)
+
+for sub_task in next_tasks:
+    print(f"===== Sub Task {sub_task.name} =====")
+    print("Expected output: ", sub_task.expected_output)
+    print("Dependencies: ", sub_task.dependencies)
+
+
+for sub_task in next_tasks:
+    response = agent.run_task(sub_task.name)
+    agent.mark_task_complete(plan_id, sub_task.name)
+
+Check if we are done
+If there are no remaining tasks, then we can stop. Otherwise, we can refine the current plan and continue
+
+next_tasks = agent.get_next_tasks(plan_id)
+print(len(next_tasks))
+1
+for sub_task in next_tasks:
+    print(f"===== Sub Task {sub_task} =====")
+===== Sub Task Summarize Risk Factors =====
+Refine the plan
+Since we have tasks remaining, lets refine our plan to make sure we are on track.
+
+# refine the plan
+agent.refine_plan(
+    "Summarize the key risk factors for Lyft and Uber in their 2021 10-K filings.",
+    plan_id,
+)
+
+plan = agent.state.plan_dict[plan_id]
+
+for sub_task in plan.sub_tasks:
+    print(f"===== Sub Task {sub_task.name} =====")
+    print("Expected output: ", sub_task.expected_output)
+    print("Dependencies: ", sub_task.dependencies)
+
+Loop until done
+With our plan refined, we can repeat this process until we have no more tasks to run.
+
+import asyncio
+
+while True:
+    # are we done?
+    next_tasks = agent.get_next_tasks(plan_id)
+    if len(next_tasks) == 0:
+        break
+
+    # run concurrently for better performance
+    responses = await asyncio.gather(
+        *[agent.arun_task(task_id) for task_id in next_tasks]
+    )
+    for task_id in next_tasks:
+        agent.mark_task_complete(plan_id, task_id)
+
+    # refine the plan
+    await agent.arefine_plan(
+        "Summarize the key risk factors for Lyft and Uber in their 2021 10-K filings.",
+        plan_id,
+    )
+
+https://docs.llamaindex.ai/en/stable/examples/agent/agent_runner/agent_runner_rag_controllable/
+
+Controllable Agents for RAG
+Open In Colab
+
+Adding agentic capabilities on top of your RAG pipeline can allow you to reason over much more complex questions.
+
+But a big pain point for agents is the lack of steerability/transparency. An agent may tackle a user query through chain-of-thought/planning, which requires repeated calls to an LLM. During this process it can be hard to inspect what's going on, or stop/correct execution in the middle.
+
+This notebook shows you how to use our brand-new lower-level agent API, which allows controllable step-wise execution, on top of a RAG pipeline.
+
+We showcase this over Wikipedia documents.
+
+%pip install llama-index-agent-openai
+%pip install llama-index-llms-openai
+!pip install llama-index
+Setup Data
+Here we load a simple dataset of different cities from Wikipedia.
+
+from llama_index.core import (
+    SimpleDirectoryReader,
+    VectorStoreIndex,
+    StorageContext,
+    load_index_from_storage,
+)
+from llama_index.llms.openai import OpenAI
+from llama_index.core.tools import QueryEngineTool, ToolMetadata
+# llm = OpenAI(model="gpt-3.5-turbo")
+llm = OpenAI(model="gpt-4-1106-preview")
+Download Data
+!mkdir -p 'data/10q/'
+!wget 'https://raw.githubusercontent.com/run-llama/llama_index/main/docs/docs/examples/data/10q/uber_10q_march_2022.pdf' -O 'data/10q/uber_10q_march_2022.pdf'
+!wget 'https://raw.githubusercontent.com/run-llama/llama_index/main/docs/docs/examples/data/10q/uber_10q_june_2022.pdf' -O 'data/10q/uber_10q_june_2022.pdf'
+!wget 'https://raw.githubusercontent.com/run-llama/llama_index/main/docs/docs/examples/data/10q/uber_10q_sept_2022.pdf' -O 'data/10q/uber_10q_sept_2022.pdf'
+Load data
+march_2022 = SimpleDirectoryReader(
+    input_files=["./data/10q/uber_10q_march_2022.pdf"]
+).load_data()
+june_2022 = SimpleDirectoryReader(
+    input_files=["./data/10q/uber_10q_june_2022.pdf"]
+).load_data()
+sept_2022 = SimpleDirectoryReader(
+    input_files=["./data/10q/uber_10q_sept_2022.pdf"]
+).load_data()
+Build indices/query engines/tools
+import os
+
+
+def get_tool(name, full_name, documents=None):
+    if not os.path.exists(f"./data/{name}"):
+        # build vector index
+        vector_index = VectorStoreIndex.from_documents(documents)
+        vector_index.storage_context.persist(persist_dir=f"./data/{name}")
+    else:
+        vector_index = load_index_from_storage(
+            StorageContext.from_defaults(persist_dir=f"./data/{name}"),
+        )
+    query_engine = vector_index.as_query_engine(similarity_top_k=3, llm=llm)
+    query_engine_tool = QueryEngineTool(
+        query_engine=query_engine,
+        metadata=ToolMetadata(
+            name=name,
+            description=(
+                "Provides information about Uber quarterly financials ending"
+                f" {full_name}"
+            ),
+        ),
+    )
+    return query_engine_tool
+march_tool = get_tool("march_2022", "March 2022", documents=march_2022)
+june_tool = get_tool("june_2022", "June 2022", documents=june_2022)
+sept_tool = get_tool("sept_2022", "September 2022", documents=sept_2022)
+query_engine_tools = [march_tool, june_tool, sept_tool]
+Setup Agent
+In this section we define our tools and setup the agent.
+
+from llama_index.core.agent import AgentRunner, ReActAgent
+from llama_index.agent.openai import OpenAIAgentWorker, OpenAIAgent
+from llama_index.agent.openai import OpenAIAgentWorker
+
+# openai_step_engine = OpenAIAgentWorker.from_tools(
+#     query_engine_tools, llm=llm, verbose=True
+# )
+# agent = AgentRunner(openai_step_engine)
+# # alternative
+# agent = OpenAIAgent.from_tools(query_engine_tools, llm=llm, verbose=True)
+
+agent_llm = OpenAI(model="gpt-3.5-turbo")
+# agent_llm = OpenAI(model="gpt-4-1106-preview")
+
+agent = ReActAgent.from_tools(
+    query_engine_tools, llm=agent_llm, verbose=True, max_iterations=20
+)
+Run Some Queries
+We now demonstrate the capabilities of our step-wise agent framework.
+
+We show how it can handle complex queries, both e2e as well as step by step.
+
+We can then show how we can steer the outputs.
+
+Out of the box
+Calling chat will attempt to run the task end-to-end, and we notice that it only ends up calling one tool.
+
+response = agent.chat("Analyze the changes in R&D expenditures and revenue")
+
+Test Step-Wise Execution
+The end-to-end chat didn't work. Let's try to break it down step-by-step, and inject our own feedback if things are going wrong.
+
+# start task
+task = agent.create_task("Analyze the changes in R&D expenditures and revenue")
+This returns a Task object, which contains the input, additional state in extra_state, and other fields.
+
+Now let's try executing a single step of this task.
+
+step_output = agent.run_step(task.task_id)
+
+step_output = agent.run_step(task.task_id, input="What about June?")
+
+Since the steps look good, we are now ready to call finalize_response, get back our response.
+
+This will also commit the task execution to the memory object present in our agent_runner. We can inspect it.
+
+response = agent.finalize_response(task.task_id)
+print(str(response))
+
+Setup Human In the Loop Chat
+With these capabilities, it's easy to setup human-in-the-loop (or LLM-in-the-loop) feedback when interacting with an agent, especially for long-running tasks.
+
+We setup a double-loop: one for the task (the user "chatting" with an agent), and the other to control the intermediate executions.
+
+agent_llm = OpenAI(model="gpt-3.5-turbo")
+# agent_llm = OpenAI(model="gpt-4-1106-preview")
+
+agent = ReActAgent.from_tools(
+    query_engine_tools, llm=agent_llm, verbose=True, max_iterations=20
+)
+def chat_repl(exit_when_done: bool = True):
+    """Chat REPL.
+
+    Args:
+        exit_when_done(bool): if True, automatically exit when step is finished.
+            Set to False if you want to keep going even if step is marked as finished by the agent.
+            If False, you need to explicitly call "exit" to finalize a task execution.
+
+    """
+    task_message = None
+    while task_message != "exit":
+        task_message = input(">> Human: ")
+        if task_message == "exit":
+            break
+
+        task = agent.create_task(task_message)
+
+        response = None
+        step_output = None
+        message = None
+        while message != "exit":
+            if message is None or message == "":
+                step_output = agent.run_step(task.task_id)
+            else:
+                step_output = agent.run_step(task.task_id, input=message)
+            if exit_when_done and step_output.is_last:
+                print(
+                    ">> Task marked as finished by the agent, executing task execution."
+                )
+                break
+
+            message = input(
+                ">> Add feedback during step? (press enter/leave blank to continue, and type 'exit' to stop): "
+            )
+            if message == "exit":
+                break
+
+        if step_output is None:
+            print(">> You haven't run the agent. Task is discarded.")
+        elif not step_output.is_last:
+            print(">> The agent hasn't finished yet. Task is discarded.")
+        else:
+            response = agent.finalize_response(task.task_id)
+        print(f"Agent: {str(response)}")
+chat_repl()
+

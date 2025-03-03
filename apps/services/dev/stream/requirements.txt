@@ -1,0 +1,11 @@
+fastapi
+uvicorn
+faker
+opencv-python
+numpy
+loguru
+pydantic
+python-multipart
+typing-extensions
+websockets
+starlette

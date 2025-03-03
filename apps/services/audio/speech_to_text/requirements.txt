@@ -1,0 +1,7 @@
+librosa
+soundfile
+faster-whisper
+torch
+torchaudio
+pyaudio
+numpy

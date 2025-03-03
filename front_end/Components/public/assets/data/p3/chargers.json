@@ -1,0 +1,29 @@
+[
+  {
+    "id": "CH-2023-10045",
+    "model": "FastCharge Pro X3",
+    "location": {
+      "address": "123 Main Street, Berlin",
+      "coordinates": {
+        "lat": 52.5200,
+        "lng": 13.4050
+      },
+      "country": "Germany"
+    },
+    "status": "online",
+    "backend_system": "ChargePulse",
+    "last_maintenance": "2024-09-15",
+    "power_output": "150kW",
+    "connectors": [
+      {
+        "type": "CCS",
+        "status": "available"
+      },
+      {
+        "type": "CHAdeMO",
+        "status": "available"
+      }
+    ],
+    "firmware_version": "4.2.1"
+  }
+]
