@@ -32,5 +32,67 @@
   "aiResponses": {
     "cameraPlacement": "Based on your floor plan, I recommend positioning cameras at the following locations to maximize coverage while minimizing blind spots:\n\n1. Main entrance: Use a 4MP dome camera with 110° field of view\n2. Hallway intersections: Deploy 2MP cameras with corridor format\n3. Parking area: Consider 5MP cameras with IR capabilities for low-light conditions\n\nThis configuration provides approximately 95% coverage of critical areas while staying within your budget constraints.",
     "marketTrends": "The security camera market is currently experiencing several significant trends:\n\n1. Cloud-based VMS solutions are growing at 24% CAGR, outpacing on-premise systems\n2. AI-powered analytics are becoming standard features rather than premium add-ons\n3. Multi-sensor cameras are gaining market share due to their cost-efficiency for wide area coverage\n4. Cybersecurity features are increasingly becoming a primary selection criterion\n\nBased on your organization's profile, focusing on cloud-compatible cameras with built-in analytics would align with these market directions."
+  },
+  "aiIntegrations": [
+    {
+      "id": 1,
+      "name": "Web Extension",
+      "icon": "Globe"
+    },
+    {
+      "id": 2,
+      "name": "Slack",
+      "icon": "MessageSquare"
+    },
+    {
+      "id": 3,
+      "name": "Teams",
+      "icon": "MessageCircle"
+    },
+    {
+      "id": 4,
+      "name": "Mobile",
+      "icon": "Smartphone"
+    }
+  ],
+  "detailedResponses": {
+    "cloudSurveillance": {
+      "title": "IPVM Research",
+      "subtitle": "Based on IPVM's independent testing",
+      "content": "Based on IPVM's testing, cloud-based video surveillance solutions are increasingly viable for enterprise deployments with improved reliability.",
+      "keyFactors": [
+        "Bandwidth requirements based on camera count and resolution",
+        "Data retention costs scale with storage length",
+        "Verify provider's encryption standards",
+        "Check compatibility with existing systems"
+      ],
+      "topSolutions": "Top solutions: Genetec Cloud, Eagle Eye Networks, and Axis Cloud Connect."
+    },
+    "externalSources": [
+      {
+        "id": 1,
+        "source": "Axis Website",
+        "icon": "Camera",
+        "quote": "Axis offers cloud-ready cameras with ARTPEC chip for enhanced security and flexible deployment options."
+      },
+      {
+        "id": 2,
+        "source": "GPT-4o",
+        "icon": "Brain",
+        "quote": "Cloud video systems use subscription models with benefits like remote access and reduced on-site hardware."
+      }
+    ],
+    "actions": [
+      {
+        "id": 1,
+        "label": "Generate Quiz",
+        "style": "primary"
+      },
+      {
+        "id": 2,
+        "label": "View RFP Templates",
+        "style": "secondary"
+      }
+    ]
   }
 } 

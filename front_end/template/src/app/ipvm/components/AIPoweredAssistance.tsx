@@ -11,7 +11,7 @@ const AIPoweredAssistance: React.FC = () => {
   const [showImageAnalysis, setShowImageAnalysis] = useState<boolean>(false);
   
   // Get data from JSON
-  const { imageAnalysis, aiCapabilities, aiResponses } = aiPoweredAssistanceData;
+  const { imageAnalysis, aiCapabilities, aiResponses, aiIntegrations, detailedResponses } = aiPoweredAssistanceData;
   
   const handleAiQuery = (e: React.FormEvent) => {
     e.preventDefault();
@@ -25,6 +25,26 @@ const AIPoweredAssistance: React.FC = () => {
       } else {
         setShowImageAnalysis(false);
       }
+    }
+  };
+  
+  // Function to get the appropriate icon component
+  const getIconComponent = (iconName: string, size: number = 16, className: string = "") => {
+    switch (iconName) {
+      case 'Globe':
+        return <Globe size={size} className={className} />;
+      case 'MessageSquare':
+        return <MessageSquare size={size} className={className} />;
+      case 'MessageCircle':
+        return <MessageCircle size={size} className={className} />;
+      case 'Smartphone':
+        return <Smartphone size={size} className={className} />;
+      case 'Camera':
+        return <Camera size={size} className={className} />;
+      case 'Brain':
+        return <Brain size={size} className={className} />;
+      default:
+        return <Brain size={size} className={className} />;
     }
   };
   
@@ -102,14 +122,74 @@ const AIPoweredAssistance: React.FC = () => {
                           </div>
                         </div>
                       ) : (
-                        <div className="bg-white border border-gray-200 rounded-lg p-2">
-                          <h4 className="text-xs font-semibold text-gray-800 mb-1.5">AI Response</h4>
-                          <div className="p-2 bg-blue-50 border border-blue-100 rounded-lg">
-                            <p className="text-xs text-blue-800 whitespace-pre-line">
-                              {aiQuery.toLowerCase().includes('market') || aiQuery.toLowerCase().includes('trend') 
-                                ? aiResponses.marketTrends 
-                                : aiResponses.cameraPlacement}
-                            </p>
+                        <div>
+                          <div className="bg-blue-50 border border-blue-100 rounded-lg p-2 mb-2">
+                            <div className="flex items-start mb-1.5">
+                              <div className="w-5 h-5 flex-shrink-0 rounded-full bg-blue-600 flex items-center justify-center">
+                                <Brain size={12} className="text-white" />
+                              </div>
+                              <div className="ml-1.5">
+                                <h4 className="text-xs font-semibold text-gray-800">{detailedResponses.cloudSurveillance.title}</h4>
+                                <p className="text-gray-500 text-xs">{detailedResponses.cloudSurveillance.subtitle}</p>
+                              </div>
+                            </div>
+                            
+                            <div className="prose max-w-none text-xs">
+                              <p>
+                                {detailedResponses.cloudSurveillance.content}
+                              </p>
+                              <p className="mt-1">
+                                Key factors to consider:
+                              </p>
+                              <ul className="list-disc pl-4 mt-0.5 space-y-0.5">
+                                {detailedResponses.cloudSurveillance.keyFactors.map((factor, index) => (
+                                  <li key={index}>{factor}</li>
+                                ))}
+                              </ul>
+                              <p className="mt-1">
+                                {detailedResponses.cloudSurveillance.topSolutions}
+                              </p>
+                            </div>
+                          </div>
+                          
+                          <div className="grid grid-cols-2 gap-2">
+                            {detailedResponses.externalSources.map((source, index) => (
+                              <div key={index} className={`bg-${source.icon === 'Camera' ? 'green' : 'purple'}-50 border border-${source.icon === 'Camera' ? 'green' : 'purple'}-100 rounded-lg p-2`}>
+                                <h4 className="text-xs font-semibold text-gray-800 mb-1 flex items-center">
+                                  <div className={`w-4 h-4 rounded-full bg-${source.icon === 'Camera' ? 'green' : 'purple'}-100 flex items-center justify-center mr-1`}>
+                                    {getIconComponent(source.icon, 10, `text-${source.icon === 'Camera' ? 'green' : 'purple'}-700`)}
+                                  </div>
+                                  {source.source}
+                                </h4>
+                                <p className="text-xs text-gray-700">
+                                  "{source.quote}"
+                                </p>
+                              </div>
+                            ))}
+                          </div>
+                          
+                          <div className="flex justify-between items-center mt-2 pt-2 border-t border-gray-200">
+                            <div className="flex space-x-1.5">
+                              {detailedResponses.actions.map((action, index) => (
+                                <button 
+                                  key={index} 
+                                  className={`px-1.5 py-0.5 text-xs ${
+                                    action.style === 'primary' 
+                                      ? 'bg-blue-100 text-blue-800' 
+                                      : 'bg-gray-100 text-gray-800'
+                                  } rounded hover:${
+                                    action.style === 'primary' 
+                                      ? 'bg-blue-200' 
+                                      : 'bg-gray-200'
+                                  }`}
+                                >
+                                  {action.label}
+                                </button>
+                              ))}
+                            </div>
+                            <div className="text-xs text-gray-500">
+                              Powered by IPVM AI
+                            </div>
                           </div>
                         </div>
                       )}
@@ -119,8 +199,8 @@ const AIPoweredAssistance: React.FC = () => {
               </div>
             </div>
             
-            <div className="module-grid-item">
-              <div className="card h-full">
+            <div className="module-grid-item space-y-3">
+              <div className="card">
                 <div className="panel-header border-b border-gray-200">
                   <h3 className="text-base font-semibold text-gray-800">AI Capabilities</h3>
                 </div>
@@ -132,6 +212,22 @@ const AIPoweredAssistance: React.FC = () => {
                         title={capability.title}
                         description={capability.description}
                       />
+                    ))}
+                  </div>
+                </div>
+              </div>
+              
+              <div className="card h-full">
+                <div className="panel-header border-b border-gray-200">
+                  <h3 className="text-base font-semibold text-gray-800">IPVM AI Integration</h3>
+                </div>
+                <div className="panel-content compact-p">
+                  <div className="grid grid-cols-2 gap-2">
+                    {aiIntegrations.map((integration) => (
+                      <div key={integration.id} className="flex items-center p-2 border border-gray-200 rounded-lg">
+                        {getIconComponent(integration.icon, 16, "text-blue-600 mr-2")}
+                        <span className="text-sm">{integration.name}</span>
+                      </div>
                     ))}
                   </div>
                 </div>
