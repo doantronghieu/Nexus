@@ -10,10 +10,17 @@ const IPVMSentinelDashboard = dynamic(
   { ssr: false }
 );
 
+// Import ChatBot component with SSR disabled
+const ChatBot = dynamic(
+  () => import('./components/ChatBot'),
+  { ssr: false }
+);
+
 export default function IPVMPage() {
   return (
     <div>
       <IPVMSentinelDashboard />
+      <ChatBot />
     </div>
   );
 } 

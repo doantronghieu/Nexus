@@ -283,13 +283,6 @@ const IPVMSentinelDashboard: React.FC = () => {
           </div>
         </main>
       </div>
-      
-      {/* Chat Button */}
-      <div className="fixed bottom-3 right-3 z-10">
-        <button className="bg-blue-600 text-white p-2 rounded-full shadow-md hover:bg-blue-700">
-          <MessageCircle className="h-5 w-5" />
-        </button>
-      </div>
     </div>
   );
 };
