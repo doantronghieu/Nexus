@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from 'react';
-import { Brain, Camera } from 'lucide-react';
+import { Brain, Camera, Globe, MessageSquare, MessageCircle, Smartphone, Search } from 'lucide-react';
 
 // AI-Powered Assistance Component
 const AIPoweredAssistance: React.FC = () => {
@@ -25,212 +25,212 @@ const AIPoweredAssistance: React.FC = () => {
   };
   
   return (
-    <div className="p-6">
-      <div className="mb-6">
-        <h2 className="text-2xl font-bold text-gray-800">AI-Powered Assistance</h2>
-        <p className="text-gray-600">Advanced intelligence for security technology decision-making</p>
-      </div>
-      
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2 bg-white rounded-lg shadow p-6">
-          <div className="flex items-center mb-6">
-            <Brain size={24} className="text-blue-600 mr-3" />
-            <h3 className="text-lg font-semibold text-gray-800">IPVM Sentinel AI</h3>
-          </div>
-          
-          <form onSubmit={handleAiQuery} className="mb-6">
-            <div className="flex mb-3">
-              <input
-                type="text"
-                placeholder="Ask about security technologies, recommendations, or market trends..."
-                className="flex-1 px-4 py-3 border border-gray-300 rounded-l focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                value={aiQuery}
-                onChange={(e) => setAiQuery(e.target.value)}
-              />
-              <button 
-                type="submit"
-                className="px-6 py-3 bg-blue-600 text-white rounded-r hover:bg-blue-700"
-              >
-                Ask AI
-              </button>
-            </div>
-            <div className="flex justify-end items-center bg-gray-50 rounded-lg p-3 border border-gray-200">
-              <button type="button" className="flex items-center text-sm text-blue-600 hover:text-blue-800">
-                <Camera size={15} className="mr-1" />
-                Upload Image
-              </button>
-            </div>
-          </form>
-          
-          {showAiResponse && (
-            <div className="space-y-4">
-              {showImageAnalysis ? (
-                <div className="bg-white border border-gray-200 rounded-lg p-4">
-                  <h4 className="text-lg font-semibold text-gray-800 mb-3">Visual Analysis</h4>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="border border-gray-200 rounded bg-gray-50 p-2">
-                      <div className="aspect-video bg-gray-200 mb-2 flex items-center justify-center text-gray-400">
-                        Floor Plan View
-                      </div>
-                      <p className="text-sm text-gray-600">Original floor plan</p>
-                    </div>
-                    <div className="border border-gray-200 rounded bg-gray-50 p-2">
-                      <div className="aspect-video bg-gray-200 mb-2 flex items-center justify-center text-gray-400">
-                        AI-Enhanced View
-                      </div>
-                      <p className="text-sm text-gray-600">Camera coverage analysis</p>
-                    </div>
-                  </div>
-                  <div className="mt-4 p-3 bg-blue-50 border border-blue-100 rounded-lg">
-                    <h5 className="font-medium text-blue-900 mb-2">Analysis Results</h5>
-                    <ul className="text-sm text-blue-800 space-y-1 list-disc pl-4">
-                      <li>Coverage gap detected in northwest corner</li>
-                      <li>Recommend repositioning Camera #3 for better coverage</li>
-                      <li>Potential blind spot in main corridor</li>
-                      <li>Lighting levels may affect camera performance in east entrance</li>
-                    </ul>
-                  </div>
-                </div>
-              ) : (
-                <div>
-                  <div className="bg-blue-50 border border-blue-100 rounded-lg p-6 mb-4">
-                    <div className="flex items-start mb-4">
-                      <div className="w-8 h-8 flex-shrink-0 rounded-full bg-blue-600 flex items-center justify-center">
-                        <Brain size={18} className="text-white" />
-                      </div>
-                      <div className="ml-3">
-                        <h4 className="text-lg font-semibold text-gray-800">IPVM Research</h4>
-                        <p className="text-gray-500 text-sm">Based on IPVM's independent testing and analysis</p>
-                      </div>
-                    </div>
-                    
-                    <div className="prose max-w-none">
-                      <p>
-                        Based on IPVM's extensive testing and research, cloud-based video surveillance solutions are increasingly 
-                        viable for enterprise deployments. Recent testing shows significant improvements in reliability and 
-                        feature parity with on-premise systems.
-                      </p>
-                      <p className="mt-4">
-                        When evaluating cloud video surveillance for your environment, consider these key factors:
-                      </p>
-                      <ul className="list-disc pl-5 mt-2 space-y-1">
-                        <li>Bandwidth requirements: Calculate your upload bandwidth needs based on camera count, resolution, and frame rate</li>
-                        <li>Data retention: Cloud storage costs scale with retention length and resolution</li>
-                        <li>Cybersecurity: Verify the provider's encryption standards and access controls</li>
-                        <li>Integration capabilities: Ensure compatibility with your existing access control and alarm systems</li>
-                      </ul>
-                      <p className="mt-4">
-                        Our testing indicates that Genetec Cloud, Eagle Eye Networks, and Axis Cloud Connect currently offer the 
-                        most robust enterprise solutions, while Verkada and Ava provide more simplified deployments with trade-offs 
-                        in customization.
-                      </p>
-                    </div>
-                  </div>
-                  
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="bg-green-50 border border-green-100 rounded-lg p-4">
-                      <h4 className="text-md font-semibold text-gray-800 mb-2 flex items-center">
-                        <div className="w-6 h-6 rounded-full bg-green-100 flex items-center justify-center mr-2">
-                          <Camera size={14} className="text-green-700" />
-                        </div>
-                        Axis Website
-                      </h4>
-                      <p className="text-sm text-gray-700">
-                        "Axis offers cloud-ready network cameras with ARTPEC chip for enhanced cybersecurity. Our solutions integrate 
-                        with leading VMS platforms and provide flexible deployment options."
-                      </p>
-                    </div>
-                    
-                    <div className="bg-purple-50 border border-purple-100 rounded-lg p-4">
-                      <h4 className="text-md font-semibold text-gray-800 mb-2 flex items-center">
-                        <div className="w-6 h-6 rounded-full bg-purple-100 flex items-center justify-center mr-2">
-                          <Brain size={14} className="text-purple-700" />
-                        </div>
-                        GPT-4o
-                      </h4>
-                      <p className="text-sm text-gray-700">
-                        "Cloud video surveillance systems typically use a subscription model and offer benefits like remote access, 
-                        automatic updates, and reduced on-site hardware. Consider bandwidth, privacy, and regulatory requirements when evaluating."
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              )}
-              
-              <div className="flex justify-between items-center mt-4 pt-4 border-t border-gray-200">
-                <div className="flex space-x-2">
-                  <button className="px-3 py-1 text-sm bg-blue-100 text-blue-800 rounded hover:bg-blue-200">
-                    Generate Quiz
-                  </button>
-                  <button className="px-3 py-1 text-sm bg-gray-100 text-gray-800 rounded hover:bg-gray-200">
-                    View RFP Templates
-                  </button>
-                </div>
-                <div className="text-sm text-gray-500">
-                  Powered by IPVM Sentinel AI
-                </div>
-              </div>
-            </div>
-          )}
+    <div className="viewport-fit">
+      <div className="module-container">
+        <div className="module-header">
+          <h2 className="text-xl font-bold text-gray-800">AI-Powered Assistance</h2>
+          <p className="text-sm text-gray-600">Advanced intelligence for security technology decision-making</p>
         </div>
         
-        <div className="space-y-6">
-          <div className="bg-white rounded-lg shadow p-6">
-            <h3 className="text-lg font-semibold text-gray-800 mb-4">AI Capabilities</h3>
-            <div className="space-y-3">
-              <AiCapabilityItem 
-                title="Multi-Modal Intelligence" 
-                description="Process text, images, and technical data"
-              />
-              <AiCapabilityItem 
-                title="Predictive Analytics" 
-                description="Technology trend forecasting and risk assessment"
-              />
-              <AiCapabilityItem 
-                title="Decision Support" 
-                description="Requirements analysis and solution comparison"
-              />
-              <AiCapabilityItem 
-                title="Visual Analysis" 
-                description="Camera placement and field of view optimization"
-              />
-            </div>
-          </div>
-          
-          <div className="bg-white rounded-lg shadow p-6">
-            <h3 className="text-lg font-semibold text-gray-800 mb-4">IPVM AI Everywhere</h3>
-            <div className="mb-4">
-              <p className="text-sm text-gray-600">Access IPVM AI across your workflow:</p>
-              <div className="grid grid-cols-2 gap-2 mt-3">
-                <div className="border border-gray-200 rounded p-2 text-center">
-                  <div className="w-full aspect-square bg-gray-100 flex items-center justify-center mb-1">
-                    <div className="h-10 w-10 bg-gray-200 rounded"></div>
-                  </div>
-                  <p className="text-xs font-medium">Web Extension</p>
+        <div className="module-content">
+          <div className="module-grid compact-gap">
+            <div className="module-grid-item">
+              <div className="card h-full">
+                <div className="panel-header border-b border-gray-200 flex items-center">
+                  <Brain size={16} className="text-blue-600 mr-2" />
+                  <h3 className="text-base font-semibold text-gray-800">IPVM Sentinel AI</h3>
                 </div>
-                <div className="border border-gray-200 rounded p-2 text-center">
-                  <div className="w-full aspect-square bg-gray-100 flex items-center justify-center mb-1">
-                    <div className="h-10 w-10 bg-gray-200 rounded"></div>
-                  </div>
-                  <p className="text-xs font-medium">Slack</p>
-                </div>
-                <div className="border border-gray-200 rounded p-2 text-center">
-                  <div className="w-full aspect-square bg-gray-100 flex items-center justify-center mb-1">
-                    <div className="h-10 w-10 bg-gray-200 rounded"></div>
-                  </div>
-                  <p className="text-xs font-medium">Teams</p>
-                </div>
-                <div className="border border-gray-200 rounded p-2 text-center">
-                  <div className="w-full aspect-square bg-gray-100 flex items-center justify-center mb-1">
-                    <div className="h-10 w-10 bg-gray-200 rounded"></div>
-                  </div>
-                  <p className="text-xs font-medium">Mobile</p>
+                
+                <div className="panel-content compact-p">
+                  <form onSubmit={handleAiQuery} className="mb-2">
+                    <div className="flex mb-2 relative">
+                      <div className="relative flex-1">
+                        <Search size={14} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                        <input
+                          type="text"
+                          placeholder="Ask about security technologies, recommendations, or market trends..."
+                          className="flex-1 w-full pl-10 pr-2 py-1.5 text-xs border border-gray-300 rounded-l focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent"
+                          value={aiQuery}
+                          onChange={(e) => setAiQuery(e.target.value)}
+                        />
+                      </div>
+                      <button 
+                        type="submit"
+                        className="px-3 py-1.5 bg-blue-600 text-white text-xs rounded-r hover:bg-blue-700"
+                      >
+                        Ask AI
+                      </button>
+                    </div>
+                    <div className="flex justify-end items-center bg-gray-50 rounded-lg p-1.5 border border-gray-200">
+                      <button type="button" className="flex items-center text-xs text-blue-600 hover:text-blue-800">
+                        <Camera size={12} className="mr-1" />
+                        Upload Image
+                      </button>
+                    </div>
+                  </form>
+                  
+                  {showAiResponse && (
+                    <div className="module-content-scrollable space-y-2">
+                      {showImageAnalysis ? (
+                        <div className="bg-white border border-gray-200 rounded-lg p-2">
+                          <h4 className="text-xs font-semibold text-gray-800 mb-1.5">Visual Analysis</h4>
+                          <div className="grid grid-cols-2 gap-2">
+                            <div className="border border-gray-200 rounded bg-gray-50 p-1.5">
+                              <div className="aspect-video bg-gray-200 mb-1 flex items-center justify-center text-gray-400 text-xs">
+                                Floor Plan View
+                              </div>
+                              <p className="text-xs text-gray-600">Original floor plan</p>
+                            </div>
+                            <div className="border border-gray-200 rounded bg-gray-50 p-1.5">
+                              <div className="aspect-video bg-gray-200 mb-1 flex items-center justify-center text-gray-400 text-xs">
+                                AI-Enhanced View
+                              </div>
+                              <p className="text-xs text-gray-600">Camera coverage analysis</p>
+                            </div>
+                          </div>
+                          <div className="mt-2 p-1.5 bg-blue-50 border border-blue-100 rounded-lg">
+                            <h5 className="font-medium text-blue-900 text-xs mb-0.5">Analysis Results</h5>
+                            <ul className="text-xs text-blue-800 space-y-0.5 list-disc pl-4">
+                              <li>Coverage gap detected in northwest corner</li>
+                              <li>Recommend repositioning Camera #3 for better coverage</li>
+                              <li>Potential blind spot in main corridor</li>
+                              <li>Lighting levels may affect camera performance in east entrance</li>
+                            </ul>
+                          </div>
+                        </div>
+                      ) : (
+                        <div>
+                          <div className="bg-blue-50 border border-blue-100 rounded-lg p-2 mb-2">
+                            <div className="flex items-start mb-1.5">
+                              <div className="w-5 h-5 flex-shrink-0 rounded-full bg-blue-600 flex items-center justify-center">
+                                <Brain size={12} className="text-white" />
+                              </div>
+                              <div className="ml-1.5">
+                                <h4 className="text-xs font-semibold text-gray-800">IPVM Research</h4>
+                                <p className="text-gray-500 text-xs">Based on IPVM's independent testing</p>
+                              </div>
+                            </div>
+                            
+                            <div className="prose max-w-none text-xs">
+                              <p>
+                                Based on IPVM's testing, cloud-based video surveillance solutions are increasingly 
+                                viable for enterprise deployments with improved reliability.
+                              </p>
+                              <p className="mt-1">
+                                Key factors to consider:
+                              </p>
+                              <ul className="list-disc pl-4 mt-0.5 space-y-0.5">
+                                <li>Bandwidth requirements based on camera count and resolution</li>
+                                <li>Data retention costs scale with storage length</li>
+                                <li>Verify provider's encryption standards</li>
+                                <li>Check compatibility with existing systems</li>
+                              </ul>
+                              <p className="mt-1">
+                                Top solutions: Genetec Cloud, Eagle Eye Networks, and Axis Cloud Connect.
+                              </p>
+                            </div>
+                          </div>
+                          
+                          <div className="grid grid-cols-2 gap-2">
+                            <div className="bg-green-50 border border-green-100 rounded-lg p-2">
+                              <h4 className="text-xs font-semibold text-gray-800 mb-1 flex items-center">
+                                <div className="w-4 h-4 rounded-full bg-green-100 flex items-center justify-center mr-1">
+                                  <Camera size={10} className="text-green-700" />
+                                </div>
+                                Axis Website
+                              </h4>
+                              <p className="text-xs text-gray-700">
+                                "Axis offers cloud-ready cameras with ARTPEC chip for enhanced security and flexible deployment options."
+                              </p>
+                            </div>
+                            
+                            <div className="bg-purple-50 border border-purple-100 rounded-lg p-2">
+                              <h4 className="text-xs font-semibold text-gray-800 mb-1 flex items-center">
+                                <div className="w-4 h-4 rounded-full bg-purple-100 flex items-center justify-center mr-1">
+                                  <Brain size={10} className="text-purple-700" />
+                                </div>
+                                GPT-4o
+                              </h4>
+                              <p className="text-xs text-gray-700">
+                                "Cloud video systems use subscription models with benefits like remote access and reduced on-site hardware."
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                      
+                      <div className="flex justify-between items-center mt-2 pt-2 border-t border-gray-200">
+                        <div className="flex space-x-1.5">
+                          <button className="px-1.5 py-0.5 text-xs bg-blue-100 text-blue-800 rounded hover:bg-blue-200">
+                            Generate Quiz
+                          </button>
+                          <button className="px-1.5 py-0.5 text-xs bg-gray-100 text-gray-800 rounded hover:bg-gray-200">
+                            View RFP Templates
+                          </button>
+                        </div>
+                        <div className="text-xs text-gray-500">
+                          Powered by IPVM AI
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
-            <button className="w-full px-4 py-2 bg-blue-600 text-white text-sm rounded hover:bg-blue-700">
-              Configure Integrations
-            </button>
+            
+            <div className="module-grid-item space-y-3">
+              <div className="card">
+                <div className="panel-header border-b border-gray-200">
+                  <h3 className="text-base font-semibold text-gray-800">AI Capabilities</h3>
+                </div>
+                <div className="panel-content compact-p">
+                  <div className="space-y-1.5">
+                    <AiCapabilityItem 
+                      title="Multi-Modal Intelligence" 
+                      description="Process text, images, and technical data"
+                    />
+                    <AiCapabilityItem 
+                      title="Predictive Analytics" 
+                      description="Technology trend forecasting and risk assessment"
+                    />
+                    <AiCapabilityItem 
+                      title="Decision Support" 
+                      description="Requirements analysis and solution comparison"
+                    />
+                    <AiCapabilityItem 
+                      title="Visual Analysis" 
+                      description="Camera placement and field of view optimization"
+                    />
+                  </div>
+                </div>
+              </div>
+              
+              <div className="card h-full">
+                <div className="panel-header border-b border-gray-200">
+                  <h3 className="text-base font-semibold text-gray-800">IPVM AI Integration</h3>
+                </div>
+                <div className="panel-content compact-p">
+                  <div className="grid grid-cols-2 gap-2">
+                    <div className="flex items-center p-2 border border-gray-200 rounded-lg">
+                      <Globe size={16} className="text-blue-600 mr-2" />
+                      <span className="text-xs">Web Extension</span>
+                    </div>
+                    <div className="flex items-center p-2 border border-gray-200 rounded-lg">
+                      <MessageSquare size={16} className="text-blue-600 mr-2" />
+                      <span className="text-xs">Slack</span>
+                    </div>
+                    <div className="flex items-center p-2 border border-gray-200 rounded-lg">
+                      <MessageCircle size={16} className="text-blue-600 mr-2" />
+                      <span className="text-xs">Teams</span>
+                    </div>
+                    <div className="flex items-center p-2 border border-gray-200 rounded-lg">
+                      <Smartphone size={16} className="text-blue-600 mr-2" />
+                      <span className="text-xs">Mobile</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -245,12 +245,14 @@ interface AiCapabilityItemProps {
 }
 
 const AiCapabilityItem: React.FC<AiCapabilityItemProps> = ({ title, description }) => (
-  <div className="border-b border-gray-100 pb-3">
+  <div className="border-b border-gray-100 pb-1.5">
     <div className="flex items-start">
-      <Brain size={16} className="text-blue-600 mr-2 mt-1" />
+      <div className="w-4 h-4 rounded-full bg-blue-100 flex-shrink-0 flex items-center justify-center mt-0.5 mr-1.5">
+        <Brain size={10} className="text-blue-700" />
+      </div>
       <div>
-        <h4 className="font-medium text-gray-800">{title}</h4>
-        <p className="text-gray-600 text-sm">{description}</p>
+        <h4 className="text-xs font-medium text-gray-800">{title}</h4>
+        <p className="text-xs text-gray-600">{description}</p>
       </div>
     </div>
   </div>
