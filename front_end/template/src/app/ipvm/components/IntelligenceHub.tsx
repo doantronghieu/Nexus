@@ -232,7 +232,7 @@ const AISearchResults: React.FC<AISearchResultsProps> = ({ query }) => {
           Analysis for: <span className="font-semibold">"{query || 'AI in Video Surveillance'}"</span>
         </p>
         <div className="text-xs text-blue-700">
-          IPVM Sentinel AI has analyzed our research database, market trends, and industry data to provide you with comprehensive insights.
+          IPVM Platform AI has analyzed our research database, market trends, and industry data to provide you with comprehensive insights.
         </div>
       </div>
       

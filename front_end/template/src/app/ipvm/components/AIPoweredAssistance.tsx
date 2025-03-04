@@ -62,7 +62,7 @@ const AIPoweredAssistance: React.FC = () => {
               <div className="card h-full">
                 <div className="panel-header border-b border-gray-200 flex items-center">
                   <Brain size={16} className="text-blue-600 mr-2" />
-                  <h3 className="text-base font-semibold text-gray-800">IPVM Sentinel AI</h3>
+                  <h3 className="text-base font-semibold text-gray-800">IPVM Platform AI</h3>
                 </div>
                 
                 <div className="panel-content compact-p">

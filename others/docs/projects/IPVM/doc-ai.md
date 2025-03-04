@@ -1,16 +1,16 @@
-# IPVM Sentinel AI: Advanced Intelligence for Physical Security
+# IPVM Platform AI: Advanced Intelligence for Physical Security
 
 ## Executive Summary
 
-Building upon IPVM's successful AI launch in January 2025, IPVM Sentinel AI represents the next evolution in applying artificial intelligence to physical security technology intelligence. While the existing IPVM AI focuses primarily on information retrieval and unified answers across content sources, Sentinel AI expands these capabilities to provide comprehensive decision support, predictive analytics, and automated workflows throughout the security technology lifecycle.
+Building upon IPVM's successful AI launch in January 2025, IPVM Platform AI represents the next evolution in applying artificial intelligence to physical security technology intelligence. While the existing IPVM AI focuses primarily on information retrieval and unified answers across content sources, Platform AI expands these capabilities to provide comprehensive decision support, predictive analytics, and automated workflows throughout the security technology lifecycle.
 
-IPVM Sentinel AI transforms how security professionals interact with complex technical information, moving beyond simple question-answering to deliver contextual insights, proactive recommendations, and sophisticated analysis tools. By combining IPVM's authoritative knowledge base with cutting-edge AI technologies, Sentinel AI becomes a true partner in security technology decision-making, capable of understanding nuanced requirements, anticipating needs, and continuously learning from industry developments.
+IPVM Platform AI transforms how security professionals interact with complex technical information, moving beyond simple question-answering to deliver contextual insights, proactive recommendations, and sophisticated analysis tools. By combining IPVM's authoritative knowledge base with cutting-edge AI technologies, Platform AI becomes a true partner in security technology decision-making, capable of understanding nuanced requirements, anticipating needs, and continuously learning from industry developments.
 
 ## Core AI Capabilities
 
 ### 1. Multi-Modal Intelligence
 
-IPVM Sentinel AI processes and analyzes information across multiple modalities, enabling richer interactions and more comprehensive insights.
+IPVM Platform AI processes and analyzes information across multiple modalities, enabling richer interactions and more comprehensive insights.
 
 #### Key Capabilities:
 
@@ -34,7 +34,7 @@ IPVM Sentinel AI processes and analyzes information across multiple modalities, 
 
 ### 2. Adaptive Knowledge Systems
 
-IPVM Sentinel AI maintains a dynamic knowledge architecture that continuously evolves with new research, market developments, and user interactions.
+IPVM Platform AI maintains a dynamic knowledge architecture that continuously evolves with new research, market developments, and user interactions.
 
 #### Key Capabilities:
 
@@ -58,7 +58,7 @@ IPVM Sentinel AI maintains a dynamic knowledge architecture that continuously ev
 
 ### 3. Predictive Analytics and Forecasting
 
-IPVM Sentinel AI applies sophisticated predictive models to anticipate technology trends, potential issues, and future requirements.
+IPVM Platform AI applies sophisticated predictive models to anticipate technology trends, potential issues, and future requirements.
 
 #### Key Capabilities:
 
@@ -82,7 +82,7 @@ IPVM Sentinel AI applies sophisticated predictive models to anticipate technolog
 
 ### 4. Decision Intelligence
 
-IPVM Sentinel AI provides sophisticated support for complex decision-making processes throughout the security technology lifecycle.
+IPVM Platform AI provides sophisticated support for complex decision-making processes throughout the security technology lifecycle.
 
 #### Key Capabilities:
 
@@ -264,7 +264,7 @@ The foundational AI capabilities that power experiences throughout the platform 
 
 ## User Experience and Interaction Modes
 
-IPVM Sentinel AI delivers a human-centered experience that adapts to different user needs and contexts.
+IPVM Platform AI delivers a human-centered experience that adapts to different user needs and contexts.
 
 ### Interaction Modes
 
@@ -314,7 +314,7 @@ IPVM Sentinel AI delivers a human-centered experience that adapts to different u
 
 ## Technical Implementation
 
-IPVM Sentinel AI is built on a sophisticated technical architecture designed for reliability, scalability, and continuous evolution.
+IPVM Platform AI is built on a sophisticated technical architecture designed for reliability, scalability, and continuous evolution.
 
 ### Core AI Architecture
 
@@ -390,7 +390,7 @@ IPVM Sentinel AI is built on a sophisticated technical architecture designed for
 
 ## Implementation Roadmap
 
-The development and deployment of IPVM Sentinel AI will follow a phased approach to ensure quality, reliability, and user adoption.
+The development and deployment of IPVM Platform AI will follow a phased approach to ensure quality, reliability, and user adoption.
 
 ### Phase 1: Foundation (Q2-Q3 2025)
 
@@ -422,7 +422,7 @@ The development and deployment of IPVM Sentinel AI will follow a phased approach
 
 ## Use Cases and Applications
 
-IPVM Sentinel AI enables numerous high-value applications across the security technology lifecycle.
+IPVM Platform AI enables numerous high-value applications across the security technology lifecycle.
 
 ### Strategic Planning
 
@@ -482,7 +482,7 @@ IPVM Sentinel AI enables numerous high-value applications across the security te
 
 ## Unique Advantages
 
-IPVM Sentinel AI delivers unique capabilities that set it apart from conventional tools and platforms.
+IPVM Platform AI delivers unique capabilities that set it apart from conventional tools and platforms.
 
 ### IPVM Differentiation
 
@@ -502,8 +502,8 @@ IPVM Sentinel AI delivers unique capabilities that set it apart from conventiona
 
 ## Conclusion
 
-IPVM Sentinel AI represents a transformative approach to security technology intelligence, moving beyond basic information retrieval to deliver sophisticated analysis, prediction, and decision support. By combining IPVM's authoritative knowledge base with advanced artificial intelligence technologies, Sentinel AI becomes an indispensable partner for security professionals navigating increasingly complex technology decisions.
+IPVM Platform AI represents a transformative approach to security technology intelligence, moving beyond basic information retrieval to deliver sophisticated analysis, prediction, and decision support. By combining IPVM's authoritative knowledge base with advanced artificial intelligence technologies, Platform AI becomes an indispensable partner for security professionals navigating increasingly complex technology decisions.
 
-The platform's AI capabilities will continuously evolve, leveraging new research, user interactions, and technological advancements to provide ever more valuable insights. From strategic planning through implementation and optimization, IPVM Sentinel AI will guide security professionals toward informed decisions based on objective performance data and sophisticated analysis.
+The platform's AI capabilities will continuously evolve, leveraging new research, user interactions, and technological advancements to provide ever more valuable insights. From strategic planning through implementation and optimization, IPVM Platform AI will guide security professionals toward informed decisions based on objective performance data and sophisticated analysis.
 
-As physical security technologies grow increasingly sophisticated and interconnected, the need for intelligent decision support has never been greater. IPVM Sentinel AI meets this need with capabilities that augment human expertise, enabling better, faster, and more confident security technology decisions.
+As physical security technologies grow increasingly sophisticated and interconnected, the need for intelligent decision support has never been greater. IPVM Platform AI meets this need with capabilities that augment human expertise, enabling better, faster, and more confident security technology decisions.

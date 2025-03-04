@@ -21,7 +21,7 @@ interface NavItemProps {
 }
 
 // Main Dashboard Component
-const IPVMSentinelDashboard: React.FC = () => {
+const IPVMPlatformDashboard: React.FC = () => {
   // State for active module and UI controls
   const [activeModule, setActiveModule] = useState<string>('Intelligence Hub');
   const [searchQuery, setSearchQuery] = useState<string>('');
@@ -86,7 +86,7 @@ const IPVMSentinelDashboard: React.FC = () => {
               
               {/* Logo */}
               <Shield className="h-6 w-6" />
-              <span className="text-lg font-bold">IPVM Sentinel</span>
+              <span className="text-lg font-bold">IPVM Platform</span>
             </div>
             
             {/* Search - hidden on small screens */}
@@ -324,4 +324,4 @@ const NavItem: React.FC<NavItemProps> = ({ icon, title, active, onClick, compact
   );
 };
 
-export default IPVMSentinelDashboard; 
+export default IPVMPlatformDashboard; 

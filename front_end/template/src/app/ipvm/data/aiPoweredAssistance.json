@@ -85,11 +85,6 @@
     "actions": [
       {
         "id": 1,
-        "label": "Generate Quiz",
-        "style": "primary"
-      },
-      {
-        "id": 2,
         "label": "View RFP Templates",
         "style": "secondary"
       }
