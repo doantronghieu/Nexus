@@ -5,43 +5,167 @@
       "status": "Matches Lab Results",
       "fieldValue": 94.8,
       "labValue": 96.2,
-      "percentage": 95
+      "percentage": 95,
+      "product": {
+        "name": "Axis P3265-LVE",
+        "manufacturer": "Axis Communications",
+        "category": "IP Camera",
+        "image": "/products/axis-p3265.jpg"
+      }
     },
     {
       "title": "Low Light Performance",
       "status": "Minor Deviation",
       "fieldValue": 82.3,
       "labValue": 89.1,
-      "percentage": 72
+      "percentage": 72,
+      "product": {
+        "name": "Hikvision DS-2CD2386G2",
+        "manufacturer": "Hikvision",
+        "category": "IP Camera",
+        "image": "/products/hikvision-ds2cd2386g2.jpg"
+      }
     },
     {
       "title": "Analytics Detection Accuracy",
       "status": "Significant Deviation",
       "fieldValue": 68.7,
       "labValue": 91.5,
-      "percentage": 68.7
+      "percentage": 68.7,
+      "product": {
+        "name": "Verkada D80",
+        "manufacturer": "Verkada",
+        "category": "Cloud Camera",
+        "image": "/products/verkada-d80.jpg"
+      }
     }
   ],
   "benchmarks": [
     {
       "category": "Video Quality",
       "yourScore": 82,
-      "industryAvg": 75
+      "industryAvg": 75,
+      "products": [
+        {
+          "name": "Axis P3265-LVE",
+          "manufacturer": "Axis Communications",
+          "score": 85,
+          "category": "IP Camera"
+        },
+        {
+          "name": "Hikvision DS-2CD2386G2",
+          "manufacturer": "Hikvision",
+          "score": 79,
+          "category": "IP Camera"
+        },
+        {
+          "name": "Verkada D80",
+          "manufacturer": "Verkada",
+          "score": 82,
+          "category": "Cloud Camera"
+        }
+      ]
     },
     {
       "category": "Storage Efficiency",
       "yourScore": 68,
-      "industryAvg": 72
+      "industryAvg": 72,
+      "products": [
+        {
+          "name": "Axis P3265-LVE",
+          "manufacturer": "Axis Communications",
+          "score": 65,
+          "category": "IP Camera"
+        },
+        {
+          "name": "Hikvision DS-2CD2386G2",
+          "manufacturer": "Hikvision",
+          "score": 70,
+          "category": "IP Camera"
+        },
+        {
+          "name": "Verkada D80",
+          "manufacturer": "Verkada",
+          "score": 69,
+          "category": "Cloud Camera"
+        }
+      ]
     },
     {
       "category": "System Uptime",
       "yourScore": 99.2,
-      "industryAvg": 97.8
+      "industryAvg": 97.8,
+      "products": [
+        {
+          "name": "Axis P3265-LVE",
+          "manufacturer": "Axis Communications",
+          "score": 99.5,
+          "category": "IP Camera"
+        },
+        {
+          "name": "Hikvision DS-2CD2386G2",
+          "manufacturer": "Hikvision",
+          "score": 98.9,
+          "category": "IP Camera"
+        },
+        {
+          "name": "Verkada D80",
+          "manufacturer": "Verkada",
+          "score": 99.2,
+          "category": "Cloud Camera"
+        }
+      ]
     },
     {
       "category": "Detection Accuracy",
       "yourScore": 78,
-      "industryAvg": 65
+      "industryAvg": 65,
+      "products": [
+        {
+          "name": "Axis P3265-LVE",
+          "manufacturer": "Axis Communications",
+          "score": 76,
+          "category": "IP Camera"
+        },
+        {
+          "name": "Hikvision DS-2CD2386G2",
+          "manufacturer": "Hikvision",
+          "score": 81,
+          "category": "IP Camera"
+        },
+        {
+          "name": "Verkada D80",
+          "manufacturer": "Verkada",
+          "score": 77,
+          "category": "Cloud Camera"
+        }
+      ]
+    }
+  ],
+  "products": [
+    {
+      "id": "axis-p3265",
+      "name": "Axis P3265-LVE",
+      "manufacturer": "Axis Communications",
+      "category": "IP Camera",
+      "image": "/products/axis-p3265.jpg",
+      "description": "Outdoor-ready, vandal-resistant dome with built-in IR and deep learning-based analytics"
+    },
+    {
+      "id": "hikvision-ds2cd2386g2",
+      "name": "Hikvision DS-2CD2386G2",
+      "manufacturer": "Hikvision",
+      "category": "IP Camera",
+      "image": "/products/hikvision-ds2cd2386g2.jpg",
+      "description": "8MP AcuSense Fixed Dome Network Camera with 2.8mm lens and 30m IR"
+    },
+    {
+      "id": "verkada-d80",
+      "name": "Verkada D80",
+      "manufacturer": "Verkada",
+      "category": "Cloud Camera",
+      "image": "/products/verkada-d80.jpg",
+      "description": "Indoor Dome Camera with 4K Ultra HD resolution and built-in analytics"
     }
   ]
 } 
