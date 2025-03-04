@@ -92,14 +92,14 @@ const IPVMSentinelDashboard: React.FC = () => {
             {/* Search - hidden on small screens */}
             <form onSubmit={handleSearch} className="hidden md:block flex-1 max-w-md mx-4">
               <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-blue-300 h-4 w-4" />
                 <input
                   type="text"
                   placeholder="Search..."
-                  className="w-full py-1.5 pl-8 pr-3 rounded-md bg-blue-800 text-white placeholder-blue-300 focus:outline-none text-sm"
+                  className="w-full py-1.5 pl-10 pr-3 rounded-md bg-blue-800 text-white placeholder-blue-300 focus:outline-none text-sm"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
-                <Search className="absolute left-2.5 top-2 h-4 w-4 text-blue-300" />
               </div>
             </form>
             

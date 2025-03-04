@@ -49,7 +49,7 @@ const AIPoweredAssistance: React.FC = () => {
                         <input
                           type="text"
                           placeholder="Ask about security technologies, recommendations, or market trends..."
-                          className="flex-1 w-full pl-10 pr-2 py-1.5 text-sm border border-gray-300 rounded-l focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent"
+                          className="flex-1 w-full pl-12 pr-2 py-1.5 text-sm border border-gray-300 rounded-l focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent"
                           value={aiQuery}
                           onChange={(e) => setAiQuery(e.target.value)}
                         />
