@@ -2,9 +2,13 @@
 
 import React from 'react';
 import { MapPin } from 'lucide-react';
+import projectLifecycleData from '../data/projectLifecycle.json';
 
 // Project Lifecycle Component
 const ProjectLifecycle: React.FC = () => {
+  // Get data from JSON
+  const { projectTypes, industries, keyRequirements, recentProjects } = projectLifecycleData;
+  
   return (
     <div className="module-container">
       <div className="module-header">
@@ -47,30 +51,26 @@ const ProjectLifecycle: React.FC = () => {
                       <div>
                         <label className="block text-xs font-medium text-gray-700 mb-1">Project Type</label>
                         <select className="w-full border border-gray-300 rounded-md p-1.5 text-xs">
-                          <option>Video Surveillance</option>
-                          <option>Access Control</option>
-                          <option>Integrated System</option>
-                          <option>Weapons Detection</option>
+                          {projectTypes.map((type, index) => (
+                            <option key={index}>{type}</option>
+                          ))}
                         </select>
                       </div>
                       <div>
                         <label className="block text-xs font-medium text-gray-700 mb-1">Industry</label>
                         <select className="w-full border border-gray-300 rounded-md p-1.5 text-xs">
-                          <option>Corporate</option>
-                          <option>Education</option>
-                          <option>Healthcare</option>
-                          <option>Retail</option>
-                          <option>Government</option>
+                          {industries.map((industry, index) => (
+                            <option key={index}>{industry}</option>
+                          ))}
                         </select>
                       </div>
                     </div>
                     <div className="mb-3">
                       <label className="block text-xs font-medium text-gray-700 mb-1">Key Requirements</label>
                       <div className="flex flex-wrap gap-1.5">
-                        <span className="px-2 py-0.5 bg-blue-100 text-blue-800 text-xs rounded-full">High Resolution</span>
-                        <span className="px-2 py-0.5 bg-blue-100 text-blue-800 text-xs rounded-full">Cloud Storage</span>
-                        <span className="px-2 py-0.5 bg-blue-100 text-blue-800 text-xs rounded-full">Analytics</span>
-                        <span className="px-2 py-0.5 bg-blue-100 text-blue-800 text-xs rounded-full">Mobile Access</span>
+                        {keyRequirements.map((requirement, index) => (
+                          <span key={index} className="px-2 py-0.5 bg-blue-100 text-blue-800 text-xs rounded-full">{requirement}</span>
+                        ))}
                         <span className="px-2 py-0.5 bg-gray-100 text-gray-800 text-xs rounded-full">+ Add More</span>
                       </div>
                     </div>
@@ -92,24 +92,15 @@ const ProjectLifecycle: React.FC = () => {
               </div>
               <div className="panel-content">
                 <div className="space-y-2">
-                  <ProjectItem 
-                    title="Corporate HQ Security Upgrade" 
-                    status="In Progress"
-                    phase="Design"
-                    date="Feb 20, 2025"
-                  />
-                  <ProjectItem 
-                    title="Retail Chain Video Analytics" 
-                    status="Active"
-                    phase="Implementation"
-                    date="Jan 15, 2025"
-                  />
-                  <ProjectItem 
-                    title="Manufacturing Facility Access Control" 
-                    status="Completed"
-                    phase="Verification"
-                    date="Dec 10, 2024"
-                  />
+                  {recentProjects.map((project) => (
+                    <ProjectItem 
+                      key={project.id}
+                      title={project.title} 
+                      status={project.status as 'Completed' | 'In Progress' | 'Active'}
+                      phase={project.phase}
+                      date={project.date}
+                    />
+                  ))}
                 </div>
               </div>
             </div>

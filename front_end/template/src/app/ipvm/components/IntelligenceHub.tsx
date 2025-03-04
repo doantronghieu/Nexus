@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { Camera, Shield, Brain, ArrowRight, PieChart } from 'lucide-react';
+import intelligenceHubData from '../data/intelligenceHub.json';
 
 // Intelligence Hub Component
 interface IntelligenceHubProps {
@@ -10,6 +11,23 @@ interface IntelligenceHubProps {
 }
 
 const IntelligenceHub: React.FC<IntelligenceHubProps> = ({ searchQuery = '', showAIResults = false }) => {
+  // Get data from JSON
+  const { researchItems, categories, timeFilters } = intelligenceHubData;
+  
+  // Function to get the appropriate icon component
+  const getIconComponent = (iconName: string) => {
+    switch (iconName) {
+      case 'Camera':
+        return <Camera size={16} className="text-blue-600" />;
+      case 'Shield':
+        return <Shield size={16} className="text-purple-600" />;
+      case 'Brain':
+        return <Brain size={16} className="text-green-600" />;
+      default:
+        return <Camera size={16} className="text-blue-600" />;
+    }
+  };
+  
   return (
     <div className="module-container">
       <div className="module-header flex justify-between items-center">
@@ -38,67 +56,36 @@ const IntelligenceHub: React.FC<IntelligenceHubProps> = ({ searchQuery = '', sho
                     </div>
                     <div className="flex space-x-2">
                       <select className="text-xs border border-gray-300 rounded p-1">
-                        <option>All Categories</option>
-                        <option>Video Surveillance</option>
-                        <option>Access Control</option>
-                        <option>Analytics</option>
-                        <option>Cybersecurity</option>
+                        {categories.map((category, index) => (
+                          <option key={index}>{category}</option>
+                        ))}
                       </select>
                       <select className="text-xs border border-gray-300 rounded p-1">
-                        <option>All Time</option>
-                        <option>Last 30 Days</option>
-                        <option>Last 90 Days</option>
-                        <option>Last Year</option>
+                        {timeFilters.map((filter, index) => (
+                          <option key={index}>{filter}</option>
+                        ))}
                       </select>
                     </div>
                   </div>
                   <div className="panel-content max-h-[calc(100vh-20rem)] overflow-y-auto">
                     <div className="space-y-3">
-                      <div className="border-b border-gray-100 pb-3">
-                        <div className="flex items-center">
-                          <div className="w-8 h-8 rounded-md bg-blue-100 flex items-center justify-center mr-3">
-                            <Camera size={16} className="text-blue-600" />
-                          </div>
-                          <div>
-                            <h5 className="font-medium text-gray-800 text-sm">Cloud Going Mainstream In Video Surveillance</h5>
-                            <div className="flex items-center text-xs text-gray-500 mt-1">
-                              <span className="bg-blue-100 text-blue-800 px-2 py-0.5 rounded">Research Report</span>
-                              <span className="mx-2">•</span>
-                              <span>Apr 23, 2024</span>
+                      {researchItems.map((item) => (
+                        <div key={item.id} className="border-b border-gray-100 pb-3">
+                          <div className="flex items-center">
+                            <div className="w-8 h-8 rounded-md bg-blue-100 flex items-center justify-center mr-3">
+                              {getIconComponent(item.icon)}
+                            </div>
+                            <div>
+                              <h5 className="font-medium text-gray-800 text-sm">{item.title}</h5>
+                              <div className="flex items-center text-xs text-gray-500 mt-1">
+                                <span className="bg-blue-100 text-blue-800 px-2 py-0.5 rounded">{item.type}</span>
+                                <span className="mx-2">•</span>
+                                <span>{item.date}</span>
+                              </div>
                             </div>
                           </div>
                         </div>
-                      </div>
-                      <div className="border-b border-gray-100 pb-3">
-                        <div className="flex items-center">
-                          <div className="w-8 h-8 rounded-md bg-purple-100 flex items-center justify-center mr-3">
-                            <Shield size={16} className="text-purple-600" />
-                          </div>
-                          <div>
-                            <h5 className="font-medium text-gray-800 text-sm">Mobile Credential Solutions Comparative Test</h5>
-                            <div className="flex items-center text-xs text-gray-500 mt-1">
-                              <span className="bg-purple-100 text-purple-800 px-2 py-0.5 rounded">Test Results</span>
-                              <span className="mx-2">•</span>
-                              <span>Feb 18, 2025</span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="border-b border-gray-100 pb-3">
-                        <div className="flex items-center">
-                          <div className="w-8 h-8 rounded-md bg-green-100 flex items-center justify-center mr-3">
-                            <Brain size={16} className="text-green-600" />
-                          </div>
-                          <div>
-                            <h5 className="font-medium text-gray-800 text-sm">Person Detection Accuracy Benchmark</h5>
-                            <div className="flex items-center text-xs text-gray-500 mt-1">
-                              <span className="bg-green-100 text-green-800 px-2 py-0.5 rounded">Analytics Test</span>
-                              <span className="mx-2">•</span>
-                              <span>Feb 10, 2025</span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
+                      ))}
                     </div>
                   </div>
                 </div>
@@ -230,124 +217,96 @@ interface AISearchResultsProps {
 }
 
 const AISearchResults: React.FC<AISearchResultsProps> = ({ query }) => {
+  // Get AI search results data from JSON
+  const { aiSearchResults } = intelligenceHubData;
+  const { trends, relatedResearch, competitors, risks } = aiSearchResults;
+  
   return (
-    <div className="module-content-scrollable p-3">
-      <div className="card">
-        <div className="panel-header border-b border-gray-200">
-          <h3 className="text-lg font-semibold text-gray-800">IPVM Sentinel AI Results</h3>
-          <p className="text-sm text-gray-600">Showing intelligence for: "{query}"</p>
+    <div className="p-3">
+      <div className="bg-blue-50 border border-blue-100 rounded-lg p-3 mb-4">
+        <div className="flex items-center mb-2">
+          <Brain size={16} className="text-blue-600 mr-2" />
+          <h3 className="text-base font-semibold text-blue-900">AI-Enhanced Intelligence</h3>
         </div>
-        
-        <div className="panel-content">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-            <div className="lg:col-span-2 space-y-4">
-              <div className="bg-blue-50 border border-blue-100 rounded-lg p-4">
-                <div className="flex items-start mb-3">
-                  <Brain size={20} className="text-blue-600 mr-2 mt-0.5" />
-                  <div>
-                    <h4 className="text-base font-semibold text-gray-800">AI Analysis</h4>
-                    <p className="text-sm text-gray-600 mt-1">
-                      Based on IPVM research and testing data, here's what you should know about {query}:
-                    </p>
-                  </div>
-                </div>
-                
-                <div className="prose max-w-none text-sm">
-                  <p>
-                    Recent IPVM testing shows cloud-based video surveillance solutions are seeing increasing adoption across 
-                    enterprise markets. Major manufacturers including Genetec, Axis, and Motorola have launched new cloud platforms 
-                    in the past 6 months, signaling a significant market shift.
-                  </p>
-                  <p className="mt-3">
-                    Key considerations for implementation include:
-                  </p>
-                  <ul className="list-disc pl-5 mt-1.5 space-y-1">
-                    <li>Bandwidth requirements for different resolution streams</li>
-                    <li>Data sovereignty and compliance with regional regulations</li>
-                    <li>Total cost of ownership compared to on-premise systems</li>
-                    <li>Cybersecurity controls and encryption standards</li>
-                  </ul>
-                </div>
-              </div>
-              
-              <div className="bg-white border border-gray-200 rounded-lg p-4">
-                <h4 className="text-base font-semibold text-gray-800 mb-3">Knowledge Graph</h4>
-                <div className="h-48 flex items-center justify-center bg-gray-50 rounded border border-gray-200 mb-3">
-                  <span className="text-gray-500 text-sm">Interactive Knowledge Graph Visualization</span>
-                </div>
-                <p className="text-sm text-gray-600">
-                  This knowledge graph shows the relationships between key technologies, manufacturers, and market trends 
-                  related to cloud video surveillance. Click on any node to explore deeper connections.
-                </p>
-              </div>
-            </div>
-            
-            <div className="space-y-4">
-              <div className="bg-white border border-gray-200 rounded-lg p-4">
-                <h4 className="text-base font-semibold text-gray-800 mb-3">Competitive Analysis</h4>
-                <div className="space-y-3">
-                  <CompetitorItem 
-                    name="Genetec Cloud" 
-                    rating="High" 
-                    strength="Enterprise-grade security features" 
-                    weakness="Higher cost structure"
-                  />
-                  <CompetitorItem 
-                    name="Eagle Eye Networks" 
-                    rating="High" 
-                    strength="Purpose-built cloud architecture" 
-                    weakness="Limited integration options"
-                  />
-                  <CompetitorItem 
-                    name="Verkada" 
-                    rating="Medium" 
-                    strength="Simple deployment and management" 
-                    weakness="Closed ecosystem"
-                  />
-                </div>
-              </div>
-              
-              <div className="bg-white border border-gray-200 rounded-lg p-4">
-                <h4 className="text-base font-semibold text-gray-800 mb-3">Implementation Risks</h4>
-                <div className="space-y-2">
-                  <RiskItem 
-                    category="Security" 
-                    level="Medium" 
-                    description="Data transmission vulnerabilities if not properly encrypted"
-                  />
-                  <RiskItem 
-                    category="Reliability" 
-                    level="Low" 
-                    description="Service disruption during internet outages"
-                  />
-                  <RiskItem 
-                    category="Compliance" 
-                    level="High" 
-                    description="Data storage location may violate regional privacy laws"
-                  />
-                </div>
-              </div>
+        <p className="text-sm text-blue-800 mb-2">
+          Analysis for: <span className="font-semibold">"{query || 'AI in Video Surveillance'}"</span>
+        </p>
+        <div className="text-xs text-blue-700">
+          IPVM Sentinel AI has analyzed our research database, market trends, and industry data to provide you with comprehensive insights.
+        </div>
+      </div>
+      
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="card h-auto">
+          <div className="panel-header border-b border-gray-200">
+            <h3 className="text-base font-semibold text-gray-800">Market Trends</h3>
+          </div>
+          <div className="panel-content">
+            <div className="space-y-3">
+              {trends.map((trend, index) => (
+                <TrendItem 
+                  key={index}
+                  title={trend.title}
+                  trend={trend.trend as 'Rising' | 'Falling' | 'Stable'}
+                  impact={trend.impact as 'High' | 'Medium' | 'Low'}
+                  description={trend.description}
+                />
+              ))}
             </div>
           </div>
-          
-          <div className="mt-4">
-            <h4 className="text-base font-semibold text-gray-800 mb-3">Related Research</h4>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-              <RelatedResearchItem 
-                title="Cloud Video Storage Requirements Calculator" 
-                date="Mar 15, 2024" 
-                excerpt="Tool for estimating bandwidth and storage needs based on camera count and settings"
-              />
-              <RelatedResearchItem 
-                title="Cloud vs On-Premise Total Cost of Ownership Analysis" 
-                date="Feb 28, 2024" 
-                excerpt="5-year cost comparison across different deployment scenarios"
-              />
-              <RelatedResearchItem 
-                title="Cloud Video Surveillance Cybersecurity Guide" 
-                date="Jan 10, 2024" 
-                excerpt="Best practices for securing cloud video implementations"
-              />
+        </div>
+        
+        <div className="card h-auto">
+          <div className="panel-header border-b border-gray-200">
+            <h3 className="text-base font-semibold text-gray-800">Related Research</h3>
+          </div>
+          <div className="panel-content">
+            <div className="space-y-3">
+              {relatedResearch.map((research, index) => (
+                <RelatedResearchItem 
+                  key={index}
+                  title={research.title}
+                  date={research.date}
+                  excerpt={research.excerpt}
+                />
+              ))}
+            </div>
+          </div>
+        </div>
+        
+        <div className="card h-auto">
+          <div className="panel-header border-b border-gray-200">
+            <h3 className="text-base font-semibold text-gray-800">Competitive Landscape</h3>
+          </div>
+          <div className="panel-content">
+            <div className="space-y-3">
+              {competitors.map((competitor, index) => (
+                <CompetitorItem 
+                  key={index}
+                  name={competitor.name}
+                  rating={competitor.rating as 'High' | 'Medium' | 'Low'}
+                  strength={competitor.strength}
+                  weakness={competitor.weakness}
+                />
+              ))}
+            </div>
+          </div>
+        </div>
+        
+        <div className="card h-auto">
+          <div className="panel-header border-b border-gray-200">
+            <h3 className="text-base font-semibold text-gray-800">Risk Assessment</h3>
+          </div>
+          <div className="panel-content">
+            <div className="space-y-3">
+              {risks.map((risk, index) => (
+                <RiskItem 
+                  key={index}
+                  category={risk.category}
+                  level={risk.level as 'High' | 'Medium' | 'Low'}
+                  description={risk.description}
+                />
+              ))}
             </div>
           </div>
         </div>

@@ -1,0 +1,36 @@
+{
+  "imageAnalysis": {
+    "results": [
+      "Coverage gap detected in northwest corner",
+      "Recommend repositioning Camera #3 for better coverage",
+      "Potential blind spot in main corridor",
+      "Lighting levels may affect camera performance in east entrance"
+    ]
+  },
+  "aiCapabilities": [
+    {
+      "id": 1,
+      "title": "System Design Recommendations",
+      "description": "Get AI-powered recommendations for camera placement, access control points, and system architecture"
+    },
+    {
+      "id": 2,
+      "title": "Technology Selection",
+      "description": "Receive personalized product recommendations based on your specific requirements and constraints"
+    },
+    {
+      "id": 3,
+      "title": "Regulatory Compliance",
+      "description": "Stay informed about relevant regulations and compliance requirements for your security systems"
+    },
+    {
+      "id": 4,
+      "title": "Troubleshooting Assistant",
+      "description": "Diagnose and resolve common security system issues with AI-guided troubleshooting"
+    }
+  ],
+  "aiResponses": {
+    "cameraPlacement": "Based on your floor plan, I recommend positioning cameras at the following locations to maximize coverage while minimizing blind spots:\n\n1. Main entrance: Use a 4MP dome camera with 110° field of view\n2. Hallway intersections: Deploy 2MP cameras with corridor format\n3. Parking area: Consider 5MP cameras with IR capabilities for low-light conditions\n\nThis configuration provides approximately 95% coverage of critical areas while staying within your budget constraints.",
+    "marketTrends": "The security camera market is currently experiencing several significant trends:\n\n1. Cloud-based VMS solutions are growing at 24% CAGR, outpacing on-premise systems\n2. AI-powered analytics are becoming standard features rather than premium add-ons\n3. Multi-sensor cameras are gaining market share due to their cost-efficiency for wide area coverage\n4. Cybersecurity features are increasingly becoming a primary selection criterion\n\nBased on your organization's profile, focusing on cloud-compatible cameras with built-in analytics would align with these market directions."
+  }
+} 

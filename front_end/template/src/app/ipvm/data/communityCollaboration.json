@@ -1,0 +1,84 @@
+{
+  "discussions": [
+    {
+      "id": 1,
+      "title": "Best Practices for Cloud Video Migration",
+      "author": "Security Director",
+      "organization": "Financial Services",
+      "replies": 15,
+      "views": 342,
+      "date": "1 day ago"
+    },
+    {
+      "id": 2,
+      "title": "Integrating Weapons Detection with Access Control",
+      "author": "Systems Engineer",
+      "organization": "Education",
+      "replies": 9,
+      "views": 201,
+      "date": "2 days ago"
+    },
+    {
+      "id": 3,
+      "title": "EU AI Act Compliance for Video Analytics",
+      "author": "Chief Security Officer",
+      "organization": "Retail",
+      "replies": 24,
+      "views": 587,
+      "date": "5 days ago"
+    }
+  ],
+  "regulations": [
+    {
+      "id": 1,
+      "name": "EU AI Act",
+      "region": "Europe",
+      "status": "Pending",
+      "impact": "High"
+    },
+    {
+      "id": 2,
+      "name": "NDAA Compliance",
+      "region": "USA",
+      "status": "Active",
+      "impact": "High"
+    },
+    {
+      "id": 3,
+      "name": "BSIA 1175",
+      "region": "UK",
+      "status": "Active",
+      "impact": "Medium"
+    },
+    {
+      "id": 4,
+      "name": "PIPEDA Update",
+      "region": "Canada",
+      "status": "Proposed",
+      "impact": "Medium"
+    }
+  ],
+  "experts": [
+    {
+      "id": 1,
+      "name": "John Smith",
+      "expertise": "Video Analytics",
+      "organization": "Enterprise Security",
+      "rating": 4.9
+    },
+    {
+      "id": 2,
+      "name": "Sarah Johnson",
+      "expertise": "Access Control",
+      "organization": "Healthcare Security",
+      "rating": 4.7
+    },
+    {
+      "id": 3,
+      "name": "Michael Chen",
+      "expertise": "Cloud Migration",
+      "organization": "Technology Consulting",
+      "rating": 4.8
+    }
+  ]
+} 

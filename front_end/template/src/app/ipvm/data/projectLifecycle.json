@@ -1,0 +1,44 @@
+{
+  "projectTypes": [
+    "Video Surveillance",
+    "Access Control",
+    "Integrated System",
+    "Weapons Detection"
+  ],
+  "industries": [
+    "Corporate",
+    "Education",
+    "Healthcare",
+    "Retail",
+    "Government"
+  ],
+  "keyRequirements": [
+    "High Resolution",
+    "Cloud Storage",
+    "Analytics",
+    "Mobile Access"
+  ],
+  "recentProjects": [
+    {
+      "id": 1,
+      "title": "Corporate HQ Security Upgrade",
+      "status": "In Progress",
+      "phase": "Design",
+      "date": "Feb 20, 2025"
+    },
+    {
+      "id": 2,
+      "title": "Retail Chain Access Control Implementation",
+      "status": "Active",
+      "phase": "Deployment",
+      "date": "Jan 15, 2025"
+    },
+    {
+      "id": 3,
+      "title": "School District Video System",
+      "status": "Completed",
+      "phase": "Handover",
+      "date": "Dec 10, 2024"
+    }
+  ]
+} 

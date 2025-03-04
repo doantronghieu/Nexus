@@ -1,9 +1,13 @@
 "use client";
 
 import React from 'react';
+import communityCollaborationData from '../data/communityCollaboration.json';
 
 // Community & Collaboration Component
 const CommunityCollaboration: React.FC = () => {
+  // Get data from JSON
+  const { discussions, regulations, experts } = communityCollaborationData;
+  
   return (
     <div className="viewport-fit">
       <div className="module-container">
@@ -21,30 +25,17 @@ const CommunityCollaboration: React.FC = () => {
                 </div>
                 <div className="panel-content compact-p">
                   <div className="space-y-2 module-content-scrollable">
-                    <DiscussionItem 
-                      title="Best Practices for Cloud Video Migration" 
-                      author="Security Director"
-                      organization="Financial Services"
-                      replies={15}
-                      views={342}
-                      date="1 day ago"
-                    />
-                    <DiscussionItem 
-                      title="Integrating Weapons Detection with Access Control" 
-                      author="Systems Engineer"
-                      organization="Education"
-                      replies={9}
-                      views={201}
-                      date="2 days ago"
-                    />
-                    <DiscussionItem 
-                      title="EU AI Act Compliance for Video Analytics" 
-                      author="Chief Security Officer"
-                      organization="Retail"
-                      replies={24}
-                      views={587}
-                      date="5 days ago"
-                    />
+                    {discussions.map((discussion) => (
+                      <DiscussionItem 
+                        key={discussion.id}
+                        title={discussion.title} 
+                        author={discussion.author}
+                        organization={discussion.organization}
+                        replies={discussion.replies}
+                        views={discussion.views}
+                        date={discussion.date}
+                      />
+                    ))}
                   </div>
                 </div>
               </div>
@@ -65,38 +56,22 @@ const CommunityCollaboration: React.FC = () => {
                         </tr>
                       </thead>
                       <tbody className="bg-white divide-y divide-gray-200">
-                        <tr>
-                          <td className="px-2 py-1.5 text-sm text-gray-800">EU AI Act</td>
-                          <td className="px-2 py-1.5 text-sm text-gray-800">Europe</td>
-                          <td className="px-2 py-1.5">
-                            <span className="px-1.5 py-0.5 text-xs rounded-full bg-yellow-100 text-yellow-800">Pending</span>
-                          </td>
-                          <td className="px-2 py-1.5 text-sm text-gray-800">High</td>
-                        </tr>
-                        <tr>
-                          <td className="px-2 py-1.5 text-sm text-gray-800">NDAA Compliance</td>
-                          <td className="px-2 py-1.5 text-sm text-gray-800">USA</td>
-                          <td className="px-2 py-1.5">
-                            <span className="px-1.5 py-0.5 text-xs rounded-full bg-green-100 text-green-800">Active</span>
-                          </td>
-                          <td className="px-2 py-1.5 text-sm text-gray-800">High</td>
-                        </tr>
-                        <tr>
-                          <td className="px-2 py-1.5 text-sm text-gray-800">BSIA 1175</td>
-                          <td className="px-2 py-1.5 text-sm text-gray-800">UK</td>
-                          <td className="px-2 py-1.5">
-                            <span className="px-1.5 py-0.5 text-xs rounded-full bg-green-100 text-green-800">Active</span>
-                          </td>
-                          <td className="px-2 py-1.5 text-sm text-gray-800">Medium</td>
-                        </tr>
-                        <tr>
-                          <td className="px-2 py-1.5 text-sm text-gray-800">PIPEDA Update</td>
-                          <td className="px-2 py-1.5 text-sm text-gray-800">Canada</td>
-                          <td className="px-2 py-1.5">
-                            <span className="px-1.5 py-0.5 text-xs rounded-full bg-red-100 text-red-800">Proposed</span>
-                          </td>
-                          <td className="px-2 py-1.5 text-sm text-gray-800">Medium</td>
-                        </tr>
+                        {regulations.map((regulation) => (
+                          <tr key={regulation.id}>
+                            <td className="px-2 py-1.5 text-sm text-gray-800">{regulation.name}</td>
+                            <td className="px-2 py-1.5 text-sm text-gray-800">{regulation.region}</td>
+                            <td className="px-2 py-1.5">
+                              <span className={`px-1.5 py-0.5 text-xs rounded-full ${
+                                regulation.status === 'Active' ? 'bg-green-100 text-green-800' : 
+                                regulation.status === 'Pending' ? 'bg-yellow-100 text-yellow-800' : 
+                                'bg-red-100 text-red-800'
+                              }`}>
+                                {regulation.status}
+                              </span>
+                            </td>
+                            <td className="px-2 py-1.5 text-sm text-gray-800">{regulation.impact}</td>
+                          </tr>
+                        ))}
                       </tbody>
                     </table>
                   </div>
@@ -107,32 +82,20 @@ const CommunityCollaboration: React.FC = () => {
             <div className="module-grid-item space-y-3">
               <div className="card">
                 <div className="panel-header border-b border-gray-200">
-                  <h3 className="text-base font-semibold text-gray-800">Expert Directory</h3>
+                  <h3 className="text-base font-semibold text-gray-800">Industry Experts</h3>
                 </div>
                 <div className="panel-content compact-p">
                   <div className="space-y-2 module-content-scrollable">
-                    <ExpertItem 
-                      name="Sarah Johnson" 
-                      expertise="Video Analytics"
-                      organization="IPVM"
-                      rating={4.9}
-                    />
-                    <ExpertItem 
-                      name="Michael Chen" 
-                      expertise="Access Control"
-                      organization="Security Consultant"
-                      rating={4.8}
-                    />
-                    <ExpertItem 
-                      name="Aisha Patel" 
-                      expertise="Cloud Security"
-                      organization="Enterprise Security"
-                      rating={4.7}
-                    />
+                    {experts.map((expert) => (
+                      <ExpertItem 
+                        key={expert.id}
+                        name={expert.name}
+                        expertise={expert.expertise}
+                        organization={expert.organization}
+                        rating={expert.rating}
+                      />
+                    ))}
                   </div>
-                  <button className="w-full mt-2 px-3 py-1 bg-gray-100 text-gray-800 text-xs rounded border border-gray-300 hover:bg-gray-200">
-                    View All Experts
-                  </button>
                 </div>
               </div>
               

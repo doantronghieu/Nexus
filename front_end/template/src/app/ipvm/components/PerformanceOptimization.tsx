@@ -2,9 +2,21 @@
 
 import React from 'react';
 import { TrendingUp } from 'lucide-react';
+import performanceOptimizationData from '../data/performanceOptimization.json';
 
 // Performance Optimization Component
 const PerformanceOptimization: React.FC = () => {
+  // Get data from JSON
+  const { testLabIntegration, benchmarks } = performanceOptimizationData;
+  
+  // Function to determine status color
+  const getStatusColor = (status: string) => {
+    if (status === 'Matches Lab Results') return 'green';
+    if (status === 'Minor Deviation') return 'yellow';
+    if (status === 'Significant Deviation') return 'red';
+    return 'gray';
+  };
+  
   return (
     <div className="viewport-fit">
       <div className="module-container">
@@ -33,47 +45,26 @@ const PerformanceOptimization: React.FC = () => {
                 </div>
                 <div className="panel-content compact-p">
                   <div className="space-y-2">
-                    <div className="bg-white border border-gray-200 rounded-lg p-2">
-                      <div className="flex justify-between items-center mb-1">
-                        <span className="text-sm font-medium text-gray-800">Camera Field of View</span>
-                        <span className="text-xs px-1.5 py-0.5 rounded-full bg-green-100 text-green-800">Matches Lab Results</span>
-                      </div>
-                      <div className="bg-gray-50 rounded h-6 overflow-hidden">
-                        <div className="bg-green-500 h-full" style={{width: '95%'}}></div>
-                      </div>
-                      <div className="flex justify-between mt-0.5">
-                        <span className="text-xs text-gray-600">Field: 94.8%</span>
-                        <span className="text-xs text-gray-600">Lab: 96.2%</span>
-                      </div>
-                    </div>
-                    
-                    <div className="bg-white border border-gray-200 rounded-lg p-2">
-                      <div className="flex justify-between items-center mb-1">
-                        <span className="text-sm font-medium text-gray-800">Low Light Performance</span>
-                        <span className="text-xs px-1.5 py-0.5 rounded-full bg-yellow-100 text-yellow-800">Minor Deviation</span>
-                      </div>
-                      <div className="bg-gray-50 rounded h-6 overflow-hidden">
-                        <div className="bg-yellow-500 h-full" style={{width: '72%'}}></div>
-                      </div>
-                      <div className="flex justify-between mt-0.5">
-                        <span className="text-xs text-gray-600">Field: 82.3%</span>
-                        <span className="text-xs text-gray-600">Lab: 89.1%</span>
-                      </div>
-                    </div>
-                    
-                    <div className="bg-white border border-gray-200 rounded-lg p-2">
-                      <div className="flex justify-between items-center mb-1">
-                        <span className="text-sm font-medium text-gray-800">Analytics Detection Accuracy</span>
-                        <span className="text-xs px-1.5 py-0.5 rounded-full bg-red-100 text-red-800">Significant Deviation</span>
-                      </div>
-                      <div className="bg-gray-50 rounded h-6 overflow-hidden">
-                        <div className="bg-red-500 h-full" style={{width: '68.7%'}}></div>
-                      </div>
-                      <div className="flex justify-between mt-0.5">
-                        <span className="text-xs text-gray-600">Field: 68.7%</span>
-                        <span className="text-xs text-gray-600">Lab: 91.5%</span>
-                      </div>
-                    </div>
+                    {testLabIntegration.map((item, index) => {
+                      const statusColor = getStatusColor(item.status);
+                      return (
+                        <div key={index} className="bg-white border border-gray-200 rounded-lg p-2">
+                          <div className="flex justify-between items-center mb-1">
+                            <span className="text-sm font-medium text-gray-800">{item.title}</span>
+                            <span className={`text-xs px-1.5 py-0.5 rounded-full bg-${statusColor}-100 text-${statusColor}-800`}>
+                              {item.status}
+                            </span>
+                          </div>
+                          <div className="bg-gray-50 rounded h-6 overflow-hidden">
+                            <div className={`bg-${statusColor}-500 h-full`} style={{width: `${item.percentage}%`}}></div>
+                          </div>
+                          <div className="flex justify-between mt-0.5">
+                            <span className="text-xs text-gray-600">Field: {item.fieldValue}%</span>
+                            <span className="text-xs text-gray-600">Lab: {item.labValue}%</span>
+                          </div>
+                        </div>
+                      );
+                    })}
                   </div>
                   
                   <div className="mt-2 flex justify-end">
@@ -92,21 +83,14 @@ const PerformanceOptimization: React.FC = () => {
                 </div>
                 <div className="panel-content compact-p">
                   <div className="space-y-2">
-                    <BenchmarkItem 
-                      category="Video Quality" 
-                      yourScore={82}
-                      industryAvg={75}
-                    />
-                    <BenchmarkItem 
-                      category="Storage Efficiency" 
-                      yourScore={90}
-                      industryAvg={84}
-                    />
-                    <BenchmarkItem 
-                      category="Analytics Accuracy" 
-                      yourScore={78}
-                      industryAvg={80}
-                    />
+                    {benchmarks.map((benchmark, index) => (
+                      <BenchmarkItem 
+                        key={index}
+                        category={benchmark.category} 
+                        yourScore={benchmark.yourScore}
+                        industryAvg={benchmark.industryAvg}
+                      />
+                    ))}
                   </div>
                 </div>
               </div>

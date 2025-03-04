@@ -1,0 +1,109 @@
+{
+  "researchItems": [
+    {
+      "id": 1,
+      "title": "Cloud Going Mainstream In Video Surveillance",
+      "type": "Research Report",
+      "date": "Apr 23, 2024",
+      "icon": "Camera"
+    },
+    {
+      "id": 2,
+      "title": "Mobile Credential Solutions Comparative Test",
+      "type": "Test Results",
+      "date": "Feb 18, 2025",
+      "icon": "Shield"
+    },
+    {
+      "id": 3,
+      "title": "Person Detection Accuracy Benchmark",
+      "type": "Analytics Test",
+      "date": "Feb 10, 2025",
+      "icon": "Brain"
+    }
+  ],
+  "categories": [
+    "All Categories",
+    "Video Surveillance",
+    "Access Control",
+    "Analytics",
+    "Cybersecurity"
+  ],
+  "timeFilters": [
+    "All Time",
+    "Last 30 Days",
+    "Last 90 Days",
+    "Last Year"
+  ],
+  "aiSearchResults": {
+    "trends": [
+      {
+        "title": "AI-Powered Video Analytics",
+        "trend": "Rising",
+        "impact": "High",
+        "description": "Increasing adoption of AI-based video analytics for security applications"
+      },
+      {
+        "title": "On-Premise VMS",
+        "trend": "Falling",
+        "impact": "Medium",
+        "description": "Decreasing market share as cloud solutions gain popularity"
+      },
+      {
+        "title": "Mobile Credentials",
+        "trend": "Rising",
+        "impact": "High",
+        "description": "Growing adoption of smartphone-based access credentials"
+      }
+    ],
+    "relatedResearch": [
+      {
+        "title": "AI Video Analytics Market Report",
+        "date": "January 2025",
+        "excerpt": "Comprehensive analysis of AI video analytics market trends and forecasts"
+      },
+      {
+        "title": "Cloud VMS Comparative Test",
+        "date": "November 2024",
+        "excerpt": "Performance evaluation of leading cloud video management systems"
+      }
+    ],
+    "competitors": [
+      {
+        "name": "Avigilon",
+        "rating": "High",
+        "strength": "Advanced AI analytics",
+        "weakness": "Higher cost structure"
+      },
+      {
+        "name": "Axis",
+        "rating": "Medium",
+        "strength": "Product reliability",
+        "weakness": "Limited cloud offerings"
+      },
+      {
+        "name": "Verkada",
+        "rating": "High",
+        "strength": "Integrated cloud platform",
+        "weakness": "Closed ecosystem"
+      }
+    ],
+    "risks": [
+      {
+        "category": "Cybersecurity",
+        "level": "High",
+        "description": "Increasing vulnerability to sophisticated attacks"
+      },
+      {
+        "category": "Regulatory",
+        "level": "Medium",
+        "description": "Evolving privacy regulations affecting deployment"
+      },
+      {
+        "category": "Supply Chain",
+        "level": "Low",
+        "description": "Improving component availability"
+      }
+    ]
+  }
+} 

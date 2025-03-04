@@ -1,0 +1,47 @@
+{
+  "testLabIntegration": [
+    {
+      "title": "Camera Field of View",
+      "status": "Matches Lab Results",
+      "fieldValue": 94.8,
+      "labValue": 96.2,
+      "percentage": 95
+    },
+    {
+      "title": "Low Light Performance",
+      "status": "Minor Deviation",
+      "fieldValue": 82.3,
+      "labValue": 89.1,
+      "percentage": 72
+    },
+    {
+      "title": "Analytics Detection Accuracy",
+      "status": "Significant Deviation",
+      "fieldValue": 68.7,
+      "labValue": 91.5,
+      "percentage": 68.7
+    }
+  ],
+  "benchmarks": [
+    {
+      "category": "Video Quality",
+      "yourScore": 82,
+      "industryAvg": 75
+    },
+    {
+      "category": "Storage Efficiency",
+      "yourScore": 68,
+      "industryAvg": 72
+    },
+    {
+      "category": "System Uptime",
+      "yourScore": 99.2,
+      "industryAvg": 97.8
+    },
+    {
+      "category": "Detection Accuracy",
+      "yourScore": 78,
+      "industryAvg": 65
+    }
+  ]
+} 
