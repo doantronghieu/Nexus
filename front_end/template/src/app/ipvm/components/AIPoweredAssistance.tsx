@@ -69,18 +69,18 @@ const AIPoweredAssistance: React.FC = () => {
                   <form onSubmit={handleAiQuery} className="mb-2">
                     <div className="flex mb-2 relative">
                       <div className="relative flex-1">
-                        <Search size={14} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                        <Search size={16} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 z-10" />
                         <input
                           type="text"
                           placeholder="Ask about security technologies, recommendations, or market trends..."
-                          className="flex-1 w-full pl-12 pr-2 py-1.5 text-sm border border-gray-300 rounded-l focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent"
+                          className="flex-1 w-full pl-10 pr-2 py-2 text-sm border border-gray-300 rounded-l focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent"
                           value={aiQuery}
                           onChange={(e) => setAiQuery(e.target.value)}
                         />
                       </div>
                       <button 
                         type="submit"
-                        className="px-3 py-1.5 bg-blue-600 text-white text-sm rounded-r hover:bg-blue-700"
+                        className="px-3 py-2 bg-blue-600 text-white text-sm rounded-r hover:bg-blue-700"
                       >
                         Ask AI
                       </button>
