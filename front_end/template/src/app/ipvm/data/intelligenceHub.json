@@ -104,6 +104,38 @@
         "level": "Low",
         "description": "Improving component availability"
       }
+    ],
+    "aiInsights": [
+      {
+        "title": "Potential Security Vulnerability",
+        "category": "Cybersecurity",
+        "product": "Cloud VMS",
+        "level": "High"
+      },
+      {
+        "title": "Feature Enhancement Opportunity",
+        "category": "Product Development",
+        "product": "Mobile App",
+        "level": "Medium"
+      },
+      {
+        "title": "Market Expansion Potential",
+        "category": "Business Strategy",
+        "product": "Analytics Platform",
+        "level": "High"
+      },
+      {
+        "title": "Compliance Requirement Update",
+        "category": "Regulatory",
+        "product": "Access Control",
+        "level": "Medium"
+      },
+      {
+        "title": "Cost Optimization Identified",
+        "category": "Operations",
+        "product": "Manufacturing",
+        "level": "Low"
+      }
     ]
   }
 } 

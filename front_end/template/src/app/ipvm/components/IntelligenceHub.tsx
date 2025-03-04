@@ -219,7 +219,7 @@ interface AISearchResultsProps {
 const AISearchResults: React.FC<AISearchResultsProps> = ({ query }) => {
   // Get AI search results data from JSON
   const { aiSearchResults } = intelligenceHubData;
-  const { trends, relatedResearch, competitors, risks } = aiSearchResults;
+  const { trends, relatedResearch, competitors, risks, aiInsights } = aiSearchResults;
   
   return (
     <div className="p-3">
@@ -276,7 +276,7 @@ const AISearchResults: React.FC<AISearchResultsProps> = ({ query }) => {
         
         <div className="card h-auto">
           <div className="panel-header border-b border-gray-200">
-            <h3 className="text-base font-semibold text-gray-800">Competitive Landscape</h3>
+            <h3 className="text-base font-semibold text-gray-800">Competitor Analysis</h3>
           </div>
           <div className="panel-content">
             <div className="space-y-3">
@@ -305,6 +305,25 @@ const AISearchResults: React.FC<AISearchResultsProps> = ({ query }) => {
                   category={risk.category}
                   level={risk.level as 'High' | 'Medium' | 'Low'}
                   description={risk.description}
+                />
+              ))}
+            </div>
+          </div>
+        </div>
+        
+        <div className="card h-auto md:col-span-2">
+          <div className="panel-header border-b border-gray-200">
+            <h3 className="text-base font-semibold text-gray-800">AI-Generated Insights</h3>
+          </div>
+          <div className="panel-content">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {aiInsights.map((insight, index) => (
+                <AiInsightItem 
+                  key={index}
+                  title={insight.title}
+                  category={insight.category}
+                  product={insight.product}
+                  level={insight.level as 'High' | 'Medium' | 'Low'}
                 />
               ))}
             </div>
@@ -356,8 +375,15 @@ interface RelatedResearchItemProps {
 const RelatedResearchItem: React.FC<RelatedResearchItemProps> = ({ title, date, excerpt }) => (
   <div className="bg-gray-50 border border-gray-200 rounded-lg p-3">
     <h5 className="font-medium text-gray-800 text-sm">{title}</h5>
-    <p className="text-xs text-gray-500 mt-1">{date}</p>
-    <p className="text-xs text-gray-600 mt-1.5">{excerpt}</p>
+    <div className="flex items-center mt-1">
+      <span className="text-xs text-gray-500">{date}</span>
+    </div>
+    <p className="text-xs text-gray-600 mt-1">{excerpt}</p>
+    <div className="mt-2">
+      <a href="#" className="text-xs text-blue-600 hover:text-blue-800 flex items-center">
+        Read full report <ArrowRight size={12} className="ml-1" />
+      </a>
+    </div>
   </div>
 );
 
@@ -422,6 +448,35 @@ const RiskItem: React.FC<RiskItemProps> = ({ category, level, description }) => 
         </span>
       </div>
       <p className="text-xs text-gray-600 mt-1">{description}</p>
+    </div>
+  </div>
+);
+
+// AI Insight Item Component
+interface AiInsightItemProps {
+  title: string;
+  category: string;
+  product: string;
+  level: 'High' | 'Medium' | 'Low';
+}
+
+const AiInsightItem: React.FC<AiInsightItemProps> = ({ title, category, product, level }) => (
+  <div className="border-b border-gray-100 pb-3">
+    <h4 className="font-medium text-gray-800">{title}</h4>
+    <div className="flex items-center mt-1">
+      <span className="text-xs font-medium bg-blue-50 text-blue-700 px-2 py-1 rounded mr-2">
+        {category}
+      </span>
+      <span className="text-gray-600 text-sm">{product}</span>
+    </div>
+    <div className="flex justify-end mt-1">
+      <span className={`px-2 py-1 rounded text-xs font-medium ${
+        level === 'High' ? 'bg-red-100 text-red-800' : 
+        level === 'Low' ? 'bg-green-100 text-green-800' : 
+        'bg-yellow-100 text-yellow-800'
+      }`}>
+        {level} Level
+      </span>
     </div>
   </div>
 );
