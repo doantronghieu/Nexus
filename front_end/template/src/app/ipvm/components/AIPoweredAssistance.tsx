@@ -28,7 +28,7 @@ const AIPoweredAssistance: React.FC = () => {
     <div className="viewport-fit">
       <div className="module-container">
         <div className="module-header">
-          <h2 className="text-xl font-bold text-gray-800">AI-Powered Assistance</h2>
+          <h2 className="text-xl font-semibold text-gray-800">AI-Powered Assistance</h2>
           <p className="text-sm text-gray-600">Advanced intelligence for security technology decision-making</p>
         </div>
         
@@ -49,21 +49,21 @@ const AIPoweredAssistance: React.FC = () => {
                         <input
                           type="text"
                           placeholder="Ask about security technologies, recommendations, or market trends..."
-                          className="flex-1 w-full pl-10 pr-2 py-1.5 text-xs border border-gray-300 rounded-l focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent"
+                          className="flex-1 w-full pl-10 pr-2 py-1.5 text-sm border border-gray-300 rounded-l focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent"
                           value={aiQuery}
                           onChange={(e) => setAiQuery(e.target.value)}
                         />
                       </div>
                       <button 
                         type="submit"
-                        className="px-3 py-1.5 bg-blue-600 text-white text-xs rounded-r hover:bg-blue-700"
+                        className="px-3 py-1.5 bg-blue-600 text-white text-sm rounded-r hover:bg-blue-700"
                       >
                         Ask AI
                       </button>
                     </div>
                     <div className="flex justify-end items-center bg-gray-50 rounded-lg p-1.5 border border-gray-200">
-                      <button type="button" className="flex items-center text-xs text-blue-600 hover:text-blue-800">
-                        <Camera size={12} className="mr-1" />
+                      <button type="button" className="flex items-center text-sm text-blue-600 hover:text-blue-800">
+                        <Camera size={14} className="mr-1" />
                         Upload Image
                       </button>
                     </div>
@@ -213,19 +213,19 @@ const AIPoweredAssistance: React.FC = () => {
                   <div className="grid grid-cols-2 gap-2">
                     <div className="flex items-center p-2 border border-gray-200 rounded-lg">
                       <Globe size={16} className="text-blue-600 mr-2" />
-                      <span className="text-xs">Web Extension</span>
+                      <span className="text-sm">Web Extension</span>
                     </div>
                     <div className="flex items-center p-2 border border-gray-200 rounded-lg">
                       <MessageSquare size={16} className="text-blue-600 mr-2" />
-                      <span className="text-xs">Slack</span>
+                      <span className="text-sm">Slack</span>
                     </div>
                     <div className="flex items-center p-2 border border-gray-200 rounded-lg">
                       <MessageCircle size={16} className="text-blue-600 mr-2" />
-                      <span className="text-xs">Teams</span>
+                      <span className="text-sm">Teams</span>
                     </div>
                     <div className="flex items-center p-2 border border-gray-200 rounded-lg">
                       <Smartphone size={16} className="text-blue-600 mr-2" />
-                      <span className="text-xs">Mobile</span>
+                      <span className="text-sm">Mobile</span>
                     </div>
                   </div>
                 </div>
@@ -245,16 +245,9 @@ interface AiCapabilityItemProps {
 }
 
 const AiCapabilityItem: React.FC<AiCapabilityItemProps> = ({ title, description }) => (
-  <div className="border-b border-gray-100 pb-1.5">
-    <div className="flex items-start">
-      <div className="w-4 h-4 rounded-full bg-blue-100 flex-shrink-0 flex items-center justify-center mt-0.5 mr-1.5">
-        <Brain size={10} className="text-blue-700" />
-      </div>
-      <div>
-        <h4 className="text-xs font-medium text-gray-800">{title}</h4>
-        <p className="text-xs text-gray-600">{description}</p>
-      </div>
-    </div>
+  <div className="bg-white border border-gray-200 rounded-lg p-2">
+    <h4 className="text-sm font-medium text-gray-800 mb-1">{title}</h4>
+    <p className="text-sm text-gray-600">{description}</p>
   </div>
 );
 

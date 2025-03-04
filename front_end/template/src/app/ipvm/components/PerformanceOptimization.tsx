@@ -9,7 +9,7 @@ const PerformanceOptimization: React.FC = () => {
     <div className="viewport-fit">
       <div className="module-container">
         <div className="module-header">
-          <h2 className="text-xl font-bold text-gray-800">Performance Optimization</h2>
+          <h2 className="text-xl font-semibold text-gray-800">Performance Optimization</h2>
           <p className="text-sm text-gray-600">Evaluate and improve system performance with objective data</p>
         </div>
         
@@ -35,43 +35,43 @@ const PerformanceOptimization: React.FC = () => {
                   <div className="space-y-2">
                     <div className="bg-white border border-gray-200 rounded-lg p-2">
                       <div className="flex justify-between items-center mb-1">
-                        <span className="text-xs font-medium text-gray-800">Camera Field of View</span>
+                        <span className="text-sm font-medium text-gray-800">Camera Field of View</span>
                         <span className="text-xs px-1.5 py-0.5 rounded-full bg-green-100 text-green-800">Matches Lab Results</span>
                       </div>
                       <div className="bg-gray-50 rounded h-6 overflow-hidden">
                         <div className="bg-green-500 h-full" style={{width: '95%'}}></div>
                       </div>
                       <div className="flex justify-between mt-0.5">
-                        <span className="text-xs text-gray-500">Field: 94.8%</span>
-                        <span className="text-xs text-gray-500">Lab: 96.2%</span>
+                        <span className="text-xs text-gray-600">Field: 94.8%</span>
+                        <span className="text-xs text-gray-600">Lab: 96.2%</span>
                       </div>
                     </div>
                     
                     <div className="bg-white border border-gray-200 rounded-lg p-2">
                       <div className="flex justify-between items-center mb-1">
-                        <span className="text-xs font-medium text-gray-800">Low Light Performance</span>
-                        <span className="text-xs px-1.5 py-0.5 rounded-full bg-yellow-100 text-yellow-800">Below Lab Results</span>
+                        <span className="text-sm font-medium text-gray-800">Low Light Performance</span>
+                        <span className="text-xs px-1.5 py-0.5 rounded-full bg-yellow-100 text-yellow-800">Minor Deviation</span>
                       </div>
                       <div className="bg-gray-50 rounded h-6 overflow-hidden">
                         <div className="bg-yellow-500 h-full" style={{width: '72%'}}></div>
                       </div>
                       <div className="flex justify-between mt-0.5">
-                        <span className="text-xs text-gray-500">Field: 72.3%</span>
-                        <span className="text-xs text-gray-500">Lab: 88.7%</span>
+                        <span className="text-xs text-gray-600">Field: 82.3%</span>
+                        <span className="text-xs text-gray-600">Lab: 89.1%</span>
                       </div>
                     </div>
                     
                     <div className="bg-white border border-gray-200 rounded-lg p-2">
                       <div className="flex justify-between items-center mb-1">
-                        <span className="text-xs font-medium text-gray-800">Analytics Detection Accuracy</span>
-                        <span className="text-xs px-1.5 py-0.5 rounded-full bg-green-100 text-green-800">Matches Lab Results</span>
+                        <span className="text-sm font-medium text-gray-800">Analytics Detection Accuracy</span>
+                        <span className="text-xs px-1.5 py-0.5 rounded-full bg-red-100 text-red-800">Significant Deviation</span>
                       </div>
                       <div className="bg-gray-50 rounded h-6 overflow-hidden">
-                        <div className="bg-green-500 h-full" style={{width: '91%'}}></div>
+                        <div className="bg-red-500 h-full" style={{width: '68.7%'}}></div>
                       </div>
                       <div className="flex justify-between mt-0.5">
-                        <span className="text-xs text-gray-500">Field: 91.1%</span>
-                        <span className="text-xs text-gray-500">Lab: 92.5%</span>
+                        <span className="text-xs text-gray-600">Field: 68.7%</span>
+                        <span className="text-xs text-gray-600">Lab: 91.5%</span>
                       </div>
                     </div>
                   </div>

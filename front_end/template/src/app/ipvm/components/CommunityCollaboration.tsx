@@ -8,7 +8,7 @@ const CommunityCollaboration: React.FC = () => {
     <div className="viewport-fit">
       <div className="module-container">
         <div className="module-header">
-          <h2 className="text-xl font-bold text-gray-800">Community & Collaboration</h2>
+          <h2 className="text-xl font-semibold text-gray-800">Community & Collaboration</h2>
           <p className="text-sm text-gray-600">Connect with security professionals and share insights</p>
         </div>
         
@@ -54,67 +54,48 @@ const CommunityCollaboration: React.FC = () => {
                   <h3 className="text-base font-semibold text-gray-800">Regulatory Compliance Tracker</h3>
                 </div>
                 <div className="panel-content compact-p">
-                  <div className="border border-gray-200 rounded-lg overflow-hidden">
+                  <div className="overflow-x-auto module-content-scrollable">
                     <table className="min-w-full divide-y divide-gray-200">
                       <thead className="bg-gray-50">
                         <tr>
-                          <th scope="col" className="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Regulation</th>
-                          <th scope="col" className="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Region</th>
-                          <th scope="col" className="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                          <th scope="col" className="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Impact</th>
+                          <th scope="col" className="px-2 py-1.5 text-left text-sm font-medium text-gray-700">Regulation</th>
+                          <th scope="col" className="px-2 py-1.5 text-left text-sm font-medium text-gray-700">Region</th>
+                          <th scope="col" className="px-2 py-1.5 text-left text-sm font-medium text-gray-700">Status</th>
+                          <th scope="col" className="px-2 py-1.5 text-left text-sm font-medium text-gray-700">Impact</th>
                         </tr>
                       </thead>
                       <tbody className="bg-white divide-y divide-gray-200">
                         <tr>
-                          <td className="px-2 py-2 whitespace-nowrap">
-                            <div className="text-xs font-medium text-gray-900">EU AI Act</div>
-                            <div className="text-xs text-gray-500">Effective July 2025</div>
+                          <td className="px-2 py-1.5 text-sm text-gray-800">EU AI Act</td>
+                          <td className="px-2 py-1.5 text-sm text-gray-800">Europe</td>
+                          <td className="px-2 py-1.5">
+                            <span className="px-1.5 py-0.5 text-xs rounded-full bg-yellow-100 text-yellow-800">Pending</span>
                           </td>
-                          <td className="px-2 py-2 whitespace-nowrap">
-                            <div className="text-xs text-gray-900">European Union</div>
-                          </td>
-                          <td className="px-2 py-2 whitespace-nowrap">
-                            <span className="px-1.5 py-0.5 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
-                              Implementation Phase
-                            </span>
-                          </td>
-                          <td className="px-2 py-2 whitespace-nowrap text-xs text-gray-500">
-                            <span className="font-semibold text-red-600">High</span>
-                          </td>
+                          <td className="px-2 py-1.5 text-sm text-gray-800">High</td>
                         </tr>
                         <tr>
-                          <td className="px-2 py-2 whitespace-nowrap">
-                            <div className="text-xs font-medium text-gray-900">NDAA Compliance</div>
-                            <div className="text-xs text-gray-500">Section 889</div>
+                          <td className="px-2 py-1.5 text-sm text-gray-800">NDAA Compliance</td>
+                          <td className="px-2 py-1.5 text-sm text-gray-800">USA</td>
+                          <td className="px-2 py-1.5">
+                            <span className="px-1.5 py-0.5 text-xs rounded-full bg-green-100 text-green-800">Active</span>
                           </td>
-                          <td className="px-2 py-2 whitespace-nowrap">
-                            <div className="text-xs text-gray-900">United States</div>
-                          </td>
-                          <td className="px-2 py-2 whitespace-nowrap">
-                            <span className="px-1.5 py-0.5 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                              Active
-                            </span>
-                          </td>
-                          <td className="px-2 py-2 whitespace-nowrap text-xs text-gray-500">
-                            <span className="font-semibold text-red-600">High</span>
-                          </td>
+                          <td className="px-2 py-1.5 text-sm text-gray-800">High</td>
                         </tr>
                         <tr>
-                          <td className="px-2 py-2 whitespace-nowrap">
-                            <div className="text-xs font-medium text-gray-900">GDPR Facial Recognition</div>
-                            <div className="text-xs text-gray-500">Article 9 Guidelines</div>
+                          <td className="px-2 py-1.5 text-sm text-gray-800">BSIA 1175</td>
+                          <td className="px-2 py-1.5 text-sm text-gray-800">UK</td>
+                          <td className="px-2 py-1.5">
+                            <span className="px-1.5 py-0.5 text-xs rounded-full bg-green-100 text-green-800">Active</span>
                           </td>
-                          <td className="px-2 py-2 whitespace-nowrap">
-                            <div className="text-xs text-gray-900">European Union</div>
+                          <td className="px-2 py-1.5 text-sm text-gray-800">Medium</td>
+                        </tr>
+                        <tr>
+                          <td className="px-2 py-1.5 text-sm text-gray-800">PIPEDA Update</td>
+                          <td className="px-2 py-1.5 text-sm text-gray-800">Canada</td>
+                          <td className="px-2 py-1.5">
+                            <span className="px-1.5 py-0.5 text-xs rounded-full bg-red-100 text-red-800">Proposed</span>
                           </td>
-                          <td className="px-2 py-2 whitespace-nowrap">
-                            <span className="px-1.5 py-0.5 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                              Active
-                            </span>
-                          </td>
-                          <td className="px-2 py-2 whitespace-nowrap text-xs text-gray-500">
-                            <span className="font-semibold text-red-600">High</span>
-                          </td>
+                          <td className="px-2 py-1.5 text-sm text-gray-800">Medium</td>
                         </tr>
                       </tbody>
                     </table>
